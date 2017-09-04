@@ -76,6 +76,10 @@ def dnevnik():
 
         else:
             response = make_response(redirect('/login'))
+            response.headers['X-Content-Type-Options'] = 'nosniff'
+            response.headers['X-Frame-Options'] = 'DENY'
+            response.headers['X-XSS-Protection'] = '1; mode=block'
+            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
             return response
 
     elif request.method == 'POST':
@@ -111,6 +115,10 @@ def dnevnik():
 
         else:
             response = make_response(redirect('/login'))
+            response.headers['X-Content-Type-Options'] = 'nosniff'
+            response.headers['X-Frame-Options'] = 'DENY'
+            response.headers['X-XSS-Protection'] = '1; mode=block'
+            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
             return response
 
 
@@ -127,6 +135,10 @@ def stats():
 
         else:
             response = make_response(redirect('/login'))
+            response.headers['X-Content-Type-Options'] = 'nosniff'
+            response.headers['X-Frame-Options'] = 'DENY'
+            response.headers['X-XSS-Protection'] = '1; mode=block'
+            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
             return response
 
     elif request.method == 'POST':
@@ -179,6 +191,10 @@ def summary():
 
         else:
             response = make_response(redirect('/login'))
+            response.headers['X-Content-Type-Options'] = 'nosniff'
+            response.headers['X-Frame-Options'] = 'DENY'
+            response.headers['X-XSS-Protection'] = '1; mode=block'
+            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
             return response
 
 
@@ -187,6 +203,10 @@ def login():
     if request.method == 'GET':
         if 'DnevnikAuth_a' in request.cookies:
             response = make_response(redirect('/dnevnik'))
+            response.headers['X-Content-Type-Options'] = 'nosniff'
+            response.headers['X-Frame-Options'] = 'DENY'
+            response.headers['X-XSS-Protection'] = '1; mode=block'
+            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
             return response
 
         else:
@@ -217,6 +237,10 @@ def login():
 
             auth_cookies = s.cookies.get_dict()
             response = make_response(redirect('/dnevnik'))
+            response.headers['X-Content-Type-Options'] = 'nosniff'
+            response.headers['X-Frame-Options'] = 'DENY'
+            response.headers['X-XSS-Protection'] = '1; mode=block'
+            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
             for key, value in auth_cookies.items():
                 response.set_cookie(key, value=value, max_age=86400, expires=86400)
 
@@ -239,6 +263,10 @@ def logout():
         response.set_cookie('t0', value='', max_age=0, expires=0)
         response.set_cookie('t1', value='', max_age=0, expires=0)
         response.set_cookie('t2', value='', max_age=0, expires=0)
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
         return response
 
 
