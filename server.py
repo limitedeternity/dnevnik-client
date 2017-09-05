@@ -55,7 +55,12 @@ Template handling
 @app.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
-        response = make_response(render_template('index.html'))
+        if 'DnevnikAuth_a' not in request.cookies:
+            response = make_response(render_template('index.html'))
+
+        else:
+            response = make_response(render_template('index_logged_in.html'))
+
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['X-Frame-Options'] = 'DENY'
         response.headers['X-XSS-Protection'] = '1; mode=block'
