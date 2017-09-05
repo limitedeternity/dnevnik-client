@@ -221,16 +221,6 @@ def serve_css(path):
     return send_from_directory('static/css', path)
 
 
-@app.route('/images/<path:path>', methods=['GET'])
-def serve_image(path):
-    return send_from_directory('static/images', path)
-
-
-@app.route('/fonts/<path:path>', methods=['GET'])
-def serve_fonts(path):
-    return send_from_directory('static/fonts', path)
-
-
 if __name__ == "__main__":
     chdir(dirname(abspath(__file__)))
     serve(app, host='0.0.0.0', port=argv[1])
