@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, make_response, send_from_directory, request, redirect
+from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify
 from random import choice
 from requests import Session
 from datetime import datetime
 import pandas as pd
 from urllib.parse import urlparse, parse_qs
-from json import dumps
+from json import load
 from os import chdir
 from os.path import dirname, abspath
 from flask_wtf.csrf import CSRFProtect
@@ -81,8 +81,9 @@ def index():
                                       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8', 'DNT': '1', 'Accept-Encoding': 'gzip, deflate, br', 'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4', 'Cookie': "_ym_uid=" + request.cookies.get('_ym_uid') + '; ' + "SnapABugHistory=" + request.cookies.get('SnapABugHistory') + '; ' + "_ym_isad=" + request.cookies.get('_ym_isad') + '; ' + "dnevnik_sst=" + request.cookies.get('dnevnik_sst') + '; ' + "DnevnikAuth_a=" + request.cookies.get('DnevnikAuth_a') + '; ' + "spauth=" + request.cookies.get('spauth') + '; ' + "spvisit=" + request.cookies.get('spvisit') + '; ' + "_ga=" + request.cookies.get('_ga') + '; ' + "_gid=" + request.cookies.get('_gid') + "; " + "t0=" + request.cookies.get('t0') + "; " + "t1=" + request.cookies.get('t1') + "; " + "t2=" + request.cookies.get('t2')})
 
                     data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate('year') + "&month=" + (str(timeMonth) if timeMonth is not None else timeDate('month')) + "&day=" + (timeDate('day') if timeDay is None and timeMonth is None else str(timeDay) if timeDate('weekday', str(timeMonth), str(timeDay)) != '6' else str(int(timeDay) - 1))).content
-                    columns = {0: 'Урок', 1: 'Присутствие', 2: 'Оценки', 3: 'Замечания', 4: 'ДЗ'}
+                    columns = {0: 'Уроки', 1: 'Присутствие', 2: 'Оценки', 3: 'Замечания', 4: 'ДЗ'}
                     tables = None
+                    swapped = False
 
                     try:
                         if timeDate('weekday', str(timeMonth), str(timeDay)) != '6':
@@ -92,17 +93,50 @@ def index():
                             tables = pd.read_html(data)[int(timeDate('weekday', timeMonth, timeDay)) - 1].rename(columns=columns)
 
                     except (ValueError, IndexError):
-                        return dumps("Уроков нет ¯\_(ツ)_/¯", ensure_ascii=False)
+                        html_out = ""
+
+                        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Уроков нет ¯\_(ツ)_/¯</h4>'
+
+                        return jsonify(html_out)
 
                     if not str(tables['Урок'][0]).startswith("!"):
                         tables.index = range(1, len(tables) + 1)
+                        swapped = True
 
-                    tables['Урок'] = tables['Урок'].apply(lambda x: str(x)[:-6])
+                    tables['Уроки'] = tables['Уроки'].apply(lambda x: str(x)[:-6])
 
-                    return tables.to_json(force_ascii=False)
+                    json_out = load(tables.to_json(force_ascii=False))
+
+                    html_out = ""
+
+                    html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
+                    for i in range(len(json_out['Уроки'])):
+                        if not swapped:
+                            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+                            html_out += '    <div class="section__circle-container__circle mdl-color--primary"></div>'
+                            html_out += '</div>'
+                            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+                            html_out += '    <h5>' + str(json_out['Уроки'][str(i)]) + '</h5>'
+                            html_out += '    Присутствие: ' + ("отмечено." if str(json_out["Присутствие"][str(i)]) == 'null' else str(json_out["Присутствие"][str(i)])) + "<br>" + "Оценка: " + ("нет." if str(json_out["Оценки"][str(i)]) == 'null' else str(int(json_out["Оценки"][str(i)]))) + "<br>" + "Замечания: " + ("нет." if str(json_out["Замечания"][str(i)]) == 'null' else str(json_out["Замечания"][str(i)])) + "<br>" + "ДЗ: " + ("нет." if str(json_out["ДЗ"][str(i)]) == 'null' else str(json_out["ДЗ"][str(i)])) + "<br>"
+                            html_out += '</div>'
+
+                        elif swapped:
+                            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+                            html_out += '    <div class="section__circle-container__circle mdl-color--primary"></div>'
+                            html_out += '</div>'
+                            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+                            html_out += '    <h5>' + str(json_out['Уроки'][str(i + 1)]) + '</h5>'
+                            html_out += '    Присутствие: ' + ("отмечено." if str(json_out["Присутствие"][str(i + 1)]) == 'null' else str(json_out["Присутствие"][str(i + 1)])) + "<br>" + "Оценка: " + ("нет." if str(json_out["Оценки"][str(i + 1)]) == 'null' else str(int(json_out["Оценки"][str(i + 1)]))) + "<br>" + "Замечания: " + ("нет." if str(json_out["Замечания"][str(i + 1)]) == 'null' else str(json_out["Замечания"][str(i + 1)])) + "<br>" + "ДЗ: " + ("нет." if str(json_out["ДЗ"][str(i + 1)]) == 'null' else str(json_out["ДЗ"][str(i + 1)])) + "<br>"
+                            html_out += '</div>'
+
+                    return jsonify(html_out)
 
                 else:
-                    return dumps("Залогинься ¯\_(ツ)_/¯", ensure_ascii=False)
+                    html_out = ""
+
+                    html_out += '<h4 class="mdl-cell mdl-cell--12-col">Залогинься ¯\_(ツ)_/¯</h4>'
+
+                    return jsonify(html_out)
 
             elif action == 'stats':
                 if 'DnevnikAuth_a' in request.cookies:
@@ -118,7 +152,11 @@ def index():
                     return tables.to_json(force_ascii=False)
 
                 else:
-                    return dumps("Залогинься ¯\_(ツ)_/¯", ensure_ascii=False)
+                    html_out = ""
+
+                    html_out += '<h4 class="mdl-cell mdl-cell--12-col">Залогинься ¯\_(ツ)_/¯</h4>'
+
+                    return jsonify(html_out)
 
             elif action == 'summary':
                 if 'DnevnikAuth_a' in request.cookies:
@@ -133,10 +171,18 @@ def index():
                         return tables.to_json(force_ascii=False)
 
                     except (ValueError, IndexError):
-                        return dumps("Данных нет ¯\_(ツ)_/¯", ensure_ascii=False)
+                        html_out = ""
+
+                        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Данных нет ¯\_(ツ)_/¯</h4>'
+
+                        return jsonify(html_out)
 
                 else:
-                    return dumps("Залогинься ¯\_(ツ)_/¯", ensure_ascii=False)
+                    html_out = ""
+
+                    html_out += '<h4 class="mdl-cell mdl-cell--12-col">Залогинься ¯\_(ツ)_/¯</h4>'
+
+                    return jsonify(html_out)
 
             elif action == 'login':
                 if 'DnevnikAuth_a' not in request.cookies:
@@ -155,10 +201,15 @@ def index():
                             s.cookies.get_dict()['DnevnikAuth_a']
 
                         except KeyError:
-                            return dumps("Данные неверны ¯\_(ツ)_/¯", ensure_ascii=False)
+                            html_out = ""
+
+                            html_out += '<div style="display:block; height: 2px; clear: both;"></div>'
+                            html_out += '<p style="text-align: center;">Данные неверны ¯\_(ツ)_/¯</p>'
+
+                            return jsonify(html_out)
 
                         auth_cookies = s.cookies.get_dict()
-                        response = make_response(redirect('/dnevnik'))
+                        response = make_response(redirect('/'))
                         response.headers['X-Content-Type-Options'] = 'nosniff'
                         response.headers['X-Frame-Options'] = 'DENY'
                         response.headers['X-XSS-Protection'] = '1; mode=block'
@@ -211,9 +262,9 @@ Frontend handling
 '''
 
 
-@app.route('/config/<path:path>', methods=['GET'])
-def serve_config(path):
-    return send_from_directory('static/config', path)
+@app.route('/images/<path:path>', methods=['GET'])
+def serve_images(path):
+    return send_from_directory('static/images', path)
 
 
 @app.route('/js/<path:path>', methods=['GET'])

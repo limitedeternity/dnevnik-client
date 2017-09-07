@@ -12,7 +12,8 @@
       <meta name="author" content="limitedeternity" />
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
-
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/latest/js.cookie.min.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.teal-blue.min.css">
@@ -45,7 +46,7 @@
                 <h4>О проекте</h4>
                 Этот проект - тестовое решение для проверки некоторых аспектов интеграции проектов без наличия доступа к API. <br>
                 На данном примере - Дневник.Ру. <br> DnevnikClient - облегченная версия Дневник.Ру, расчитанная для учеников, помещенная в рамки
-                Material Design, предоставляющий функционал ровно в такой мере, которая требуется ученикам. Без тяжелого обвеса вроде ReactJS,
+                Material Design. Клиент предоставляет функционал ровно в такой мере, которая требуется ученикам. Без тяжелого обвеса вроде ReactJS,
                 избыточных элементов интерфейса и функционала "соцсети". <br> Дневник, статистика и итоговые отметки. Ничего лишнего. <br>
                 Исходный код доступен в моем репозитории GitHub. <br>
                 By @limitedeternity
@@ -55,13 +56,53 @@
         </div>
         <div class="mdl-layout__tab-panel" id="diary">
           <section class="section--center mdl-grid mdl-grid--no-spacing">
-            <div class="mdl-cell mdl-cell--12-col">
-              
+            <div class="mdl-card mdl-cell mdl-cell--12-col mdl-shadow--4dp">
+              <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
+                <h4 class="mdl-cell mdl-cell--12-col">Дата</h4>
+                <form action="" method="POST" id="dnevnik-date">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                  <input type="hidden" name="action" value="dnevnik" />
+                  <div class="mdl-textfield mdl-js-textfield">
+                      <input class="mdl-textfield__input" type="text" name="day" id="day" pattern="[1-9]{1}"/>
+                      <label class="mdl-textfield__label" for="day">День (1-31)</label>
+                  </div>
+                  <div style="display:block; height: 1px; clear:both;"></div>
+                  <div class="mdl-textfield mdl-js-textfield">
+                      <input class="mdl-textfield__input" type="text" name="month" id="month" pattern="[1-9]{1}"/>
+                      <label class="mdl-textfield__label" for="month">Месяц (1-12)</label>
+                  </div>
+                  <div style="display:block; height: 5px; clear:both;"></div>
+                  <button type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
+                      <i class="material-icons">arrow_forward</i>
+                      <span class="visuallyhidden">Next</span>
+                      <span class="mdl-button__ripple-container">
+                          <span class="mdl-ripple is-animating" style="width: 160.392px; height: 160.392px; transform: translate(-50%, -50%) translate(14px, 16px);"></span>
+                      </span>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </section>
+          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--4dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+              <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing" id="dnevnik-out">
+                <h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>
+                    <div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">
+                        <div class="section__circle-container__circle mdl-color--primary"></div>
+                    </div>
+                    <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
+                        <h5>Данные отсутствуют.</h5>
+                        Похоже, что Вы еще ничего не запросили. <br>
+                        Но мы можем исправить это. <br>
+                        Залогиньтесь, а затем введите день и месяц в форме выше.<br>
+                    </div>
+                </div>
             </div>
           </section>
         </div>
       </main>
     </div>
-    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script type="text/javascript" src="/js/dnevnik.operator.js"></script>
+    <script type="text/javascript" src="https://code.getmdl.io/1.3.0/material.min.js"></script>
   </body>
 </html>
