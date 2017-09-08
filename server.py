@@ -41,7 +41,11 @@ def timeDate(typeDate, timeMonth=None, timeDay=None):
         return str(datetime.today().year)
 
     elif typeDate == 'weekday':
-        return str(datetime(int(timeDate('year')), int(timeMonth), int(timeDay)).weekday())
+        if timeMonth is None or timeDay is None:
+            return str(datetime.today().weekday())
+        
+        else:
+            return str(datetime(int(timeDate('year')), int(timeMonth), int(timeDay)).weekday())
 
 
 def schoolId(s):
@@ -161,7 +165,7 @@ def dnevnik():
         s.post('https://login.dnevnik.ru/login', login_payload)
         s.get('https://dnevnik.ru/')
 
-        data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate('year') + "&month=" + (str(timeMonth) if timeMonth is not None else timeDate('month')) + "&day=" + (timeDate('day') if timeDay is None and timeMonth is None else str(timeDay) if timeDate('weekday', str(timeMonth), str(timeDay)) != '6' else str(int(timeDay) - 1))).content
+        data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate('year') + "&month=" + (str(timeMonth) if timeMonth is not None else timeDate('month')) + "&day=" + (timeDate('day') if timeDay is None or timeMonth is None else str(timeDay) if timeDate('weekday', str(timeMonth), str(timeDay)) != '6' else str(int(timeDay) - 1))).content
 
         columns = {0: 'Уроки', 1: 'Присутствие', 2: 'Оценки', 3: 'Замечания', 4: 'ДЗ'}
         tables = None
