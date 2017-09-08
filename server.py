@@ -43,7 +43,7 @@ def timeDate(typeDate, timeMonth=None, timeDay=None):
     elif typeDate == 'weekday':
         if timeMonth is None or timeDay is None:
             return str(datetime.today().weekday())
-        
+
         else:
             return str(datetime(int(timeDate('year')), int(timeMonth), int(timeDay)).weekday())
 
@@ -172,11 +172,19 @@ def dnevnik():
         swapped = False
 
         try:
-            if timeDate('weekday', str(timeMonth), str(timeDay)) != '6':
-                tables = pd.read_html(data)[int(timeDate('weekday', timeMonth, timeDay))].rename(columns=columns)
+            if timeMonth is None or timeDay is None:
+                if timeDate('weekday') != '6':
+                    tables = pd.read_html(data)[int(timeDate('weekday', timeMonth, timeDay))].rename(columns=columns)
+
+                else:
+                    tables = pd.read_html(data)[int(timeDate('weekday', timeMonth, timeDay)) - 1].rename(columns=columns)
 
             else:
-                tables = pd.read_html(data)[int(timeDate('weekday', timeMonth, timeDay)) - 1].rename(columns=columns)
+                if timeDate('weekday', str(timeMonth), str(timeDay)) != '6':
+                    tables = pd.read_html(data)[int(timeDate('weekday', timeMonth, timeDay))].rename(columns=columns)
+
+                else:
+                    tables = pd.read_html(data)[int(timeDate('weekday', timeMonth, timeDay)) - 1].rename(columns=columns)
 
         except (ValueError, IndexError):
             html_out = ""
