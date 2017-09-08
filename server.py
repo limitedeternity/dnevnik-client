@@ -191,33 +191,33 @@ def dnevnik():
             tables.index = range(1, len(tables) + 1)
             swapped = True
 
-            tables['Уроки'] = tables['Уроки'].apply(lambda x: str(x)[:-6])
+        tables['Уроки'] = tables['Уроки'].apply(lambda x: str(x)[:-6])
 
-            json_out = load(tables.to_json(force_ascii=False))
+        json_out = tables.to_json(force_ascii=False)
 
-            html_out = ""
+        html_out = ""
 
-            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
-            for i in range(len(json_out['Уроки'])):
-                if not swapped:
-                    html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                    html_out += '<div class="section__circle-container__circle mdl-color--primary"></div>'
-                    html_out += '</div>'
-                    html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                    html_out += '<h5>' + str(json_out['Уроки'][str(i)]) + '</h5>'
-                    html_out += 'Присутствие: ' + ("отмечено." if str(json_out["Присутствие"][str(i)]) == 'null' else str(json_out["Присутствие"][str(i)])) + "<br>" + "Оценка: " + ("нет." if str(json_out["Оценки"][str(i)]) == 'null' else str(int(json_out["Оценки"][str(i)]))) + "<br>" + "Замечания: " + ("нет." if str(json_out["Замечания"][str(i)]) == 'null' else str(json_out["Замечания"][str(i)])) + "<br>" + "ДЗ: " + ("нет." if str(json_out["ДЗ"][str(i)]) == 'null' else str(json_out["ДЗ"][str(i)])) + "<br>"
-                    html_out += '</div>'
+        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
+        for i in range(len(json_out['Уроки'])):
+            if not swapped:
+                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+                html_out += '<div class="section__circle-container__circle mdl-color--primary"></div>'
+                html_out += '</div>'
+                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+                html_out += '<h5>' + str(json_out['Уроки'][str(i)]) + '</h5>'
+                html_out += 'Присутствие: ' + ("отмечено." if str(json_out["Присутствие"][str(i)]) == 'null' else str(json_out["Присутствие"][str(i)])) + "<br>" + "Оценка: " + ("нет." if str(json_out["Оценки"][str(i)]) == 'null' else str(int(json_out["Оценки"][str(i)]))) + "<br>" + "Замечания: " + ("нет." if str(json_out["Замечания"][str(i)]) == 'null' else str(json_out["Замечания"][str(i)])) + "<br>" + "ДЗ: " + ("нет." if str(json_out["ДЗ"][str(i)]) == 'null' else str(json_out["ДЗ"][str(i)])) + "<br>"
+                html_out += '</div>'
 
-                elif swapped:
-                    html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                    html_out += '<div class="section__circle-container__circle mdl-color--primary"></div>'
-                    html_out += '</div>'
-                    html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                    html_out += '<h5>' + str(json_out['Уроки'][str(i + 1)]) + '</h5>'
-                    html_out += 'Присутствие: ' + ("отмечено." if str(json_out["Присутствие"][str(i + 1)]) == 'null' else str(json_out["Присутствие"][str(i + 1)])) + "<br>" + "Оценка: " + ("нет." if str(json_out["Оценки"][str(i + 1)]) == 'null' else str(int(float(json_out["Оценки"][str(i + 1)])))) + "<br>" + "Замечания: " + ("нет." if str(json_out["Замечания"][str(i + 1)]) == 'null' else str(json_out["Замечания"][str(i + 1)])) + "<br>" + "ДЗ: " + ("нет." if str(json_out["ДЗ"][str(i + 1)]) == 'null' else str(json_out["ДЗ"][str(i + 1)])) + "<br>"
-                    html_out += '</div>'
+            elif swapped:
+                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+                html_out += '<div class="section__circle-container__circle mdl-color--primary"></div>'
+                html_out += '</div>'
+                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+                html_out += '<h5>' + str(json_out['Уроки'][str(i + 1)]) + '</h5>'
+                html_out += 'Присутствие: ' + ("отмечено." if str(json_out["Присутствие"][str(i + 1)]) == 'null' else str(json_out["Присутствие"][str(i + 1)])) + "<br>" + "Оценка: " + ("нет." if str(json_out["Оценки"][str(i + 1)]) == 'null' else str(int(float(json_out["Оценки"][str(i + 1)])))) + "<br>" + "Замечания: " + ("нет." if str(json_out["Замечания"][str(i + 1)]) == 'null' else str(json_out["Замечания"][str(i + 1)])) + "<br>" + "ДЗ: " + ("нет." if str(json_out["ДЗ"][str(i + 1)]) == 'null' else str(json_out["ДЗ"][str(i + 1)])) + "<br>"
+                html_out += '</div>'
 
-            return jsonify(html_out)
+        return jsonify(html_out)
 
     else:
         html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
