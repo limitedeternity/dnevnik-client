@@ -1,6 +1,9 @@
 $(document).ready(function() {
     $("#dnevnik-login").on("submit", function(a) {
         a.preventDefault();
+
+        $("#error").html("<div class='loader'>Loading...</div>");
+
         $.ajax({
                 headers: {
                     "X-CSRFToken": Cookies.get("csrftoken")
