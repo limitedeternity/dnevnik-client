@@ -14,6 +14,7 @@
       <meta name="apple-mobile-web-app-capable" content="yes" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/latest/js.cookie.min.js"></script>
+    <link rel="shortcut icon" href="/images/favicon.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.teal-blue.min.css">
@@ -32,8 +33,8 @@
         <div class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--primary-dark">
           <a href="#overview" class="mdl-layout__tab is-active">Главная</a>
           <a href="#diary" class="mdl-layout__tab">Дневник</a>
-          <a href="#stats" class="mdl-layout__tab">Статистика</a>
-          <a href="#summary" class="mdl-layout__tab">Итоговые</a>
+          <a href="#stats" class="mdl-layout__tab" style="display:none;">Статистика</a>
+          <a href="#summary" class="mdl-layout__tab" style="display:none;">Итоговые</a>
           <a href="/logout" class="mdl-layout__tab">Выход</a>
         </div>
       </header>
@@ -59,9 +60,8 @@
             <div class="mdl-card mdl-cell mdl-cell--12-col mdl-shadow--4dp">
               <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
                 <h4 class="mdl-cell mdl-cell--12-col">Дата</h4>
-                <form action="" method="POST" id="dnevnik-date">
+                <form action="/dnevnik" method="post" id="dnevnik-date">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                  <input type="hidden" name="action" value="dnevnik" />
                   <div class="mdl-textfield mdl-js-textfield">
                       <input class="mdl-textfield__input" type="text" name="day" id="day" pattern="[1-9]{1}"/>
                       <label class="mdl-textfield__label" for="day">День (1-31)</label>
@@ -94,7 +94,7 @@
                         <h5>Данные отсутствуют.</h5>
                         Похоже, что Вы еще ничего не запросили. <br>
                         Но мы можем исправить это. <br>
-                        Залогиньтесь, а затем введите день и месяц в форме выше.<br>
+                        Введите день и месяц в форме выше.<br>
                     </div>
                 </div>
             </div>

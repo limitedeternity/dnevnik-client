@@ -5,9 +5,9 @@ $(document).ready(function() {
 			headers: {
         "X-CSRFToken": Cookies.get("csrftoken")
       },
-			url: '/',
-			type: 'POST',
-			dataType: 'json',
+			url: "/login",
+			type: "POST",
+			dataType: "json",
 			data: $("#dnevnik-login").serialize(),
 		})
 		.done(function(data) {
@@ -30,9 +30,9 @@ $(document).ready(function() {
 			headers: {
         "X-CSRFToken": Cookies.get("csrftoken")
       },
-			url: '/',
-			type: 'POST',
-			dataType: 'json',
+			url: "/dnevnik",
+			type: "POST",
+			dataType: "json",
 			data: $("#dnevnik-date").serialize(),
 		})
 		.done(function(data) {
