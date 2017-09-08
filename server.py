@@ -7,6 +7,7 @@ from datetime import datetime
 import pandas as pd
 from urllib.parse import urlparse, parse_qs
 from os import chdir
+from json import loads
 from os.path import dirname, abspath
 from flask_wtf.csrf import CSRFProtect
 from waitress import serve
@@ -192,7 +193,7 @@ def dnevnik():
 
         tables['Уроки'] = tables['Уроки'].apply(lambda x: str(x)[:-6])
 
-        json_out = tables.to_json(force_ascii=False)
+        json_out = loads(tables.to_json(force_ascii=False))
 
         html_out = ""
 
