@@ -193,7 +193,7 @@ def dnevnik():
 
         tables['Уроки'] = tables['Уроки'].apply(lambda x: str(x)[:-6])
 
-        json_out = tables.to_json(force_ascii=False)
+        json_out = load(tables.to_json(force_ascii=False))
 
         html_out = ""
 
