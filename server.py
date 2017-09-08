@@ -182,7 +182,7 @@ def dnevnik():
             html_out += '</div>'
             html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
             html_out += '<h5>Уроков нет ¯\_(ツ)_/¯</h5>'
-            html_out += 'Наслаждайтесь временно отсутствующим расписанием.'
+            html_out += 'Наслаждайтесь временно отсутствующим расписанием :>'
             html_out += '</div>'
 
             return jsonify(html_out)
@@ -205,7 +205,7 @@ def dnevnik():
                 html_out += '</div>'
                 html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
                 html_out += '<h5>' + str(json_out['Уроки'][str(i)]) + '</h5>'
-                html_out += 'Присутствие: ' + ("отмечено." if str(json_out["Присутствие"][str(i)]) == 'null' else str(json_out["Присутствие"][str(i)])) + "<br>" + "Оценка: " + ("нет." if str(json_out["Оценки"][str(i)]) == 'null' else str(int(json_out["Оценки"][str(i)]))) + "<br>" + "Замечания: " + ("нет." if str(json_out["Замечания"][str(i)]) == 'null' else str(json_out["Замечания"][str(i)])) + "<br>" + "ДЗ: " + ("нет." if str(json_out["ДЗ"][str(i)]) == 'null' else str(json_out["ДЗ"][str(i)])) + "<br>"
+                html_out += 'Присутствие: ' + ("отмечено." if str(json_out["Присутствие"][str(i)]) == 'None' else str(json_out["Присутствие"][str(i)])) + "<br>" + "Оценка: " + ("нет." if str(json_out["Оценки"][str(i)]) == 'None' else str(int(float(json_out["Оценки"][str(i)])))) + "<br>" + "Замечания: " + ("нет." if str(json_out["Замечания"][str(i)]) == 'None' else str(json_out["Замечания"][str(i)])) + "<br>" + "ДЗ: " + ("нет." if str(json_out["ДЗ"][str(i)]) == 'None' else str(json_out["ДЗ"][str(i)])) + "<br>"
                 html_out += '</div>'
 
             elif swapped:
@@ -214,7 +214,7 @@ def dnevnik():
                 html_out += '</div>'
                 html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
                 html_out += '<h5>' + str(json_out['Уроки'][str(i + 1)]) + '</h5>'
-                html_out += 'Присутствие: ' + ("отмечено." if str(json_out["Присутствие"][str(i + 1)]) == 'null' else str(json_out["Присутствие"][str(i + 1)])) + "<br>" + "Оценка: " + ("нет." if str(json_out["Оценки"][str(i + 1)]) == 'null' else str(int(float(json_out["Оценки"][str(i + 1)])))) + "<br>" + "Замечания: " + ("нет." if str(json_out["Замечания"][str(i + 1)]) == 'null' else str(json_out["Замечания"][str(i + 1)])) + "<br>" + "ДЗ: " + ("нет." if str(json_out["ДЗ"][str(i + 1)]) == 'null' else str(json_out["ДЗ"][str(i + 1)])) + "<br>"
+                html_out += 'Присутствие: ' + ("отмечено." if str(json_out["Присутствие"][str(i + 1)]) == 'None' else str(json_out["Присутствие"][str(i + 1)])) + "<br>" + "Оценка: " + ("нет." if str(json_out["Оценки"][str(i + 1)]) == 'None' else str(int(float(json_out["Оценки"][str(i + 1)])))) + "<br>" + "Замечания: " + ("нет." if str(json_out["Замечания"][str(i + 1)]) == 'None' else str(json_out["Замечания"][str(i + 1)])) + "<br>" + "ДЗ: " + ("нет." if str(json_out["ДЗ"][str(i + 1)]) == 'None' else str(json_out["ДЗ"][str(i + 1)])) + "<br>"
                 html_out += '</div>'
 
         return jsonify(html_out)
