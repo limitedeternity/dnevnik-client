@@ -29,7 +29,7 @@ Required functionality
 '''
 
 
-def timeDate(typeDate, timeMonth=None, timeDay=None):
+def timeDate(typeDate, timeMonth='', timeDay=''):
 
     if typeDate == 'day':
         return str(datetime.today().day)
@@ -41,7 +41,7 @@ def timeDate(typeDate, timeMonth=None, timeDay=None):
         return str(datetime.today().year)
 
     elif typeDate == 'weekday':
-        if timeMonth is None or timeDay is None:
+        if timeMonth is '' or timeDay is '':
             return str(datetime.today().weekday())
 
         else:
@@ -148,8 +148,8 @@ def dnevnik():
     if 'DnevnikLogin' in request.cookies:
         s = CacheControl(Session())
 
-        timeMonth = request.form.get('month', None)
-        timeDay = request.form.get('day', None)
+        timeMonth = request.form.get('month', '')
+        timeDay = request.form.get('day', '')
 
         s.headers.update({'Upgrade-Insecure-Requests': '1',
                           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
@@ -165,19 +165,19 @@ def dnevnik():
         s.post('https://login.dnevnik.ru/login', login_payload)
         s.get('https://dnevnik.ru/')
 
-        data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate('year') + "&month=" + (str(timeMonth) if timeMonth is not None else timeDate('month')) + "&day=" + (timeDate('day') if timeDay is None or timeMonth is None else str(timeDay) if timeDate('weekday', str(timeMonth), str(timeDay)) != '6' else str(int(timeDay) - 1))).content
+        data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate('year') + "&month=" + (str(timeMonth) if timeMonth is not '' else timeDate('month')) + "&day=" + (timeDate('day') if timeDay is '' or timeMonth is '' else str(timeDay) if timeDate('weekday', str(timeMonth), str(timeDay)) != '6' else str(int(timeDay) - 1))).content
 
         columns = {0: 'Уроки', 1: 'Присутствие', 2: 'Оценки', 3: 'Замечания', 4: 'ДЗ'}
         tables = None
         swapped = False
 
         try:
-            if timeMonth is None or timeDay is None:
+            if timeMonth is '' or timeDay is '':
                 if timeDate('weekday') != '6':
-                    tables = pd.read_html(data)[int(timeDate('weekday', timeMonth, timeDay))].rename(columns=columns)
+                    tables = pd.read_html(data)[int(timeDate('weekday'))].rename(columns=columns)
 
                 else:
-                    tables = pd.read_html(data)[int(timeDate('weekday', timeMonth, timeDay)) - 1].rename(columns=columns)
+                    tables = pd.read_html(data)[int(timeDate('weekday')) - 1].rename(columns=columns)
 
             else:
                 if timeDate('weekday', str(timeMonth), str(timeDay)) != '6':
