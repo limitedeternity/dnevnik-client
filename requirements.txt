@@ -3,6 +3,8 @@ Flask-WTF
 CacheControl
 waitress
 pandas
+numpy
+beautifulsoup4
 requests
 lxml
 html5lib
