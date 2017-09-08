@@ -2,6 +2,7 @@ $(document).ready(function() {
     $("#dnevnik-login").on("submit", function(a) {
         a.preventDefault();
 
+        $("#error").show();
         $("#error").html("<div class='loader'>Loading...</div>");
 
         $.ajax({
@@ -16,8 +17,8 @@ $(document).ready(function() {
             })
             .done(function(data) {
                 if (data !== null) {
-                    $("#error").show();
                     $("#error").html(data);
+
                 } else {
                     location.reload();
                 }
