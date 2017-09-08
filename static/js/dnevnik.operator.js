@@ -41,7 +41,7 @@ $(document).ready(function() {
 			$("#dnevnik-out").html(data);
 		})
 		.fail(function() {
-			console.log("...");
+			location.reload();
 		});
 	});
 
