@@ -78,6 +78,8 @@ def stats():
     if 'DnevnikLogin' in request.cookies:
         s = CacheControl(Session())
 
+        termPeriod = request.form.get('term', '')
+
         s.headers.update({'Upgrade-Insecure-Requests': '1',
                           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
                           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -92,7 +94,7 @@ def stats():
         s.post('https://login.dnevnik.ru/login', login_payload)
         s.get('https://dnevnik.ru/')
 
-        data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=stats&period=" + (str(termPeriod) if termPeriod is not None else "0")).content
+        data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=stats&period=" + (str(termPeriod) if termPeriod is not '' else "0")).content
         tables = pd.read_html(data)[-1]
         return tables.to_json(force_ascii=False)
 
@@ -274,7 +276,7 @@ def login():
             html_out = ""
 
             html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-            html_out += '<p style="text-align: center;">Данные неверны ¯\_(ツ)_/¯</p>'
+            html_out += '<p style="text-align:center; color:red;">Данные неверны ¯\_(ツ)_/¯</p>'
 
             return jsonify(html_out)
 
