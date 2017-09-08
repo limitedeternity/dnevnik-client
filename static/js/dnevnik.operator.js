@@ -15,7 +15,7 @@ $(document).ready(function() {
 				$("#error").show();
 				$("#error").html(data);
 			} else {
-					console.log("Logged in.");
+					location.reload();
 			}
 			
 		})
@@ -39,7 +39,7 @@ $(document).ready(function() {
 			$("#dnevnik-out").html(data);
 		})
 		.fail(function() {
-			console.log("Something wrong.");
+			console.log("...");
 		});
 	});
 
