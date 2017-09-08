@@ -63,12 +63,12 @@
                 <form action="/dnevnik" method="post" id="dnevnik-date">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                   <div class="mdl-textfield mdl-js-textfield">
-                      <input class="mdl-textfield__input" type="text" name="day" id="day" pattern="[1-9]{1}" value="" />
+                      <input class="mdl-textfield__input" type="text" name="day" id="day" pattern="[1-9]{1}" value="" autocomplete="off" />
                       <label class="mdl-textfield__label" for="day">День (1-31)</label>
                   </div>
                   <div style="display:block; height: 1px; clear:both;"></div>
                   <div class="mdl-textfield mdl-js-textfield">
-                      <input class="mdl-textfield__input" type="text" name="month" id="month" pattern="[1-9]{1}" value="" />
+                      <input class="mdl-textfield__input" type="text" name="month" id="month" pattern="[1-9]{1}" value="" autocomplete="off" />
                       <label class="mdl-textfield__label" for="month">Месяц (1-12)</label>
                   </div>
                   <div style="display:block; height: 5px; clear:both;"></div>
