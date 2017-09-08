@@ -20,7 +20,7 @@ $(document).ready(function() {
 			
 		})
 		.fail(function() {
-			console.log("Something wrong.");
+			location.reload();
 		});
 	});
 
