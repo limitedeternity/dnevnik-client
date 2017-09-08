@@ -187,7 +187,7 @@ def dnevnik():
 
             return jsonify(html_out)
 
-        if not str(tables['Урок'][0]).startswith("!"):
+        if not str(tables['Уроки'][0]).startswith("!"):
             tables.index = range(1, len(tables) + 1)
             swapped = True
 
