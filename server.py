@@ -13,6 +13,7 @@ from flask_wtf.csrf import CSRFProtect
 from waitress import serve
 from os import environ
 from sys import argv
+from cachecontrol import CacheControl
 from base64 import b64encode, b64decode
 
 
@@ -71,7 +72,7 @@ def index():
 @app.route("/stats", methods=['POST'])
 def stats():
     if 'DnevnikLogin' in request.cookies:
-        s = Session()
+        s = CacheControl(Session())
 
         s.headers.update({'Upgrade-Insecure-Requests': '1',
                           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
@@ -102,7 +103,7 @@ def stats():
 @app.route("/summary", methods=['POST'])
 def summary():
     if 'DnevnikLogin' in request.cookies:
-        s = Session()
+        s = CacheControl(Session())
 
         s.headers.update({'Upgrade-Insecure-Requests': '1',
                           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
@@ -141,7 +142,7 @@ def summary():
 @app.route("/dnevnik", methods=['POST'])
 def dnevnik():
     if 'DnevnikLogin' in request.cookies:
-        s = Session()
+        s = CacheControl(Session())
 
         timeMonth = request.form.get('month', None)
         timeDay = request.form.get('day', None)
@@ -235,7 +236,8 @@ def login():
     login = request.form.get('username', None)
     password = request.form.get('password', None)
     if login is not None and password is not None:
-        s = Session()
+        s = CacheControl(Session())
+
         s.headers.update({'Upgrade-Insecure-Requests': '1',
                           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
                           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',

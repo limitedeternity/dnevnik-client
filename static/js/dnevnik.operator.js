@@ -9,6 +9,7 @@ $(document).ready(function() {
 			type: "POST",
 			dataType: "json",
 			data: $("#dnevnik-login").serialize(),
+			timeout: 10000,
 		})
 		.done(function(data) {
 			if (data !== null) {
@@ -34,6 +35,7 @@ $(document).ready(function() {
 			type: "POST",
 			dataType: "json",
 			data: $("#dnevnik-date").serialize(),
+			timeout: 10000,
 		})
 		.done(function(data) {
 			$("#dnevnik-out").html(data);

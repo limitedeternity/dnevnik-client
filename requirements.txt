@@ -1,5 +1,6 @@
 Flask
 Flask-WTF
+CacheControl
 waitress
 pandas
 requests
