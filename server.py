@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify
+from flask import Flask, render_template, render_template_string, make_response, send_from_directory, request, redirect, jsonify
 from random import choice
 from requests import Session
 from datetime import datetime
@@ -280,7 +280,7 @@ def login():
 
             return jsonify(html_out)
 
-        response = make_response("Вход выполнен.")
+        response = make_response(render_template_string('<script>window.location.replace("/");</script>'))
 
         response.set_cookie('DnevnikLogin', value=b64encode(login.encode('ascii')).decode("utf-8").replace('"', ''))
         response.set_cookie('DnevnikPass', value=b64encode(password.encode('ascii')).decode("utf-8").replace('"', ''))
