@@ -4,3 +4,4 @@ waitress
 pandas
 requests
 lxml
+html5lib
