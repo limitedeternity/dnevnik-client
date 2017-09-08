@@ -6,7 +6,6 @@ from requests import Session
 from datetime import datetime
 import pandas as pd
 from urllib.parse import urlparse, parse_qs
-from json import load
 from os import chdir
 from os.path import dirname, abspath
 from flask_wtf.csrf import CSRFProtect
@@ -81,8 +80,8 @@ def stats():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
-        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8"),
-                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8"),
+        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8").replace('"', ''),
+                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8").replace('"', ''),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
@@ -112,8 +111,8 @@ def summary():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
-        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8"),
-                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8"),
+        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8").replace('"', ''),
+                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8").replace('"', ''),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
@@ -154,8 +153,8 @@ def dnevnik():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
-        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8"),
-                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8"),
+        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8").replace('"', ''),
+                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8").replace('"', ''),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
@@ -193,7 +192,7 @@ def dnevnik():
 
         tables['Уроки'] = tables['Уроки'].apply(lambda x: str(x)[:-6])
 
-        json_out = load(tables.to_json(force_ascii=False))
+        json_out = tables.to_json(force_ascii=False)
 
         html_out = ""
 
@@ -264,8 +263,8 @@ def login():
 
         response = make_response("Вход выполнен.")
 
-        response.set_cookie('DnevnikLogin', value=b64encode(login.encode('ascii')).decode("utf-8"))
-        response.set_cookie('DnevnikPass', value=b64encode(password.encode('ascii')).decode("utf-8"))
+        response.set_cookie('DnevnikLogin', value=b64encode(login.encode('ascii')).decode("utf-8").replace('"', ''))
+        response.set_cookie('DnevnikPass', value=b64encode(password.encode('ascii')).decode("utf-8").replace('"', ''))
 
         return response
 
