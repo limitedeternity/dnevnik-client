@@ -31,7 +31,7 @@ Required functionality
 '''
 
 
-def timeDate(typeDate, timeMonth='', timeDay='', offset=''):
+def timeDate(typeDate, offset, timeMonth='', timeDay=''):
 
     if typeDate == 'day':
         return str((datetime.now(tz=utc) + timedelta(hours=offset)).day)
@@ -47,7 +47,7 @@ def timeDate(typeDate, timeMonth='', timeDay='', offset=''):
             return str((datetime.now(tz=utc) + timedelta(hours=offset)).weekday())
 
         else:
-            return str((datetime(int(timeDate('year')), int(timeMonth), int(timeDay), tzinfo=utc) + timedelta(hours=offset)).weekday())
+            return str((datetime(int(timeDate('year', offset=offset)), int(timeMonth), int(timeDay), tzinfo=utc) + timedelta(hours=offset)).weekday())
 
 
 def schoolId(s):
