@@ -87,12 +87,11 @@ def stats():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
-        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8").replace('"', ''),
-                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8").replace('"', ''),
+        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8"),
+                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8"),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
-        s.get('https://dnevnik.ru/')
 
         data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=stats&period=" + (str(termPeriod) if termPeriod is not '' else "0")).content
         tables = pd.read_html(data)[-1]
@@ -118,12 +117,11 @@ def summary():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
-        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8").replace('"', ''),
-                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8").replace('"', ''),
+        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8"),
+                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8"),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
-        s.get('https://dnevnik.ru/')
 
         try:
             data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=result").content
@@ -160,12 +158,11 @@ def dnevnik():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
-        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8").replace('"', ''),
-                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8").replace('"', ''),
+        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8"),
+                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8"),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
-        s.get('https://dnevnik.ru/')
 
         data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate('year') + "&month=" + (str(timeMonth) if timeMonth is not '' else timeDate('month')) + "&day=" + (timeDate('day') if timeDay is '' or timeMonth is '' else str(timeDay) if timeDate('weekday', str(timeMonth), str(timeDay)) != '6' else str(int(timeDay) - 1))).content
 
@@ -267,7 +264,6 @@ def login():
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
-        s.get('https://dnevnik.ru/')
 
         try:
             s.cookies.get_dict()['DnevnikAuth_a']
@@ -282,8 +278,8 @@ def login():
 
         response = make_response(render_template_string('<script>window.location.replace("/");</script>'))
 
-        response.set_cookie('DnevnikLogin', value=b64encode(login.encode('ascii')).decode("utf-8").replace('"', ''), max_age=2592000, expires=2592000)
-        response.set_cookie('DnevnikPass', value=b64encode(password.encode('ascii')).decode("utf-8").replace('"', ''))
+        response.set_cookie('DnevnikLogin', value=b64encode(login.encode('ascii')).decode("utf-8"), max_age=2592000, expires=2592000)
+        response.set_cookie('DnevnikPass', value=b64encode(password.encode('ascii')).decode("utf-8"), max_age=2592000, expires=2592000)
 
         return response
 
