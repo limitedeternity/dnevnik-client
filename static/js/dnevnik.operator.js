@@ -64,6 +64,68 @@ $(document).ready(function() {
             });
     });
 
+    $("#dnevnik-stats").on("submit", function(a) {
+        a.preventDefault();
+
+        $("#stats-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Статистика</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
+
+        $('.mdl-layout__content').animate({
+                scrollTop: ($("#stats-out").offset().top - 75) + 'px'
+        }, 'fast');
+
+        $.ajax({
+                headers: {
+                    "X-CSRFToken": Cookies.get("csrftoken")
+                },
+                url: "/stats",
+                type: "POST",
+                dataType: "json",
+                data: $("#dnevnik-stats").serialize(),
+                timeout: 30000,
+            })
+            .done(function(data) {
+                $("#stats-out").html(data);
+
+                $('.mdl-layout__content').animate({
+                    scrollTop: $("#stats-out").offset().top + 'px'
+                }, 'fast');
+            })
+            .fail(function() {
+                location.reload();
+            });
+    });
+
+    $("#dnevnik-summary").on("submit", function(a) {
+        a.preventDefault();
+
+        $("#summary-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Итоговые</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
+
+        $('.mdl-layout__content').animate({
+                scrollTop: ($("#summary-out").offset().top - 75) + 'px'
+        }, 'fast');
+
+        $.ajax({
+                headers: {
+                    "X-CSRFToken": Cookies.get("csrftoken")
+                },
+                url: "/summary",
+                type: "POST",
+                dataType: "json",
+                data: $("#dnevnik-summary").serialize(),
+                timeout: 30000,
+            })
+            .done(function(data) {
+                $("#dnevnik-out").html(data);
+
+                $('.mdl-layout__content').animate({
+                    scrollTop: $("#summary-out").offset().top + 'px'
+                }, 'fast');
+            })
+            .fail(function() {
+                location.reload();
+            });
+    });
+
     $('form').each(function() {
         $(this).find('input').keypress(function(e) {
             if(e.which == 10 || e.which == 13) {
