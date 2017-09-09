@@ -228,7 +228,7 @@ def dnevnik():
                 html_out += '</div>'
                 html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
                 html_out += '<h5>Уроков нет ¯\_(ツ)_/¯</h5>'
-                html_out += 'Наслаждайтесь временно отсутствующим расписанием :>'
+                html_out += 'Но это временно :>'
                 html_out += '</div>'
 
             response = make_response(jsonify(html_out))
@@ -309,7 +309,7 @@ def dnevnik():
                 else:
                     html_out += 'ДЗ: <h8 style="color:#212121;">' + str(json_out["ДЗ"][str(i)]) + '</h8>' + "<br>"
 
-                html_out += 'Временные рамки: <h8 style="color:#212121;">' + timing[i] + '</h8>' + "<br>"
+                html_out += 'Время: <h8 style="color:#212121;">' + timing[i] + '</h8>' + "<br>"
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
 
@@ -370,7 +370,7 @@ def dnevnik():
                 else:
                     html_out += 'ДЗ: <h8 style="color:#212121;">' + str(json_out["ДЗ"][str(i + 1)]) + '</h8>' + "<br>"
 
-                html_out += 'Временные рамки: <h8 style="color:#212121;">' + timing[i + 1] + '</h8>' + "<br>"
+                html_out += 'Время: <h8 style="color:#212121;">' + timing[i + 1] + '</h8>' + "<br>"
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
 
