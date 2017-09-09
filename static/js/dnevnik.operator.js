@@ -1,21 +1,11 @@
 $(document).ready(function() {
 
-    (function($) {
-        $.fn.goTo = function() {
-            $('.mdl-layout__content').animate({
-                scrollTop: $(this).offset().top + 'px'
-            }, 'fast');
-            return this;
-        };
-    })(jQuery);
-
     $("#dnevnik-login").on("submit", function(a) {
         a.preventDefault();
 
         $("#error").show();
         $("#login-btn").hide();
         $("#error").html("<div class='loader'>Loading...</div>");
-        $("#dnevnik-login").goTo();
 
         $.ajax({
                 headers: {
@@ -47,7 +37,9 @@ $(document).ready(function() {
 
         $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
 
-        $("#dnevnik-out").goTo();
+        $('.mdl-layout__content').animate({
+                scrollTop: ($("#dnevnik-out").offset().top - 75) + 'px'
+        }, 'fast');
 
         $.ajax({
                 headers: {
