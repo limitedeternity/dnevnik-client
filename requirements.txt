@@ -8,3 +8,4 @@ beautifulsoup4
 requests
 lxml
 html5lib
+pytz
