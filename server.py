@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template, render_template_string, make_response, send_from_directory, request, redirect, jsonify
-from bs4 import BeautifulSoup
 from random import choice
 from requests import Session
 from datetime import datetime, timedelta
@@ -173,15 +172,31 @@ def dnevnik():
 
         s.post('https://login.dnevnik.ru/login', login_payload)
 
-        if schoolId(s) == 'not617':
+        try:
+            if schoolId(s) == 'not617':
+                html_out = ""
+
+                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+                html_out += '</div>'
+                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+                html_out += '<h5>Упс... ¯\_(ツ)_/¯</h5>'
+                html_out += 'Похоже, что Вы учитесь не в 617-ой школе Санкт-Петербурга :>'
+                html_out += '</div>'
+
+                response = make_response(jsonify(html_out))
+                response.set_cookie('Offset', value='', max_age=0, expires=0)
+                return response
+
+        except KeyError:
             html_out = ""
 
             html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
             html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
             html_out += '</div>'
             html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-            html_out += '<h5>Упс... ¯\_(ツ)_/¯</h5>'
-            html_out += 'Похоже, что Вы учитесь не в 617-ой школе Санкт-Петербурга :>'
+            html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
+            html_out += 'Вы - родитель или учитель. К сожалению, здесь для вас ничего нет. И вряд ли будет. Всего доброго ( ´ ∀ ` )ﾉ'
             html_out += '</div>'
 
             response = make_response(jsonify(html_out))
@@ -210,26 +225,15 @@ def dnevnik():
                     tables = pd.read_html(data)[int(timeDate(typeDate='weekday', timeMonth=timeMonth, timeDay=timeDay, offset=offset)) - 1].rename(columns=columns)
 
         except (ValueError, IndexError):
-            soup = BeautifulSoup(data, "lxml")
             html_out = ""
 
-            if soup.title.string == 'Страница не найдена (404)':
-                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                html_out += '</div>'
-                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-                html_out += 'Вы - родитель или учитель. К сожалению, здесь для вас ничего нет. И вряд ли будет. Всего доброго ( ´ ∀ ` )ﾉ'
-                html_out += '</div>'
-
-            else:
-                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                html_out += '</div>'
-                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<h5>Уроков нет ¯\_(ツ)_/¯</h5>'
-                html_out += 'Но это временно :>'
-                html_out += '</div>'
+            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+            html_out += '</div>'
+            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+            html_out += '<h5>Уроков нет ¯\_(ツ)_/¯</h5>'
+            html_out += 'Но это временно :>'
+            html_out += '</div>'
 
             response = make_response(jsonify(html_out))
             response.set_cookie('Offset', value='', max_age=0, expires=0)
