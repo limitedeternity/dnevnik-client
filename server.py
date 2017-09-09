@@ -31,43 +31,23 @@ Required functionality
 '''
 
 
-def timeDate(typeDate, timeMonth='', timeDay='', offset=''):
+def timeDate(typeDate, offset, timeMonth='', timeDay=''):
 
     if typeDate == 'day':
-        if offset is '':
-            return str(datetime.now(tz=utc).day)
-
-        else:
-            return str((datetime.now(tz=utc) + timedelta(hours=offset)).day)
+        return str((datetime.now(tz=utc) + timedelta(hours=offset)).day)
 
     elif typeDate == 'month':
-        if offset is '':
-            return str(datetime.now(tz=utc).month)
-
-        else:
-            return str((datetime.now(tz=utc) + timedelta(hours=offset)).month)
+        return str((datetime.now(tz=utc) + timedelta(hours=offset)).month)
 
     elif typeDate == 'year':
-        if offset is '':
-            return str(datetime.now(tz=utc).year)
-
-        else:
-            return str((datetime.now(tz=utc) + timedelta(hours=offset)).year)
+        return str((datetime.now(tz=utc) + timedelta(hours=offset)).year)
 
     elif typeDate == 'weekday':
         if timeMonth is '' or timeDay is '':
-            if offset is '':
-                return str(datetime.now(tz=utc).weekday())
-
-            else:
-                return str((datetime.now(tz=utc) + timedelta(hours=offset)).weekday())
+            return str((datetime.now(tz=utc) + timedelta(hours=offset)).weekday())
 
         else:
-            if offset is '':
-                return str(datetime(int(timeDate('year')), int(timeMonth), int(timeDay), tzinfo=utc).weekday())
-
-            else:
-                return str((datetime(int(timeDate('year')), int(timeMonth), int(timeDay), tzinfo=utc) + timedelta(hours=offset)).weekday())
+            return str((datetime(int(timeDate('year')), int(timeMonth), int(timeDay), tzinfo=utc) + timedelta(hours=offset)).weekday())
 
 
 def schoolId(s):
@@ -96,6 +76,7 @@ def index():
     response.headers['X-Frame-Options'] = 'DENY'
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    response.headers['Cache-Control'] = 'no-cache'
     return response
 
 
@@ -203,7 +184,9 @@ def dnevnik():
             html_out += 'Похоже, что Вы учитесь не в 617-ой школе Санкт-Петербурга :>'
             html_out += '</div>'
 
-            return jsonify(html_out)
+            response = make_response(jsonify(html_out))
+            response.set_cookie('Offset', value='', max_age=0, expires=0)
+            return response
 
         data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate('year', offset=offset) + "&month=" + (str(timeMonth) if timeMonth is not '' else timeDate('month', offset=offset)) + "&day=" + (timeDate('day', offset=offset) if timeDay is '' or timeMonth is '' else str(timeDay) if timeDate('weekday', str(timeMonth), str(timeDay), offset=offset) != '6' else str(int(timeDay) - 1))).content
 
@@ -248,7 +231,9 @@ def dnevnik():
                 html_out += 'Наслаждайтесь временно отсутствующим расписанием :>'
                 html_out += '</div>'
 
-            return jsonify(html_out)
+            response = make_response(jsonify(html_out))
+            response.set_cookie('Offset', value='', max_age=0, expires=0)
+            return response
 
         if not str(tables['Уроки'][0]).startswith("!"):
             tables.index = range(1, len(tables) + 1)
@@ -296,19 +281,19 @@ def dnevnik():
                     html_out += 'Оценка: <h8 style="color:#212121;">нет.</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i)]))) == '1':
-                    html_out += 'Оценка: <h8 style="color:red;">1</h8>  (ノ_<)' + "<br>"
+                    html_out += 'Оценка: <h8 style="color:red;">1  (ノ_<)</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i)]))) == '2':
-                    html_out += 'Оценка: <h8 style="color:red;">2</h8>  (・・ ) ?' + "<br>"
+                    html_out += 'Оценка: <h8 style="color:red;">2  (・・ )</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i)]))) == '3':
-                    html_out += 'Оценка: <h8 style="color:#FF5722;">3</h8> (--_--)' + "<br>"
+                    html_out += 'Оценка: <h8 style="color:#FF5722;">3  (--_--)</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i)]))) == '4':
-                    html_out += 'Оценка: <h8 style="color:teal;">4</h8>  (^_~)' + "<br>"
+                    html_out += 'Оценка: <h8 style="color:teal;">4  (^_~)</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i)]))) == '5':
-                    html_out += 'Оценка: <h8 style="color:green;">5</h8>  ( ˙꒳​˙ )' + "<br>"
+                    html_out += 'Оценка: <h8 style="color:green;">5  ( ˙꒳​˙ )</h8>' + "<br>"
 
                 # ...
                 if str(json_out["Замечания"][str(i)]) == 'None':
@@ -357,19 +342,19 @@ def dnevnik():
                     html_out += 'Оценка: нет.' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '1':
-                    html_out += 'Оценка: <h8 style="color:red;">1</h8>  (ノ_<)' + "<br>"
+                    html_out += 'Оценка: <h8 style="color:red;">1  (ノ_<)</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '2':
-                    html_out += 'Оценка: <h8 style="color:red;">2</h8>  (・・ ) ?' + "<br>"
+                    html_out += 'Оценка: <h8 style="color:red;">2  (・・ )</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '3':
-                    html_out += 'Оценка: <h8 style="color:#FF5722;">3</h8> (--_--)' + "<br>"
+                    html_out += 'Оценка: <h8 style="color:#FF5722;">3  (--_--)</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '4':
-                    html_out += 'Оценка: <h8 style="color:teal;">4</h8>  (^_~)' + "<br>"
+                    html_out += 'Оценка: <h8 style="color:teal;">4  (^_~)</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '5':
-                    html_out += 'Оценка: <h8 style="color:green;">5</h8>  ( ˙꒳​˙ )' + "<br>"
+                    html_out += 'Оценка: <h8 style="color:green;">5  ( ˙꒳​˙ )</h8>' + "<br>"
 
                 # ...
                 if str(json_out["Замечания"][str(i + 1)]) == 'None':
@@ -389,7 +374,9 @@ def dnevnik():
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
 
-        return jsonify(html_out)
+        response = make_response(jsonify(html_out))
+        response.set_cookie('Offset', value='', max_age=0, expires=0)
+        return response
 
     else:
         html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
@@ -400,7 +387,9 @@ def dnevnik():
         html_out += 'Вы явно такого не ожидали, не правда ли?'
         html_out += '</div>'
 
-        return jsonify(html_out)
+        response = make_response(jsonify(html_out))
+        response.set_cookie('Offset', value='', max_age=0, expires=0)
+        return response
 
 
 @app.route("/login", methods=['POST'])
@@ -457,6 +446,7 @@ def logout():
     response.headers['X-Frame-Options'] = 'DENY'
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    response.headers['Cache-Control'] = 'no-cache'
     return response
 
 
