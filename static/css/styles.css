@@ -158,9 +158,9 @@ html, body {
   text-decoration: none;
 }
 .mdl-demo section .section__circle-container > .section__circle-container__circle {
-  width: 64px;
-  height: 64px;
-  border-radius: 32px;
+  width: 2em;
+  height: 2em;
+  border-radius: 1em;
   margin: 8px 0;
 }
 .mdl-demo section.section--footer .section__circle--big {
