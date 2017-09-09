@@ -282,7 +282,7 @@ def login():
 
         response = make_response(render_template_string('<script>window.location.replace("/");</script>'))
 
-        response.set_cookie('DnevnikLogin', value=b64encode(login.encode('ascii')).decode("utf-8").replace('"', ''))
+        response.set_cookie('DnevnikLogin', value=b64encode(login.encode('ascii')).decode("utf-8").replace('"', ''), max_age=2592000, expires=2592000)
         response.set_cookie('DnevnikPass', value=b64encode(password.encode('ascii')).decode("utf-8").replace('"', ''))
 
         return response
