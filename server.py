@@ -31,7 +31,7 @@ Required functionality
 '''
 
 
-def timeDate(typeDate, timeMonth='', timeDay='', offset=''):
+def timeDate(typeDate, offset, timeMonth='', timeDay=''):
 
     if typeDate == 'day':
         return str((datetime.now(tz=utc) + timedelta(hours=offset)).day)
@@ -188,7 +188,7 @@ def dnevnik():
             response.set_cookie('Offset', value='', max_age=0, expires=0)
             return response
 
-        data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate('year', offset=offset) + "&month=" + (str(timeMonth) if timeMonth is not '' else timeDate('month', offset=offset)) + "&day=" + (timeDate('day', offset=offset) if timeDay is '' or timeMonth is '' else str(timeDay) if timeDate('weekday', str(timeMonth), str(timeDay), offset=offset) != '6' else str(int(timeDay) - 1))).content
+        data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate(typeDate='year', offset=offset) + "&month=" + (str(timeMonth) if timeMonth is not '' else timeDate(typeDate='month', offset=offset)) + "&day=" + (timeDate(typeDate='day', offset=offset) if timeDay is '' or timeMonth is '' else str(timeDay) if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset) != '6' else str(int(timeDay) - 1))).content
 
         columns = {0: 'Уроки', 1: 'Присутствие', 2: 'Оценки', 3: 'Замечания', 4: 'ДЗ'}
         tables = None
@@ -196,18 +196,18 @@ def dnevnik():
 
         try:
             if timeMonth is '' or timeDay is '':
-                if timeDate('weekday', offset=offset) != '6':
-                    tables = pd.read_html(data)[int(timeDate('weekday', offset=offset))].rename(columns=columns)
+                if timeDate(typeDate='weekday', offset=offset) != '6':
+                    tables = pd.read_html(data)[int(timeDate(typeDate='weekday', offset=offset))].rename(columns=columns)
 
                 else:
-                    tables = pd.read_html(data)[int(timeDate('weekday', offset=offset)) - 1].rename(columns=columns)
+                    tables = pd.read_html(data)[int(timeDate(typeDate='weekday', offset=offset)) - 1].rename(columns=columns)
 
             else:
-                if timeDate('weekday', str(timeMonth), str(timeDay), offset=offset) != '6':
-                    tables = pd.read_html(data)[int(timeDate('weekday', timeMonth, timeDay, offset=offset))].rename(columns=columns)
+                if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset) != '6':
+                    tables = pd.read_html(data)[int(timeDate(typeDate='weekday', timeMonth=timeMonth, timeDay=timeDay, offset=offset))].rename(columns=columns)
 
                 else:
-                    tables = pd.read_html(data)[int(timeDate('weekday', timeMonth, timeDay, offset=offset)) - 1].rename(columns=columns)
+                    tables = pd.read_html(data)[int(timeDate(typeDate='weekday', timeMonth=timeMonth, timeDay=timeDay, offset=offset)) - 1].rename(columns=columns)
 
         except (ValueError, IndexError):
             soup = BeautifulSoup(data, "lxml")
