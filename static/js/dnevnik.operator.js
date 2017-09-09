@@ -53,6 +53,10 @@ $(document).ready(function() {
             })
             .done(function(data) {
                 $("#dnevnik-out").html(data);
+
+                $('.mdl-layout__content').animate({
+                    scrollTop: $("#dnevnik-out").offset().top + 'px'
+                }, 'fast');
             })
             .fail(function() {
                 location.reload();
