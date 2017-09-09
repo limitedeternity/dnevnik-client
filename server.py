@@ -50,7 +50,11 @@ def timeDate(typeDate, timeMonth='', timeDay=''):
 
 def schoolId(s):
 
-    return str(parse_qs(urlparse(s.get("https://schools.dnevnik.ru/school.aspx").url).query)['school'][-1])
+    if str(parse_qs(urlparse(s.get("https://schools.dnevnik.ru/school.aspx").url).query)['school'][-1]) == '1172':
+        return '1172'
+
+    else:
+        return 'not617'
 
 
 '''
@@ -164,6 +168,19 @@ def dnevnik():
 
         s.post('https://login.dnevnik.ru/login', login_payload)
 
+        if schoolId(s) == 'not617':
+            html_out = ""
+
+            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+            html_out += '</div>'
+            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+            html_out += '<h5>Упс... ¯\_(ツ)_/¯</h5>'
+            html_out += 'Похоже, что Вы учитесь не в 617-ой школе Санкт-Петербурга :>'
+            html_out += '</div>'
+
+            return jsonify(html_out)
+
         data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate('year') + "&month=" + (str(timeMonth) if timeMonth is not '' else timeDate('month')) + "&day=" + (timeDate('day') if timeDay is '' or timeMonth is '' else str(timeDay) if timeDate('weekday', str(timeMonth), str(timeDay)) != '6' else str(int(timeDay) - 1))).content
 
         columns = {0: 'Уроки', 1: 'Присутствие', 2: 'Оценки', 3: 'Замечания', 4: 'ДЗ'}
@@ -189,7 +206,7 @@ def dnevnik():
             html_out = ""
 
             html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-            html_out += '<div class="section__circle-container__circle mdl-color--primary"></div>'
+            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
             html_out += '</div>'
             html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
             html_out += '<h5>Уроков нет ¯\_(ツ)_/¯</h5>'
@@ -341,7 +358,7 @@ def dnevnik():
 
     else:
         html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-        html_out += '<div class="section__circle-container__circle mdl-color--primary"></div>'
+        html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
         html_out += '</div>'
         html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
         html_out += '<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>'
