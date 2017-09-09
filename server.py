@@ -100,7 +100,7 @@ def stats():
     else:
         html_out = ""
 
-        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Залогинься ¯\_(ツ)_/¯</h4>'
+        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Залогиньтесь ¯\_(ツ)_/¯</h4>'
 
         return jsonify(html_out)
 
@@ -209,6 +209,11 @@ def dnevnik():
         html_out = ""
 
         html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
+
+        timing = {0: "8:30 - 8:55", 1: "9:00 - 9:45", 2: "9:00 - 9:45", 3: "10:55 - 11:40", 4: "12:00 - 12:45", 5: "13:00 - 13:45",
+                  6: "13:55 - 14:40", 7: "14:50 - 15:35", 8: "15:45 - 16:30", 9: "16:40 - 17:25", 10: "17:35 - 18:20", 11: "18:30 - 19:15",
+                  12: "19:25 - 20:10"}
+
         for i in range(len(json_out['Уроки'])):
             if not swapped:
                 html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
@@ -236,7 +241,7 @@ def dnevnik():
 
                 # ...
                 if str(json_out["Оценки"][str(i)]) == 'None':
-                    html_out += 'Оценка: нет.' + "<br>"
+                    html_out += 'Оценка: <h8 style="color:#212121;">нет.</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i)]))) == '1':
                     html_out += 'Оценка: <h8 style="color:red;">1</h8>  (ノ_<)' + "<br>"
@@ -267,6 +272,7 @@ def dnevnik():
                 else:
                     html_out += 'ДЗ: <h8 style="color:#212121;">' + str(json_out["ДЗ"][str(i)]) + '</h8>' + "<br>"
 
+                html_out += 'Временные рамки: <h8 style="color:#212121;">' + timing[i] + '</h8>' + "<br>"
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
 
@@ -327,6 +333,7 @@ def dnevnik():
                 else:
                     html_out += 'ДЗ: <h8 style="color:#212121;">' + str(json_out["ДЗ"][str(i + 1)]) + '</h8>' + "<br>"
 
+                html_out += 'Временные рамки: <h8 style="color:#212121;">' + timing[i + 1] + '</h8>' + "<br>"
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
 
