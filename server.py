@@ -212,23 +212,121 @@ def dnevnik():
         for i in range(len(json_out['Уроки'])):
             if not swapped:
                 html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<div class="section__circle-container__circle mdl-color--primary"></div>'
+                html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
                 html_out += '</div>'
                 html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
                 html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-                html_out += '<h5>' + str(json_out['Уроки'][str(i)]) + '</h5>'
-                html_out += 'Присутствие: ' + ("отмечено." if str(json_out["Присутствие"][str(i)]) == 'None' else str(json_out["Присутствие"][str(i)])) + "<br>" + "Оценка: " + ("нет." if str(json_out["Оценки"][str(i)]) == 'None' else str(int(float(json_out["Оценки"][str(i)])))) + "<br>" + "Замечания: " + ("нет." if str(json_out["Замечания"][str(i)]) == 'None' else str(json_out["Замечания"][str(i)])) + "<br>" + "ДЗ: " + ("нет." if str(json_out["ДЗ"][str(i)]) == 'None' else str(json_out["ДЗ"][str(i)])) + "<br>"
+                html_out += '<h5 style="font-weight:600">' + str(json_out['Уроки'][str(i)]) + '</h5>'
+
+                # ...
+                if str(json_out["Присутствие"][str(i)]) == 'None':
+                    html_out += 'Присутствие: <h8 style="color:teal;">отмечено.</h8>' + "<br>"
+
+                elif str(json_out["Присутствие"][str(i)]) == 'Н':
+                    html_out += 'Присутствие: <h8 style="color:red;">неявка.</h8>' + "<br>"
+
+                elif str(json_out["Присутствие"][str(i)]) == 'О':
+                    html_out += 'Присутствие: <h8 style="color:#FF5722;">опоздание.</h8>' + "<br>"
+
+                elif str(json_out["Присутствие"][str(i)]) == 'Б':
+                    html_out += 'Присутствие: <h8 style="color:#01579B;">пропуск по болезни.</h8>' + "<br>"
+
+                elif str(json_out["Присутствие"][str(i)]) == 'П':
+                    html_out += 'Присутствие: <h8 style="color:#01579B;">пропуск по ув. причине.</h8>' + "<br>"
+
+                # ...
+                if str(json_out["Оценки"][str(i)]) == 'None':
+                    html_out += 'Оценка: нет.' + "<br>"
+
+                elif str(int(float(json_out["Оценки"][str(i)]))) == '1':
+                    html_out += 'Оценка: <h8 style="color:red;">1</h8>  (ノ_<)' + "<br>"
+
+                elif str(int(float(json_out["Оценки"][str(i)]))) == '2':
+                    html_out += 'Оценка: <h8 style="color:red;">2</h8>  (・・ ) ?' + "<br>"
+
+                elif str(int(float(json_out["Оценки"][str(i)]))) == '3':
+                    html_out += 'Оценка: <h8 style="color:#FF5722;">3</h8> (--_--)' + "<br>"
+
+                elif str(int(float(json_out["Оценки"][str(i)]))) == '4':
+                    html_out += 'Оценка: <h8 style="color:teal;">4</h8>  (^_~)' + "<br>"
+
+                elif str(int(float(json_out["Оценки"][str(i)]))) == '5':
+                    html_out += 'Оценка: <h8 style="color:green;">5</h8>  ( ˙꒳​˙ )' + "<br>"
+
+                # ...
+                if str(json_out["Замечания"][str(i)]) == 'None':
+                    html_out += 'Замечания: <h8 style="color:teal;">нет.</h8>' + "<br>"
+
+                else:
+                    html_out += 'Замечания: <h8 style="color:#212121;">' + str(json_out["Замечания"][str(i)]) + '</h8>' + "<br>"
+
+                # ...
+                if str(json_out["ДЗ"][str(i)]):
+                    html_out += 'ДЗ: <h8 style="color:#212121;">нет.</h8>  ヽ(ー_ー )ノ' + "<br>"
+
+                else:
+                    html_out += 'ДЗ: <h8 style="color:#212121;">' + str(json_out["ДЗ"][str(i)]) + '</h8>' + "<br>"
+
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
 
             elif swapped:
                 html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<div class="section__circle-container__circle mdl-color--primary"></div>'
+                html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
                 html_out += '</div>'
                 html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
                 html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-                html_out += '<h5>' + str(json_out['Уроки'][str(i + 1)]) + '</h5>'
-                html_out += 'Присутствие: ' + ("отмечено." if str(json_out["Присутствие"][str(i + 1)]) == 'None' else str(json_out["Присутствие"][str(i + 1)])) + "<br>" + "Оценка: " + ("нет." if str(json_out["Оценки"][str(i + 1)]) == 'None' else str(int(float(json_out["Оценки"][str(i + 1)])))) + "<br>" + "Замечания: " + ("нет." if str(json_out["Замечания"][str(i + 1)]) == 'None' else str(json_out["Замечания"][str(i + 1)])) + "<br>" + "ДЗ: " + ("нет." if str(json_out["ДЗ"][str(i + 1)]) == 'None' else str(json_out["ДЗ"][str(i + 1)])) + "<br>"
+                html_out += '<h5 style="font-weight:600">' + str(json_out['Уроки'][str(i + 1)]) + '</h5>'
+
+                # ...
+                if str(json_out["Присутствие"][str(i + 1)]) == 'None':
+                    html_out += 'Присутствие: <h8 style="color:teal;">отмечено.</h8>' + "<br>"
+
+                elif str(json_out["Присутствие"][str(i + 1)]) == 'Н':
+                    html_out += 'Присутствие: <h8 style="color:red;">неявка.</h8>' + "<br>"
+
+                elif str(json_out["Присутствие"][str(i + 1)]) == 'О':
+                    html_out += 'Присутствие: <h8 style="color:#FF5722;">опоздание.</h8>' + "<br>"
+
+                elif str(json_out["Присутствие"][str(i + 1)]) == 'Б':
+                    html_out += 'Присутствие: <h8 style="color:#01579B;">пропуск по болезни.</h8>' + "<br>"
+
+                elif str(json_out["Присутствие"][str(i + 1)]) == 'П':
+                    html_out += 'Присутствие: <h8 style="color:#01579B;">пропуск по ув. причине.</h8>' + "<br>"
+
+                # ...
+                if str(json_out["Оценки"][str(i + 1)]) == 'None':
+                    html_out += 'Оценка: нет.' + "<br>"
+
+                elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '1':
+                    html_out += 'Оценка: <h8 style="color:red;">1</h8>  (ノ_<)' + "<br>"
+
+                elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '2':
+                    html_out += 'Оценка: <h8 style="color:red;">2</h8>  (・・ ) ?' + "<br>"
+
+                elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '3':
+                    html_out += 'Оценка: <h8 style="color:#FF5722;">3</h8> (--_--)' + "<br>"
+
+                elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '4':
+                    html_out += 'Оценка: <h8 style="color:teal;">4</h8>  (^_~)' + "<br>"
+
+                elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '5':
+                    html_out += 'Оценка: <h8 style="color:green;">5</h8>  ( ˙꒳​˙ )' + "<br>"
+
+                # ...
+                if str(json_out["Замечания"][str(i + 1)]) == 'None':
+                    html_out += 'Замечания: <h8 style="color:teal;">нет.</h8>' + "<br>"
+
+                else:
+                    html_out += 'Замечания: <h8 style="color:#212121;">' + str(json_out["Замечания"][str(i + 1)]) + '</h8>' + "<br>"
+
+                # ...
+                if str(json_out["ДЗ"][str(i + 1)]):
+                    html_out += 'ДЗ: <h8 style="color:#212121;">нет.</h8>  ヽ(ー_ー )ノ' + "<br>"
+
+                else:
+                    html_out += 'ДЗ: <h8 style="color:#212121;">' + str(json_out["ДЗ"][str(i + 1)]) + '</h8>' + "<br>"
+
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
 
@@ -278,6 +376,7 @@ def login():
 
         response = make_response(render_template_string('<script>window.location.replace("/");</script>'))
 
+        # base64 (pls kill me)
         response.set_cookie('DnevnikLogin', value=b64encode(login.encode('ascii')).decode("utf-8"), max_age=2592000, expires=2592000)
         response.set_cookie('DnevnikPass', value=b64encode(password.encode('ascii')).decode("utf-8"), max_age=2592000, expires=2592000)
 
