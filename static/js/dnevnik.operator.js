@@ -2,7 +2,7 @@ $(document).ready(function() {
 
     (function($) {
         $.fn.goTo = function() {
-            $('html, body').animate({
+            $('.mdl-layout__content').animate({
                 scrollTop: $(this).offset().top + 'px'
             }, 'fast');
             return this;
