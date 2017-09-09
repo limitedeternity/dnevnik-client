@@ -31,7 +31,7 @@ Required functionality
 '''
 
 
-def timeDate(typeDate, offset, timeMonth='', timeDay=''):
+def timeDate(typeDate, timeMonth='', timeDay='', offset=''):
 
     if typeDate == 'day':
         return str((datetime.now(tz=utc) + timedelta(hours=offset)).day)
