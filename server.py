@@ -332,7 +332,7 @@ def dnevnik():
                     html_out += 'Замечания: <h8 style="color:#212121;">' + str(json_out["Замечания"][str(i)]) + '</h8>' + "<br>"
 
                 # ...
-                if str(json_out["ДЗ"][str(i)]):
+                if str(json_out["ДЗ"][str(i)]) == 'None':
                     html_out += 'ДЗ: <h8 style="color:#212121;">нет.</h8>  ヽ(ー_ー )ノ' + "<br>"
 
                 else:
@@ -393,7 +393,7 @@ def dnevnik():
                     html_out += 'Замечания: <h8 style="color:#212121;">' + str(json_out["Замечания"][str(i + 1)]) + '</h8>' + "<br>"
 
                 # ...
-                if str(json_out["ДЗ"][str(i + 1)] == 'None'):
+                if str(json_out["ДЗ"][str(i + 1)]) == 'None':
                     html_out += 'ДЗ: <h8 style="color:#212121;">нет.</h8>  ヽ(ー_ー )ノ' + "<br>"
 
                 else:
