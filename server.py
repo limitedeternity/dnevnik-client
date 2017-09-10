@@ -16,7 +16,7 @@ from waitress import serve
 from os import environ
 from sys import argv
 from cachecontrol import CacheControl
-from base64 import b64encode, b64decode
+from base64 import b64encode, b64decode, b32encode, b32decode
 
 
 app = Flask(__name__, template_folder='templates')
@@ -94,15 +94,28 @@ def stats():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
-        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8"),
-                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8"),
+        login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
+                         'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
 
         data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=stats&period=" + (str(termPeriod) if termPeriod is not '' else "0")).content
         tables = pd.read_html(data)[-1]
-        return tables.to_json(force_ascii=False)
+
+        json_out = loads(tables.to_json(force_ascii=False))
+
+        html_out = ""
+
+        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
+
+        for i in range(len(json_out["Предмет"])):
+            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+            html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
+            html_out += '</div>'
+            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+            html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+            html_out += '<h5 style="font-weight:600">' + str(json_out['Предмет'][str(i)]) + '</h5>'
 
     else:
         html_out = ""
@@ -124,8 +137,8 @@ def summary():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
-        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8"),
-                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8"),
+        login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
+                         'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
@@ -167,8 +180,8 @@ def dnevnik():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
-        login_payload = {'login': b64decode(request.cookies.get('DnevnikLogin').encode('ascii')).decode("utf-8"),
-                         'password': b64decode(request.cookies.get('DnevnikPass').encode('ascii')).decode("utf-8"),
+        login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
+                         'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
@@ -197,7 +210,7 @@ def dnevnik():
             html_out += '</div>'
             html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
             html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-            html_out += 'Вы - родитель или учитель. К сожалению, здесь для вас ничего нет. И вряд ли будет. Всего доброго ( ´ ∀ ` )ﾉ'
+            html_out += 'Вы - родитель. К сожалению, здесь для вас ничего нет. И вряд ли будет. Всего доброго ( ´ ∀ ` )ﾉ'
             html_out += '</div>'
 
             response = make_response(jsonify(html_out))
@@ -235,7 +248,7 @@ def dnevnik():
                 html_out += '</div>'
                 html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
                 html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-                html_out += 'Вы - родитель или учитель. К сожалению, здесь для вас ничего нет. И вряд ли будет. Всего доброго ( ´ ∀ ` )ﾉ'
+                html_out += 'Вы - учитель. К сожалению, здесь для вас ничего нет. И вряд ли будет. Всего доброго ( ´ ∀ ` )ﾉ'
                 html_out += '</div>'
 
             else:
@@ -380,7 +393,7 @@ def dnevnik():
                     html_out += 'Замечания: <h8 style="color:#212121;">' + str(json_out["Замечания"][str(i + 1)]) + '</h8>' + "<br>"
 
                 # ...
-                if str(json_out["ДЗ"][str(i + 1)]):
+                if str(json_out["ДЗ"][str(i + 1)] == 'None'):
                     html_out += 'ДЗ: <h8 style="color:#212121;">нет.</h8>  ヽ(ー_ー )ノ' + "<br>"
 
                 else:
@@ -440,9 +453,8 @@ def login():
 
         response = make_response(render_template_string('<script>window.location.replace("/");</script>'))
 
-        # base64 (pls kill me)
-        response.set_cookie('DnevnikLogin', value=b64encode(login.encode('ascii')).decode("utf-8"), max_age=2592000, expires=2592000)
-        response.set_cookie('DnevnikPass', value=b64encode(password.encode('ascii')).decode("utf-8"), max_age=2592000, expires=2592000)
+        response.set_cookie('DnevnikLogin', value=b32encode(b64encode(login.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
+        response.set_cookie('DnevnikPass', value=b32encode(b64encode(password.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
 
         return response
 
