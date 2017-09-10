@@ -686,9 +686,9 @@ def dnevnik():
 
 @app.route("/login", methods=['POST'])
 def login():
-    login = request.form.get('username', None)
-    password = request.form.get('password', None)
-    if login is not None and password is not None:
+    login = request.form.get('username', '')
+    password = request.form.get('password', '')
+    if login is not '' and password is not '':
         s = CacheControl(Session())
 
         s.headers.update({'Upgrade-Insecure-Requests': '1',
