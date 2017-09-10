@@ -115,7 +115,7 @@ $(document).ready(function() {
                 timeout: 30000,
             })
             .done(function(data) {
-                $("#dnevnik-out").html(data);
+                $("#summary-out").html(data);
 
                 $('.mdl-layout__content').animate({
                     scrollTop: $("#summary-out").offset().top + 'px'
