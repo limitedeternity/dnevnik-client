@@ -151,13 +151,13 @@ def stats():
             elif int(json_out["4 и 5"][str(i)][:-1]) in range(80, 101):
                 html_out += '<h8 style="color:green;">Процент: ' + str(json_out["4 и 5"][str(i)]) + '</h8>' + "<br>"
 
-            elif int(json_out["4 и 5"][str(i)][:-1]) in range(60, 79):
+            elif int(json_out["4 и 5"][str(i)][:-1]) in range(60, 80):
                 html_out += '<h8 style="color:teal;">Процент: ' + str(json_out["4 и 5"][str(i)]) + '</h8>' + "<br>"
 
-            elif int(json_out["4 и 5"][str(i)][:-1]) in range(40, 59):
+            elif int(json_out["4 и 5"][str(i)][:-1]) in range(40, 60):
                 html_out += '<h8 style="color:#FF5722;">Процент: ' + str(json_out["4 и 5"][str(i)]) + '</h8>' + "<br>"
 
-            elif int(json_out["4 и 5"][str(i)][:-1]) in range(0, 39):
+            elif int(json_out["4 и 5"][str(i)][:-1]) in range(0, 40):
                 html_out += '<h8 style="color:red;">Процент: ' + str(json_out["4 и 5"][str(i)]) + '</h8>' + "<br>"
 
             html_out += '<div style="display:block; height:5px; clear:both;"></div>'
@@ -200,19 +200,228 @@ def summary():
         try:
             data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=result").content
             tables = pd.read_html(data)[-1]
-            return tables.to_json(force_ascii=False)
+
+            header = tables.iloc[0]
+            tables = tables[1:-5]
+            tables = tables.rename(columns=header)
+
+            json_out = loads(tables.to_json(force_ascii=False))
+
+            html_out = ""
+            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>'
+
+            for i in range(len(json_out['Предметы'])):
+                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+                html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
+                html_out += '</div>'
+                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+                html_out += '<h5 style="font-weight:600">' + str(json_out['Предметы'][str(i + 1)]) + '</h5>'
+
+                # ...
+                try:
+                    # ...
+
+                    if str(json_out["1 сем"][str(i + 1)]) == 'None':
+                        html_out += '<h8 style="color:#212121;">1 cем.: нет.</h8>' + "<br>"
+
+                    elif str(json_out["1 сем"][str(i + 1)]) == '5':
+                        html_out += '<h8 style="color:green;">1 cем.: 5</h8>' + "<br>"
+
+                    elif str(json_out["1 сем"][str(i + 1)]) == '4':
+                        html_out += '<h8 style="color:teal;">1 cем.: 4</h8>' + "<br>"
+
+                    elif str(json_out["1 сем"][str(i + 1)]) == '3':
+                        html_out += '<h8 style="color:#FF5722;">1 cем.: 3</h8>' + "<br>"
+
+                    elif str(json_out["1 сем"][str(i + 1)]) == '2':
+                        html_out += '<h8 style="color:red;">1 cем.: 2</h8>' + "<br>"
+
+                    elif str(json_out["1 сем"][str(i + 1)]) == '1':
+                        html_out += '<h8 style="color:red;">1 cем.: 1</h8>' + "<br>"
+
+                    # ...
+                    if str(json_out["2 сем"][str(i + 1)]) == 'None':
+                        html_out += '<h8 style="color:#212121;">2 cем.: нет.</h8>' + "<br>"
+
+                    elif str(json_out["2 сем"][str(i + 1)]) == '5':
+                        html_out += '<h8 style="color:green;">2 cем.: 5</h8>' + "<br>"
+
+                    elif str(json_out["2 сем"][str(i + 1)]) == '4':
+                        html_out += '<h8 style="color:teal;">2 cем.: 4</h8>' + "<br>"
+
+                    elif str(json_out["2 сем"][str(i + 1)]) == '3':
+                        html_out += '<h8 style="color:#FF5722;">2 cем.: 3</h8>' + "<br>"
+
+                    elif str(json_out["2 сем"][str(i + 1)]) == '2':
+                        html_out += '<h8 style="color:red;">2 cем.: 2</h8>' + "<br>"
+
+                    elif str(json_out["2 сем"][str(i + 1)]) == '1':
+                        html_out += '<h8 style="color:red;">2 cем.: 1</h8>' + "<br>"
+
+                except KeyError:
+                    # ...
+
+                    if str(json_out["1 чтв"][str(i + 1)]) == 'None':
+                        html_out += '<h8 style="color:#212121;">1 чтв.: нет.</h8>' + "<br>"
+
+                    elif str(json_out["1 чтв"][str(i + 1)]) == '5':
+                        html_out += '<h8 style="color:green;">1 чтв.: 5</h8>' + "<br>"
+
+                    elif str(json_out["1 чтв"][str(i + 1)]) == '4':
+                        html_out += '<h8 style="color:teal;">1 чтв.: 4</h8>' + "<br>"
+
+                    elif str(json_out["1 чтв"][str(i + 1)]) == '3':
+                        html_out += '<h8 style="color:#FF5722;">1 чтв.: 3</h8>' + "<br>"
+
+                    elif str(json_out["1 чтв"][str(i + 1)]) == '2':
+                        html_out += '<h8 style="color:red;">1 чтв.: 2</h8>' + "<br>"
+
+                    elif str(json_out["1 чтв"][str(i + 1)]) == '1':
+                        html_out += '<h8 style="color:red;">1 чтв.: 1</h8>' + "<br>"
+
+                    # ...
+                    if str(json_out["2 чтв"][str(i + 1)]) == 'None':
+                        html_out += '<h8 style="color:#212121;">2 чтв.: нет.</h8>' + "<br>"
+
+                    elif str(json_out["2 чтв"][str(i + 1)]) == '5':
+                        html_out += '<h8 style="color:green;">2 чтв.: 5</h8>' + "<br>"
+
+                    elif str(json_out["2 чтв"][str(i + 1)]) == '4':
+                        html_out += '<h8 style="color:teal;">2 чтв.: 4</h8>' + "<br>"
+
+                    elif str(json_out["2 чтв"][str(i + 1)]) == '3':
+                        html_out += '<h8 style="color:#FF5722;">2 чтв.: 3</h8>' + "<br>"
+
+                    elif str(json_out["2 чтв"][str(i + 1)]) == '2':
+                        html_out += '<h8 style="color:red;">2 чтв.: 2</h8>' + "<br>"
+
+                    elif str(json_out["2 чтв"][str(i + 1)]) == '1':
+                        html_out += '<h8 style="color:red;">2 чтв.: 1</h8>' + "<br>"
+
+                    # ...
+                    if str(json_out["3 чтв"][str(i + 1)]) == 'None':
+                        html_out += '<h8 style="color:#212121;">3 чтв.: нет.</h8>' + "<br>"
+
+                    elif str(json_out["3 чтв"][str(i + 1)]) == '5':
+                        html_out += '<h8 style="color:green;">3 чтв.: 5</h8>' + "<br>"
+
+                    elif str(json_out["3 чтв"][str(i + 1)]) == '4':
+                        html_out += '<h8 style="color:teal;">3 чтв.: 4</h8>' + "<br>"
+
+                    elif str(json_out["3 чтв"][str(i + 1)]) == '3':
+                        html_out += '<h8 style="color:#FF5722;">3 чтв.: 3</h8>' + "<br>"
+
+                    elif str(json_out["3 чтв"][str(i + 1)]) == '2':
+                        html_out += '<h8 style="color:red;">3 чтв.: 2</h8>' + "<br>"
+
+                    elif str(json_out["3 чтв"][str(i + 1)]) == '1':
+                        html_out += '<h8 style="color:red;">3 чтв.: 1</h8>' + "<br>"
+
+                    # ...
+                    if str(json_out["4 чтв"][str(i + 1)]) == 'None':
+                        html_out += '<h8 style="color:#212121;">4 чтв.: нет.</h8>' + "<br>"
+
+                    elif str(json_out["4 чтв"][str(i + 1)]) == '5':
+                        html_out += '<h8 style="color:green;">4 чтв.: 5</h8>' + "<br>"
+
+                    elif str(json_out["4 чтв"][str(i + 1)]) == '4':
+                        html_out += '<h8 style="color:teal;">4 чтв.: 4</h8>' + "<br>"
+
+                    elif str(json_out["4 чтв"][str(i + 1)]) == '3':
+                        html_out += '<h8 style="color:#FF5722;">4 чтв.: 3</h8>' + "<br>"
+
+                    elif str(json_out["4 чтв"][str(i + 1)]) == '2':
+                        html_out += '<h8 style="color:red;">4 чтв.: 2</h8>' + "<br>"
+
+                    elif str(json_out["4 чтв"][str(i + 1)]) == '1':
+                        html_out += '<h8 style="color:red;">4 чтв.: 1</h8>' + "<br>"
+
+                # ...
+                if str(json_out["Год"][str(i + 1)]) == 'None':
+                    html_out += '<h8 style="color:#212121;">Год.: нет.</h8>' + "<br>"
+
+                elif str(json_out["Год"][str(i + 1)]) == '5':
+                    html_out += '<h8 style="color:green;">Год.: 5</h8>' + "<br>"
+
+                elif str(json_out["Год"][str(i + 1)]) == '4':
+                    html_out += '<h8 style="color:teal;">Год.: 4</h8>' + "<br>"
+
+                elif str(json_out["Год"][str(i + 1)]) == '3':
+                    html_out += '<h8 style="color:#FF5722;">Год.: 3</h8>' + "<br>"
+
+                elif str(json_out["Год"][str(i + 1)]) == '2':
+                    html_out += '<h8 style="color:red;">Год.: 2</h8>' + "<br>"
+
+                elif str(json_out["Год"][str(i + 1)]) == '1':
+                    html_out += '<h8 style="color:red;">Год.: 1</h8>' + "<br>"
+
+                # ...
+                if str(json_out["Экзамен"][str(i + 1)]) == 'None':
+                    html_out += '<h8 style="color:#212121;">Экзамен: нет.</h8>' + "<br>"
+
+                elif str(json_out["Экзамен"][str(i + 1)]) == '5':
+                    html_out += '<h8 style="color:green;">Экзамен: 5</h8>' + "<br>"
+
+                elif str(json_out["Экзамен"][str(i + 1)]) == '4':
+                    html_out += '<h8 style="color:teal;">Экзамен: 4</h8>' + "<br>"
+
+                elif str(json_out["Экзамен"][str(i + 1)]) == '3':
+                    html_out += '<h8 style="color:#FF5722;">Экзамен: 3</h8>' + "<br>"
+
+                elif str(json_out["Экзамен"][str(i + 1)]) == '2':
+                    html_out += '<h8 style="color:red;">Экзамен: 2</h8>' + "<br>"
+
+                elif str(json_out["Экзамен"][str(i + 1)]) == '1':
+                    html_out += '<h8 style="color:red;">Экзамен: 1</h8>' + "<br>"
+
+                # ...
+                if str(json_out["Итог"][str(i + 1)]) == 'None':
+                    html_out += '<h8 style="color:#212121;">Итог.: нет.</h8>' + "<br>"
+
+                elif str(json_out["Итог"][str(i + 1)]) == '5':
+                    html_out += '<h8 style="color:green;">Итог.: 5</h8>' + "<br>"
+
+                elif str(json_out["Итог"][str(i + 1)]) == '4':
+                    html_out += '<h8 style="color:teal;">Итог.: 4</h8>' + "<br>"
+
+                elif str(json_out["Итог"][str(i + 1)]) == '3':
+                    html_out += '<h8 style="color:#FF5722;">Итог.: 3</h8>' + "<br>"
+
+                elif str(json_out["Итог"][str(i + 1)]) == '2':
+                    html_out += '<h8 style="color:red;">Итог.: 2</h8>' + "<br>"
+
+                elif str(json_out["Итог"][str(i + 1)]) == '1':
+                    html_out += '<h8 style="color:red;">Итог.: 1</h8>' + "<br>"
+
+                html_out += '<div style="display:block; height:5px; clear:both;"></div>'
+                html_out += '</div>'
+
+            return jsonify(html_out)
 
         except (ValueError, IndexError):
             html_out = ""
 
-            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Данных нет ¯\_(ツ)_/¯</h4>'
+            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+            html_out += '</div>'
+            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+            html_out += '<h5>Данных нет ¯\_(ツ)_/¯</h5>'
+            html_out += 'Дождитесь окончания учебного периода :>'
+            html_out += '</div>'
 
             return jsonify(html_out)
 
     else:
         html_out = ""
 
-        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Залогиньтесь ¯\_(ツ)_/¯</h4>'
+        html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+        html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+        html_out += '</div>'
+        html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+        html_out += '<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>'
+        html_out += 'Вы явно такого не ожидали, не правда ли?'
+        html_out += '</div>'
 
         return jsonify(html_out)
 
