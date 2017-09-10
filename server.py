@@ -722,7 +722,12 @@ def login():
         return response
 
     else:
-        return True
+        html_out = ""
+
+        html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+        html_out += '<p style="text-align:center; color:red;">Данные отсутствуют ¯\_(ツ)_/¯</p>'
+
+        return jsonify(html_out)
 
 
 @app.route("/logout", methods=['GET'])
