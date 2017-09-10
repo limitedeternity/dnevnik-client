@@ -100,13 +100,12 @@ def stats():
 
         s.post('https://login.dnevnik.ru/login', login_payload)
 
-        data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=stats&period=" + (str(termPeriod) if termPeriod is not '' else "0")).content
-        tables = pd.read_html(data)[-1]
+        data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=stats&period=" + (str(int(termPeriod) - 1) if termPeriod is not '' else "0")).content
 
+        tables = pd.read_html(data)[-1]
         json_out = loads(tables.to_json(force_ascii=False))
 
         html_out = ""
-
         html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
 
         for i in range(len(json_out["Предмет"])):
@@ -117,10 +116,65 @@ def stats():
             html_out += '<div style="display:block; height:2px; clear:both;"></div>'
             html_out += '<h5 style="font-weight:600">' + str(json_out['Предмет'][str(i)]) + '</h5>'
 
+            # ...
+            if str(json_out["5"][str(i)]) == 'None':
+                html_out += '<h8 style="color:#212121;">5: 0</h8>' + "<br>"
+
+            else:
+                html_out += '<h8 style="color:green;">5: ' + str(int(float(json_out["5"][str(i)]))) + '</h8>' + "<br>"
+
+            # ...
+            if str(json_out["4"][str(i)]) == 'None':
+                html_out += '<h8 style="color:#212121;">4: 0</h8>' + "<br>"
+
+            else:
+                html_out += '<h8 style="color:teal;">4: ' + str(int(float(json_out["4"][str(i)]))) + '</h8>' + "<br>"
+
+            # ...
+            if str(json_out["3"][str(i)]) == 'None':
+                html_out += '<h8 style="color:#212121;">3: 0</h8>' + "<br>"
+
+            else:
+                html_out += '<h8 style="color:#FF5722;">3: ' + str(int(float(json_out["3"][str(i)]))) + '</h8>' + "<br>"
+
+            # ...
+            if str(json_out["2"][str(i)]) == 'None':
+                html_out += '<h8 style="color:#212121;">2: 0</h8>' + "<br>"
+
+            else:
+                html_out += '<h8 style="color:red;">2: ' + str(int(float(json_out["2"][str(i)]))) + '</h8>' + "<br>"
+
+            # ...
+            if str(json_out["4 и 5"][str(i)]) == 'None':
+                html_out += '<h8 style="color:green;">Процент: 100%</h8>' + "<br>"
+
+            elif int(json_out["4 и 5"][str(i)][:-1]) in range(80, 101):
+                html_out += '<h8 style="color:green;">Процент: ' + str(json_out["4 и 5"][str(i)]) + '</h8>' + "<br>"
+
+            elif int(json_out["4 и 5"][str(i)][:-1]) in range(60, 79):
+                html_out += '<h8 style="color:teal;">Процент: ' + str(json_out["4 и 5"][str(i)]) + '</h8>' + "<br>"
+
+            elif int(json_out["4 и 5"][str(i)][:-1]) in range(40, 59):
+                html_out += '<h8 style="color:#FF5722;">Процент: ' + str(json_out["4 и 5"][str(i)]) + '</h8>' + "<br>"
+
+            elif int(json_out["4 и 5"][str(i)][:-1]) in range(0, 39):
+                html_out += '<h8 style="color:red;">Процент: ' + str(json_out["4 и 5"][str(i)]) + '</h8>' + "<br>"
+
+            html_out += '<div style="display:block; height:5px; clear:both;"></div>'
+            html_out += '</div>'
+
+        return jsonify(html_out)
+
     else:
         html_out = ""
 
-        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Залогиньтесь ¯\_(ツ)_/¯</h4>'
+        html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+        html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+        html_out += '</div>'
+        html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+        html_out += '<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>'
+        html_out += 'Вы явно такого не ожидали, не правда ли?'
+        html_out += '</div>'
 
         return jsonify(html_out)
 
