@@ -761,6 +761,11 @@ def serve_css(path):
     return send_from_directory('static/css', path)
 
 
+@app.route('/config/<path:path>', methods=['GET'])
+def serve_config(path):
+    return send_from_directory('static/config', path)
+
+
 if __name__ == "__main__":
     chdir(dirname(abspath(__file__)))
     serve(app, host='0.0.0.0', port=argv[1])

@@ -1,0 +1,22 @@
+{
+    "dir": "ltr",
+    "lang": "ru",
+    "name": "DnevnikClient",
+    "scope": "/",
+    "display": "standalone",
+    "start_url": "https://dnevnik-client.herokuapp.com/",
+    "short_name": "DnevnikClient",
+    "theme_color": "transparent",
+    "description": "Облегченная версия Дневник.Ру.",
+    "orientation": "portrait",
+    "background_color": "transparent",
+    "related_applications": [],
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "/images/favicon.png",
+            "type": "image/png",
+            "sizes": "60x60"
+        }
+    ]
+}
