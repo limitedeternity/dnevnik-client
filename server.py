@@ -596,7 +596,7 @@ def dnevnik():
 
                 # ...
                 if str(json_out["ДЗ"][str(i)]) == 'None':
-                    html_out += '<h8 style="color:#212121;">ДЗ: нет.</h8>  ヽ(ー_ー )ノ' + "<br>"
+                    html_out += '<h8 style="color:#212121;">ДЗ: нет.  ヽ(ー_ー )ノ</h8>' + "<br>"
 
                 else:
                     html_out += '<h8 style="color:#212121;">ДЗ: ' + str(json_out["ДЗ"][str(i)]) + '</h8>' + "<br>"
@@ -657,7 +657,7 @@ def dnevnik():
 
                 # ...
                 if str(json_out["ДЗ"][str(i + 1)]) == 'None':
-                    html_out += '<h8 style="color:#212121;">ДЗ: нет.</h8>  ヽ(ー_ー )ノ' + "<br>"
+                    html_out += '<h8 style="color:#212121;">ДЗ: нет.  ヽ(ー_ー )ノ</h8>' + "<br>"
 
                 else:
                     html_out += '<h8 style="color:#212121;">ДЗ: ' + str(json_out["ДЗ"][str(i + 1)]) + '</h8>' + "<br>"
