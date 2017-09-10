@@ -554,54 +554,54 @@ def dnevnik():
 
                 # ...
                 if str(json_out["Присутствие"][str(i)]) == 'None':
-                    html_out += 'Присутствие: <h8 style="color:teal;">отмечено.</h8>' + "<br>"
+                    html_out += '<h8 style="color:teal;">Присутствие: отмечено.</h8>' + "<br>"
 
                 elif str(json_out["Присутствие"][str(i)]) == 'Н':
-                    html_out += 'Присутствие: <h8 style="color:red;">неявка.</h8>' + "<br>"
+                    html_out += '<h8 style="color:red;">Присутствие: неявка.</h8>' + "<br>"
 
                 elif str(json_out["Присутствие"][str(i)]) == 'О':
-                    html_out += 'Присутствие: <h8 style="color:#FF5722;">опоздание.</h8>' + "<br>"
+                    html_out += '<h8 style="color:#FF5722;">Присутствие: опоздание.</h8>' + "<br>"
 
                 elif str(json_out["Присутствие"][str(i)]) == 'Б':
-                    html_out += 'Присутствие: <h8 style="color:#01579B;">пропуск по болезни.</h8>' + "<br>"
+                    html_out += '<h8 style="color:#01579B;">Присутствие: пропуск по болезни.</h8>' + "<br>"
 
                 elif str(json_out["Присутствие"][str(i)]) == 'П':
-                    html_out += 'Присутствие: <h8 style="color:#01579B;">пропуск по ув. причине.</h8>' + "<br>"
+                    html_out += '<h8 style="color:#01579B;">Присутствие: пропуск по ув. причине.</h8>' + "<br>"
 
                 # ...
                 if str(json_out["Оценки"][str(i)]) == 'None':
-                    html_out += 'Оценка: <h8 style="color:#212121;">нет.</h8>' + "<br>"
+                    html_out += '<h8 style="color:#212121;">Оценка: нет.</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i)]))) == '1':
-                    html_out += 'Оценка: <h8 style="color:red;">1  (ノ_<)</h8>' + "<br>"
+                    html_out += '<h8 style="color:red;">Оценка: 1  (ノ_<)</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i)]))) == '2':
-                    html_out += 'Оценка: <h8 style="color:red;">2  (・・ )</h8>' + "<br>"
+                    html_out += '<h8 style="color:red;">Оценка: 2  (・・ )</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i)]))) == '3':
-                    html_out += 'Оценка: <h8 style="color:#FF5722;">3  (--_--)</h8>' + "<br>"
+                    html_out += '<h8 style="color:#FF5722;">Оценка: 3  (--_--)</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i)]))) == '4':
-                    html_out += 'Оценка: <h8 style="color:teal;">4  (^_~)</h8>' + "<br>"
+                    html_out += '<h8 style="color:teal;">Оценка: 4  (^_~)</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i)]))) == '5':
-                    html_out += 'Оценка: <h8 style="color:green;">5  ( ˙꒳​˙ )</h8>' + "<br>"
+                    html_out += '<h8 style="color:green;">Оценка: 5  ( ˙꒳​˙ )</h8>' + "<br>"
 
                 # ...
                 if str(json_out["Замечания"][str(i)]) == 'None':
-                    html_out += 'Замечания: <h8 style="color:teal;">нет.</h8>' + "<br>"
+                    html_out += '<h8 style="color:teal;">Замечания: нет.</h8>' + "<br>"
 
                 else:
-                    html_out += 'Замечания: <h8 style="color:#212121;">' + str(json_out["Замечания"][str(i)]) + '</h8>' + "<br>"
+                    html_out += '<h8 style="color:#212121;">Замечания: ' + str(json_out["Замечания"][str(i)]) + '</h8>' + "<br>"
 
                 # ...
                 if str(json_out["ДЗ"][str(i)]) == 'None':
-                    html_out += 'ДЗ: <h8 style="color:#212121;">нет.</h8>  ヽ(ー_ー )ノ' + "<br>"
+                    html_out += '<h8 style="color:#212121;">ДЗ: нет.</h8>  ヽ(ー_ー )ノ' + "<br>"
 
                 else:
-                    html_out += 'ДЗ: <h8 style="color:#212121;">' + str(json_out["ДЗ"][str(i)]) + '</h8>' + "<br>"
+                    html_out += '<h8 style="color:#212121;">ДЗ: ' + str(json_out["ДЗ"][str(i)]) + '</h8>' + "<br>"
 
-                html_out += 'Время: <h8 style="color:#212121;">' + timing[i] + '</h8>' + "<br>"
+                html_out += '<h8 style="color:#212121;">Время: ' + timing[i] + '</h8>' + "<br>"
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
 
@@ -615,54 +615,54 @@ def dnevnik():
 
                 # ...
                 if str(json_out["Присутствие"][str(i + 1)]) == 'None':
-                    html_out += 'Присутствие: <h8 style="color:teal;">отмечено.</h8>' + "<br>"
+                    html_out += '<h8 style="color:teal;">Присутствие: отмечено.</h8>' + "<br>"
 
                 elif str(json_out["Присутствие"][str(i + 1)]) == 'Н':
-                    html_out += 'Присутствие: <h8 style="color:red;">неявка.</h8>' + "<br>"
+                    html_out += '<h8 style="color:red;">Присутствие: неявка.</h8>' + "<br>"
 
                 elif str(json_out["Присутствие"][str(i + 1)]) == 'О':
-                    html_out += 'Присутствие: <h8 style="color:#FF5722;">опоздание.</h8>' + "<br>"
+                    html_out += '<h8 style="color:#FF5722;">Присутствие: опоздание.</h8>' + "<br>"
 
                 elif str(json_out["Присутствие"][str(i + 1)]) == 'Б':
-                    html_out += 'Присутствие: <h8 style="color:#01579B;">пропуск по болезни.</h8>' + "<br>"
+                    html_out += '<h8 style="color:#01579B;">Присутствие: пропуск по болезни.</h8>' + "<br>"
 
                 elif str(json_out["Присутствие"][str(i + 1)]) == 'П':
-                    html_out += 'Присутствие: <h8 style="color:#01579B;">пропуск по ув. причине.</h8>' + "<br>"
+                    html_out += '<h8 style="color:#01579B;">Присутствие: пропуск по ув. причине.</h8>' + "<br>"
 
                 # ...
                 if str(json_out["Оценки"][str(i + 1)]) == 'None':
-                    html_out += 'Оценка: нет.' + "<br>"
+                    html_out += '<h8 style="color:#212121;">Оценка: нет.</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '1':
-                    html_out += 'Оценка: <h8 style="color:red;">1  (ノ_<)</h8>' + "<br>"
+                    html_out += '<h8 style="color:red;">Оценка: 1  (ノ_<)</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '2':
-                    html_out += 'Оценка: <h8 style="color:red;">2  (・・ )</h8>' + "<br>"
+                    html_out += '<h8 style="color:red;">Оценка: 2  (・・ )</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '3':
-                    html_out += 'Оценка: <h8 style="color:#FF5722;">3  (--_--)</h8>' + "<br>"
+                    html_out += '<h8 style="color:#FF5722;">Оценка: 3  (--_--)</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '4':
-                    html_out += 'Оценка: <h8 style="color:teal;">4  (^_~)</h8>' + "<br>"
+                    html_out += '<h8 style="color:teal;">Оценка: 4  (^_~)</h8>' + "<br>"
 
                 elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '5':
-                    html_out += 'Оценка: <h8 style="color:green;">5  ( ˙꒳​˙ )</h8>' + "<br>"
+                    html_out += '<h8 style="color:green;">Оценка: 5  ( ˙꒳​˙ )</h8>' + "<br>"
 
                 # ...
                 if str(json_out["Замечания"][str(i + 1)]) == 'None':
-                    html_out += 'Замечания: <h8 style="color:teal;">нет.</h8>' + "<br>"
+                    html_out += '<h8 style="color:teal;">Замечания: нет.</h8>' + "<br>"
 
                 else:
-                    html_out += 'Замечания: <h8 style="color:#212121;">' + str(json_out["Замечания"][str(i + 1)]) + '</h8>' + "<br>"
+                    html_out += '<h8 style="color:#212121;">Замечания: ' + str(json_out["Замечания"][str(i + 1)]) + '</h8>' + "<br>"
 
                 # ...
                 if str(json_out["ДЗ"][str(i + 1)]) == 'None':
-                    html_out += 'ДЗ: <h8 style="color:#212121;">нет.</h8>  ヽ(ー_ー )ノ' + "<br>"
+                    html_out += '<h8 style="color:#212121;">ДЗ: нет.</h8>  ヽ(ー_ー )ノ' + "<br>"
 
                 else:
-                    html_out += 'ДЗ: <h8 style="color:#212121;">' + str(json_out["ДЗ"][str(i + 1)]) + '</h8>' + "<br>"
+                    html_out += '<h8 style="color:#212121;">ДЗ: ' + str(json_out["ДЗ"][str(i + 1)]) + '</h8>' + "<br>"
 
-                html_out += 'Время: <h8 style="color:#212121;">' + timing[i + 1] + '</h8>' + "<br>"
+                html_out += '<h8 style="color:#212121;">Время: ' + timing[i + 1] + '</h8>' + "<br>"
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
 
