@@ -21,6 +21,11 @@
     <link rel="stylesheet" href="/css/md_icons.css">
     <link rel="stylesheet" href="/css/material.teal-blue.min.css">
     <link rel="stylesheet" href="/css/styles.css">
+    <script type="text/javascript">
+        if (Cookies.get('DnevnikLogin') !== undefined) {
+          location.replace("/main");
+        }
+    </script>
   </head>
   <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
