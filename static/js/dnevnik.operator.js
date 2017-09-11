@@ -64,13 +64,13 @@ $(document).ready(function() {
                 $("#dnevnik-out").html(data);
 
                 if (localStorage.getItem('dnevnik') !== null) {
-                    if (data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) {
+                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
                         localStorage.removeItem("dnevnik");
                         localStorage.setItem('dnevnik', data);
                     }
                     
                 } else {
-                    if (data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) {
+                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
                         localStorage.setItem('dnevnik', data);
                     }
                 }
@@ -124,13 +124,13 @@ $(document).ready(function() {
                 $("#stats-out").html(data);
 
                 if (localStorage.getItem('stats') !== null) {
-                    if (data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) {
+                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
                         localStorage.removeItem("stats");
                         localStorage.setItem('stats', data);
                     }
                     
                 } else {
-                    if (data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) {
+                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
                         localStorage.setItem('stats', data);
                     }
                 }
@@ -183,13 +183,13 @@ $(document).ready(function() {
                 $("#summary-out").html(data);
 
                 if (localStorage.getItem('summary') !== null) {
-                    if (data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) {
+                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
                         localStorage.removeItem("summary");
                         localStorage.setItem('summary', data);
                     }
                     
                 } else {
-                    if (data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) {
+                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
                         localStorage.setItem('summary', data);
                     }
                 }
