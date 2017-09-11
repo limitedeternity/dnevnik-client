@@ -7,7 +7,7 @@ self.addEventListener('install', function(event) {
 var preLoad = function(){
   return caches.open('dnevnik-sw').then(function(cache) {
     return cache.addAll([
-              '/',
+              '/main',
               '/css/material.teal-blue.min.css',
               '/css/md_icons.css',
               '/css/Roboto.css',
@@ -68,7 +68,7 @@ var returnFromCache = function(request){
   return caches.open('dnevnik-sw').then(function (cache) {
     return cache.match(request).then(function (matching) {
      if(!matching || matching.status == 404) {
-       return cache.match('/');
+       return cache.match('/main');
      } else {
        return matching;
      }

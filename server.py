@@ -70,6 +70,23 @@ def index():
         response = make_response(render_template('index.html'))
 
     else:
+        response = make_response(redirect('/main'))
+
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    response.headers['Cache-Control'] = 'no-cache'
+    response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
+    return response
+
+
+@app.route("/main", methods=['GET'])
+def main():
+    if 'DnevnikLogin' not in request.cookies:
+        response = make_response(redirect('/'))
+
+    else:
         response = make_response(render_template('index_logged_in.html'))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
