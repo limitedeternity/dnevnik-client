@@ -556,6 +556,11 @@ def dnevnik():
         tables_sch = pd.read_html(schedule)[-1].rename(columns=columns)
 
         timing = loads(tables_sch.to_json(force_ascii=False))
+        alt_grading = False
+
+        for i in range(len(json_out['Уроки'])):
+            if int(float(json_out["Оценки"][str(i)])) in range(6, 11):
+                alt_grading = True
 
         for i in range(len(json_out['Уроки'])):
             if not swapped:
@@ -583,23 +588,43 @@ def dnevnik():
                     html_out += '<h8 style="color:#01579B;">Присутствие: пропуск по ув. причине.</h8>' + "<br>"
 
                 # ...
-                if str(json_out["Оценки"][str(i)]) == 'None':
-                    html_out += '<h8 style="color:#212121;">Оценка: нет.</h8>' + "<br>"
+                if alt_grading is False:
+                    if str(json_out["Оценки"][str(i)]) == 'None':
+                        html_out += '<h8 style="color:#212121;">Оценка: нет.</h8>' + "<br>"
 
-                elif str(int(float(json_out["Оценки"][str(i)]))) == '1':
-                    html_out += '<h8 style="color:red;">Оценка: 1  (ノ_<)</h8>' + "<br>"
+                    elif str(int(float(json_out["Оценки"][str(i)]))) == '1':
+                        html_out += '<h8 style="color:red;">Оценка: 1  (ノ_<)</h8>' + "<br>"
 
-                elif str(int(float(json_out["Оценки"][str(i)]))) == '2':
-                    html_out += '<h8 style="color:red;">Оценка: 2  (・・ )</h8>' + "<br>"
+                    elif str(int(float(json_out["Оценки"][str(i)]))) == '2':
+                        html_out += '<h8 style="color:red;">Оценка: 2  (・・ )</h8>' + "<br>"
 
-                elif str(int(float(json_out["Оценки"][str(i)]))) == '3':
-                    html_out += '<h8 style="color:#FF5722;">Оценка: 3  (--_--)</h8>' + "<br>"
+                    elif str(int(float(json_out["Оценки"][str(i)]))) == '3':
+                        html_out += '<h8 style="color:#FF5722;">Оценка: 3  (--_--)</h8>' + "<br>"
 
-                elif str(int(float(json_out["Оценки"][str(i)]))) == '4':
-                    html_out += '<h8 style="color:teal;">Оценка: 4  (^_~)</h8>' + "<br>"
+                    elif str(int(float(json_out["Оценки"][str(i)]))) == '4':
+                        html_out += '<h8 style="color:teal;">Оценка: 4  (^_~)</h8>' + "<br>"
 
-                elif str(int(float(json_out["Оценки"][str(i)]))) == '5':
-                    html_out += '<h8 style="color:green;">Оценка: 5  ( ˙꒳​˙ )</h8>' + "<br>"
+                    elif str(int(float(json_out["Оценки"][str(i)]))) == '5':
+                        html_out += '<h8 style="color:green;">Оценка: 5  ( ˙꒳​˙ )</h8>' + "<br>"
+
+                else:
+                    if str(json_out["Оценки"][str(i)]) == 'None':
+                        html_out += '<h8 style="color:#212121;">Оценка: нет.</h8>' + "<br>"
+
+                    elif int(float(json_out["Оценки"][str(i)])) in range(0, 2):
+                        html_out += '<h8 style="color:red;">Оценка: ' + str(int(float(json_out["Оценки"][str(i)]))) + '  (ノ_<)</h8>' + "<br>"
+
+                    elif int(float(json_out["Оценки"][str(i)])) in range(2, 4):
+                        html_out += '<h8 style="color:red;">Оценка: ' + str(int(float(json_out["Оценки"][str(i)]))) + '  (・・ )</h8>' + "<br>"
+
+                    elif int(float(json_out["Оценки"][str(i)])) in range(4, 6):
+                        html_out += '<h8 style="color:#FF5722;">Оценка: ' + str(int(float(json_out["Оценки"][str(i)]))) + '  (--_--)</h8>' + "<br>"
+
+                    elif int(float(json_out["Оценки"][str(i)])) in range(6, 8):
+                        html_out += '<h8 style="color:teal;">Оценка: ' + str(int(float(json_out["Оценки"][str(i)]))) + '  (^_~)</h8>' + "<br>"
+
+                    elif int(float(json_out["Оценки"][str(i)])) in range(8, 10):
+                        html_out += '<h8 style="color:green;">Оценка: ' + str(int(float(json_out["Оценки"][str(i)]))) + '  ( ˙꒳​˙ )</h8>' + "<br>"
 
                 # ...
                 if str(json_out["Замечания"][str(i)]) == 'None':
