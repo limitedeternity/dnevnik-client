@@ -67,11 +67,7 @@ Template handling
 
 @app.route("/", methods=['GET'])
 def index():
-    if 'DnevnikLogin' not in request.cookies:
-        response = make_response(render_template('index.html'))
-
-    else:
-        response = make_response(redirect('/main'))
+    response = make_response(render_template('index.html'))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
@@ -85,11 +81,7 @@ def index():
 
 @app.route("/main", methods=['GET'])
 def main():
-    if 'DnevnikLogin' not in request.cookies:
-        response = make_response(redirect('/'))
-
-    else:
-        response = make_response(render_template('index_logged_in.html'))
+    response = make_response(render_template('index_logged_in.html'))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
