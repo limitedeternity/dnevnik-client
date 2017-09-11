@@ -77,6 +77,7 @@ def index():
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Cache-Control'] = 'no-cache'
+    response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
     return response
 
 
@@ -99,11 +100,26 @@ def stats():
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
+        json_out = None
 
-        data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=stats&period=" + (str(int(termPeriod) - 1) if termPeriod is not '' else "0")).content
+        try:
+            data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=stats&period=" + (str(int(termPeriod) - 1) if termPeriod is not '' else "-1")).content
 
-        tables = pd.read_html(data)[-1]
-        json_out = loads(tables.to_json(force_ascii=False))
+            tables = pd.read_html(data)[-1]
+            json_out = loads(tables.to_json(force_ascii=False))
+
+        except (ValueError, IndexError):
+            html_out = ""
+
+            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+            html_out += '</div>'
+            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+            html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
+            html_out += 'Кажется, Дневник.Ру ушел в оффлайн :>'
+            html_out += '</div>'
+
+            return jsonify(html_out)
 
         html_out = ""
         html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
@@ -406,8 +422,8 @@ def summary():
             html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
             html_out += '</div>'
             html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-            html_out += '<h5>Данных нет ¯\_(ツ)_/¯</h5>'
-            html_out += 'Дождитесь окончания учебного периода :>'
+            html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
+            html_out += 'Либо данных по-просту нет, либо Дневник.Ру в оффлайне :>'
             html_out += '</div>'
 
             return jsonify(html_out)
@@ -519,8 +535,8 @@ def dnevnik():
                 html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
                 html_out += '</div>'
                 html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<h5>Уроков нет ¯\_(ツ)_/¯</h5>'
-                html_out += 'Но это временно :>'
+                html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
+                html_out += 'Либо уроков нет, либо Дневник.Ру ушел в оффлайн :>'
                 html_out += '</div>'
 
             response = make_response(jsonify(html_out))
@@ -710,7 +726,7 @@ def login():
             html_out = ""
 
             html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-            html_out += '<p style="text-align:center; color:red;">Данные неверны ¯\_(ツ)_/¯</p>'
+            html_out += '<p style="text-align:center; color:red;">Данные неверны, либо Дневник.Ру в оффлайне ¯\_(ツ)_/¯</p>'
 
             return jsonify(html_out)
 
@@ -756,9 +772,15 @@ def serve_images(path):
     return send_from_directory('static/images', path)
 
 
+@app.route('/sw.js', methods=['GET'])
+def serviceworker():
+    return send_from_directory('static/js', 'sw.js')
+
+
 @app.route('/js/<path:path>', methods=['GET'])
 def serve_js(path):
-    return send_from_directory('static/js', path)
+    if path != 'sw.js':
+        return send_from_directory('static/js', path)
 
 
 @app.route('/css/<path:path>', methods=['GET'])
@@ -769,6 +791,11 @@ def serve_css(path):
 @app.route('/config/<path:path>', methods=['GET'])
 def serve_config(path):
     return send_from_directory('static/config', path)
+
+
+@app.route('/fonts/<path:path>', methods=['GET'])
+def serve_fonts(path):
+    return send_from_directory('static/fonts', path)
 
 
 if __name__ == "__main__":
