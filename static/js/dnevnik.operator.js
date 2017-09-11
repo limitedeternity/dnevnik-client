@@ -37,7 +37,7 @@ $(document).ready(function() {
         $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
 
         $('.mdl-layout__content').animate({
-                scrollTop: $("#dnevnik-out").offset().top + 'px'
+            scrollTop: $("#dnevnik-out").offset().top + 'px'
         }, 'fast');
 
         if (!navigator.onLine) {
@@ -45,63 +45,66 @@ $(document).ready(function() {
                 $("#dnevnik-out").html(localStorage.getItem('dnevnik').replace('<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
                 return $('.mdl-layout__content').animate({
-                           scrollTop: $("#dnevnik-out").offset().top + 'px'
-                        }, 'fast');
+                    scrollTop: $("#dnevnik-out").offset().top + 'px'
+                }, 'fast');
 
             } else {
                 return location.reload();
             }
 
         } else {
-            document.cookie = "Offset=" + (- new Date().getTimezoneOffset() / 60);
+            document.cookie = "Offset=" + (-new Date().getTimezoneOffset() / 60);
 
-            callout = function() {
+            var date = $("#dnevnik-date").serialize();
+            var callout = function() {
                 $.ajax({
-                    headers: {
-                        "X-CSRFToken": Cookies.get("csrftoken")
-                    },
-                    url: "/dnevnik",
-                    type: "POST",
-                    dataType: "json",
-                    data: $("#dnevnik-date").serialize(),
-                    timeout: 30000,
-                })
-                .done(function(data) {
-                    $("#dnevnik-out").html(data);
+                        headers: {
+                            "X-CSRFToken": Cookies.get("csrftoken")
+                        },
+                        url: "/dnevnik",
+                        type: "POST",
+                        dataType: "json",
+                        data: date,
+                        timeout: 30000,
+                    })
+                    .done(function(data) {
+                        $("#dnevnik-out").html(data);
 
-                    if (localStorage.getItem('dnevnik') !== null) {
-                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
-                            localStorage.removeItem("dnevnik");
-                            localStorage.setItem('dnevnik', data);
-                        }
-                    
-                    } else {
-                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
-                            localStorage.setItem('dnevnik', data);
-                        }
-                    }
+                        if (localStorage.getItem('dnevnik') !== null) {
+                            if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                                localStorage.removeItem("dnevnik");
+                                localStorage.setItem('dnevnik', data);
+                            }
 
-                    $('.mdl-layout__content').animate({
-                        scrollTop: $("#dnevnik-out").offset().top + 'px'
-                    }, 'fast');
-                })
-                .fail(function() {
-                    if (localStorage.getItem('dnevnik') !== null) {
-                        $("#dnevnik-out").html(localStorage.getItem('dnevnik').replace('<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+                        } else {
+                            if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                                localStorage.setItem('dnevnik', data);
+                            }
+                        }
 
                         $('.mdl-layout__content').animate({
                             scrollTop: $("#dnevnik-out").offset().top + 'px'
                         }, 'fast');
+                    })
+                    .fail(function() {
+                        if (localStorage.getItem('dnevnik') !== null) {
+                            $("#dnevnik-out").html(localStorage.getItem('dnevnik').replace('<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
-                    } else {
-                        location.reload();
-                    }
+                            $('.mdl-layout__content').animate({
+                                scrollTop: $("#dnevnik-out").offset().top + 'px'
+                            }, 'fast');
 
-                })
-                .always(function() {
-                    setTimeout(callout, 1000 * 60 * 20);
-                });
+                        } else {
+                            location.reload();
+                        }
+
+                    })
+                    .always(function() {
+                        setTimeout(callout, 1000 * 60 * 20);
+                    });
             };
+
+            callout();
         }
 
     });
@@ -112,7 +115,7 @@ $(document).ready(function() {
         $("#stats-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Статистика</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
 
         $('.mdl-layout__content').animate({
-                scrollTop: $("#stats-out").offset().top + 'px'
+            scrollTop: $("#stats-out").offset().top + 'px'
         }, 'fast');
 
         if (!navigator.onLine) {
@@ -120,8 +123,8 @@ $(document).ready(function() {
                 $("#stats-out").html(localStorage.getItem('stats').replace('<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
                 return $('.mdl-layout__content').animate({
-                           scrollTop: $("#dnevnik-out").offset().top + 'px'
-                        }, 'fast');
+                    scrollTop: $("#dnevnik-out").offset().top + 'px'
+                }, 'fast');
 
             } else {
                 return location.reload();
@@ -129,47 +132,47 @@ $(document).ready(function() {
 
         } else {
             $.ajax({
-                headers: {
-                    "X-CSRFToken": Cookies.get("csrftoken")
-                },
-                url: "/stats",
-                type: "POST",
-                dataType: "json",
-                data: $("#dnevnik-stats").serialize(),
-                timeout: 30000,
-            })
-            .done(function(data) {
-                $("#stats-out").html(data);
+                    headers: {
+                        "X-CSRFToken": Cookies.get("csrftoken")
+                    },
+                    url: "/stats",
+                    type: "POST",
+                    dataType: "json",
+                    data: $("#dnevnik-stats").serialize(),
+                    timeout: 30000,
+                })
+                .done(function(data) {
+                    $("#stats-out").html(data);
 
-                if (localStorage.getItem('stats') !== null) {
-                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
-                        localStorage.removeItem("stats");
-                        localStorage.setItem('stats', data);
-                    }
-                    
-                } else {
-                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
-                        localStorage.setItem('stats', data);
-                    }
-                }
+                    if (localStorage.getItem('stats') !== null) {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                            localStorage.removeItem("stats");
+                            localStorage.setItem('stats', data);
+                        }
 
-                $('.mdl-layout__content').animate({
-                    scrollTop: $("#stats-out").offset().top + 'px'
-                }, 'fast');
-            })
-            .fail(function() {
-                if (localStorage.getItem('stats') !== null) {
-                    $("#stats-out").html(localStorage.getItem('stats').replace('<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+                    } else {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                            localStorage.setItem('stats', data);
+                        }
+                    }
 
                     $('.mdl-layout__content').animate({
-                            scrollTop: $("#dnevnik-out").offset().top + 'px'
+                        scrollTop: $("#stats-out").offset().top + 'px'
                     }, 'fast');
+                })
+                .fail(function() {
+                    if (localStorage.getItem('stats') !== null) {
+                        $("#stats-out").html(localStorage.getItem('stats').replace('<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
-                } else {
-                    location.reload();
-                }
+                        $('.mdl-layout__content').animate({
+                            scrollTop: $("#dnevnik-out").offset().top + 'px'
+                        }, 'fast');
 
-            });
+                    } else {
+                        location.reload();
+                    }
+
+                });
         }
     });
 
@@ -179,7 +182,7 @@ $(document).ready(function() {
         $("#summary-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Итоговые</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
 
         $('.mdl-layout__content').animate({
-                scrollTop: $("#summary-out").offset().top + 'px'
+            scrollTop: $("#summary-out").offset().top + 'px'
         }, 'fast');
 
         if (!navigator.onLine) {
@@ -187,8 +190,8 @@ $(document).ready(function() {
                 $("#summary-out").html(localStorage.getItem('summary').replace('<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
                 return $('.mdl-layout__content').animate({
-                           scrollTop: $("#dnevnik-out").offset().top + 'px'
-                        }, 'fast');
+                    scrollTop: $("#dnevnik-out").offset().top + 'px'
+                }, 'fast');
 
             } else {
                 return location.reload();
@@ -196,58 +199,60 @@ $(document).ready(function() {
 
         } else {
             $.ajax({
-                headers: {
-                    "X-CSRFToken": Cookies.get("csrftoken")
-                },
-                url: "/summary",
-                type: "POST",
-                dataType: "json",
-                data: $("#dnevnik-summary").serialize(),
-                timeout: 30000,
-            })
-            .done(function(data) {
-                $("#summary-out").html(data);
+                    headers: {
+                        "X-CSRFToken": Cookies.get("csrftoken")
+                    },
+                    url: "/summary",
+                    type: "POST",
+                    dataType: "json",
+                    data: $("#dnevnik-summary").serialize(),
+                    timeout: 30000,
+                })
+                .done(function(data) {
+                    $("#summary-out").html(data);
 
-                if (localStorage.getItem('summary') !== null) {
-                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
-                        localStorage.removeItem("summary");
-                        localStorage.setItem('summary', data);
-                    }
-                    
-                } else {
-                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
-                        localStorage.setItem('summary', data);
-                    }
-                }
+                    if (localStorage.getItem('summary') !== null) {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                            localStorage.removeItem("summary");
+                            localStorage.setItem('summary', data);
+                        }
 
-                $('.mdl-layout__content').animate({
-                    scrollTop: $("#summary-out").offset().top + 'px'
-                }, 'fast');
-            })
-            .fail(function() {
-                if (localStorage.getItem('summary') !== null) {
-                    $("#stats-out").html(localStorage.getItem('summary').replace('<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+                    } else {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                            localStorage.setItem('summary', data);
+                        }
+                    }
 
                     $('.mdl-layout__content').animate({
-                            scrollTop: $("#dnevnik-out").offset().top + 'px'
+                        scrollTop: $("#summary-out").offset().top + 'px'
                     }, 'fast');
+                })
+                .fail(function() {
+                    if (localStorage.getItem('summary') !== null) {
+                        $("#stats-out").html(localStorage.getItem('summary').replace('<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
-                } else {
-                    location.reload();
-                }
+                        $('.mdl-layout__content').animate({
+                            scrollTop: $("#dnevnik-out").offset().top + 'px'
+                        }, 'fast');
 
-            });
+                    } else {
+                        location.reload();
+                    }
+
+                });
         }
     });
 
     $('form').each(function() {
         $(this).find('input').keypress(function(e) {
-            if(e.which == 10 || e.which == 13) {
+            if (e.which == 10 || e.which == 13) {
                 this.form.submit();
             }
         });
     });
 
-    HTMLDocument.prototype.__defineGetter__("write",function(){return null;});
+    HTMLDocument.prototype.__defineGetter__("write", function() {
+        return null;
+    });
 
 });
