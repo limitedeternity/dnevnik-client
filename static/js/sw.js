@@ -8,9 +8,31 @@ var preLoad = function(){
   return caches.open('dnevnik-sw').then(function(cache) {
     return cache.addAll([
               '/',
+              '/css/material.teal-blue.min.css',
+              '/css/md_icons.css',
+              '/css/Roboto.css',
               '/css/styles.css',
               '/images/favicon.png',
-              '/js/dnevnik.operator.js'
+              '/js/dnevnik.operator.js',
+              '/js/js.cookie.min.js',
+              '/js/jquery.min.js',
+              '/js/material.min.js',
+              '/config/manifest.json',
+              '/fonts/md_icons.woff2',
+              '/fonts/Black/Roboto-Black.woff',
+              '/fonts/Black/Roboto-Black.woff2',
+              '/fonts/Bold/Roboto-Bold.woff',
+              '/fonts/Bold/Roboto-Bold.woff2',
+              '/fonts/BoldItalic/Roboto-BoldItalic.woff',
+              '/fonts/BoldItalic/Roboto-BoldItalic.woff2',
+              '/fonts/Light/Roboto-Light.woff',
+              '/fonts/Light/Roboto-Light.woff2',
+              '/fonts/Medium/Roboto-Medium.woff',
+              '/fonts/Medium/Roboto-Medium.woff2',
+              '/fonts/Regular/Roboto-Regular.woff',
+              '/fonts/Regular/Roboto-Regular.woff2',
+              '/fonts/Thin/Roboto-Thin.woff',
+              '/fonts/Thin/Roboto-Thin.woff2'
     ]);
   });
 };
