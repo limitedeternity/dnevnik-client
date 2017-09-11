@@ -42,7 +42,11 @@ $(document).ready(function() {
 
         if (!navigator.onLine) {
             if (localStorage.getItem('dnevnik') !== null) {
-                return $("#dnevnik-out").html(localStorage.getItem('dnevnik').replace('<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+                $("#dnevnik-out").html(localStorage.getItem('dnevnik').replace('<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+
+                return $('.mdl-layout__content').animate({
+                           scrollTop: $("#dnevnik-out").offset().top + 'px'
+                        }, 'fast');
 
             } else {
                 return location.reload();
@@ -50,44 +54,54 @@ $(document).ready(function() {
 
         } else {
             document.cookie = "Offset=" + (- new Date().getTimezoneOffset() / 60);
-            $.ajax({
-                headers: {
-                    "X-CSRFToken": Cookies.get("csrftoken")
-                },
-                url: "/dnevnik",
-                type: "POST",
-                dataType: "json",
-                data: $("#dnevnik-date").serialize(),
-                timeout: 30000,
-            })
-            .done(function(data) {
-                $("#dnevnik-out").html(data);
 
-                if (localStorage.getItem('dnevnik') !== null) {
-                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
-                        localStorage.removeItem("dnevnik");
-                        localStorage.setItem('dnevnik', data);
-                    }
+            callout = function() {
+                $.ajax({
+                    headers: {
+                        "X-CSRFToken": Cookies.get("csrftoken")
+                    },
+                    url: "/dnevnik",
+                    type: "POST",
+                    dataType: "json",
+                    data: $("#dnevnik-date").serialize(),
+                    timeout: 30000,
+                })
+                .done(function(data) {
+                    $("#dnevnik-out").html(data);
+
+                    if (localStorage.getItem('dnevnik') !== null) {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                            localStorage.removeItem("dnevnik");
+                            localStorage.setItem('dnevnik', data);
+                        }
                     
-                } else {
-                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
-                        localStorage.setItem('dnevnik', data);
+                    } else {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                            localStorage.setItem('dnevnik', data);
+                        }
                     }
-                }
 
-                $('.mdl-layout__content').animate({
-                    scrollTop: $("#dnevnik-out").offset().top + 'px'
-                }, 'fast');
-            })
-            .fail(function() {
-                if (localStorage.getItem('dnevnik') !== null) {
-                    $("#dnevnik-out").html(localStorage.getItem('dnevnik').replace('<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+                    $('.mdl-layout__content').animate({
+                        scrollTop: $("#dnevnik-out").offset().top + 'px'
+                    }, 'fast');
+                })
+                .fail(function() {
+                    if (localStorage.getItem('dnevnik') !== null) {
+                        $("#dnevnik-out").html(localStorage.getItem('dnevnik').replace('<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
-                } else {
-                    location.reload();
-                }
+                        $('.mdl-layout__content').animate({
+                            scrollTop: $("#dnevnik-out").offset().top + 'px'
+                        }, 'fast');
 
-            });
+                    } else {
+                        location.reload();
+                    }
+
+                })
+                .always(function () {
+                    setTimeout(callout, 1000 * 60 * 20);
+                });
+            };
         }
 
     });
@@ -103,7 +117,11 @@ $(document).ready(function() {
 
         if (!navigator.onLine) {
             if (localStorage.getItem('stats') !== null) {
-                return $("#stats-out").html(localStorage.getItem('stats').replace('<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+                $("#stats-out").html(localStorage.getItem('stats').replace('<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+
+                return $('.mdl-layout__content').animate({
+                           scrollTop: $("#dnevnik-out").offset().top + 'px'
+                        }, 'fast');
 
             } else {
                 return location.reload();
@@ -143,6 +161,10 @@ $(document).ready(function() {
                 if (localStorage.getItem('stats') !== null) {
                     $("#stats-out").html(localStorage.getItem('stats').replace('<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
+                    $('.mdl-layout__content').animate({
+                            scrollTop: $("#dnevnik-out").offset().top + 'px'
+                    }, 'fast');
+
                 } else {
                     location.reload();
                 }
@@ -162,7 +184,11 @@ $(document).ready(function() {
 
         if (!navigator.onLine) {
             if (localStorage.getItem('summary') !== null) {
-                return $("#summary-out").html(localStorage.getItem('summary').replace('<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+                $("#summary-out").html(localStorage.getItem('summary').replace('<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+
+                return $('.mdl-layout__content').animate({
+                           scrollTop: $("#dnevnik-out").offset().top + 'px'
+                        }, 'fast');
 
             } else {
                 return location.reload();
@@ -201,6 +227,10 @@ $(document).ready(function() {
             .fail(function() {
                 if (localStorage.getItem('summary') !== null) {
                     $("#stats-out").html(localStorage.getItem('summary').replace('<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+
+                    $('.mdl-layout__content').animate({
+                            scrollTop: $("#dnevnik-out").offset().top + 'px'
+                    }, 'fast');
 
                 } else {
                     location.reload();
