@@ -56,7 +56,7 @@ $(document).ready(function() {
             document.cookie = "Offset=" + (- new Date().getTimezoneOffset() / 60);
 
             var date = $("#dnevnik-date").serialize();
-            callout = function() {
+            var callout = function() {
                 $.ajax({
                     headers: {
                         "X-CSRFToken": Cookies.get("csrftoken")
