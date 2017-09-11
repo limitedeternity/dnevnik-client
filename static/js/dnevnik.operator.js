@@ -55,7 +55,7 @@ $(document).ready(function() {
         } else {
             document.cookie = "Offset=" + (- new Date().getTimezoneOffset() / 60);
 
-            var callout = function() {
+            callout = function() {
                 $.ajax({
                     headers: {
                         "X-CSRFToken": Cookies.get("csrftoken")
@@ -98,7 +98,7 @@ $(document).ready(function() {
                     }
 
                 })
-                .always(function () {
+                .always(function() {
                     setTimeout(callout, 1000 * 60 * 20);
                 });
             };
