@@ -66,19 +66,7 @@ Template handling
 
 @app.route("/", methods=['GET'])
 def index():
-    styles = {
-        'teal': '<link rel="stylesheet" href="/css/material.teal-blue.min.css">'
-    }
-
-    try:
-        if 'Style' in request.cookies:
-            response = make_response(render_template('index.html', style=styles[request.cookies.get('Style')]))
-
-        else:
-            response = make_response(render_template('index.html', style=styles['teal']))
-
-    except KeyError:
-        response = make_response(render_template('index.html', style=styles['teal']))
+    response = make_response(render_template('index.html'))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
@@ -91,19 +79,7 @@ def index():
 
 @app.route("/main", methods=['GET'])
 def main():
-    styles = {
-        'teal': '<link rel="stylesheet" href="/css/material.teal-blue.min.css">'
-    }
-
-    try:
-        if 'Style' in request.cookies:
-            response = make_response(render_template('index.html', style=styles[request.cookies.get('Style')]))
-
-        else:
-            response = make_response(render_template('index.html', style=styles['teal']))
-
-    except KeyError:
-        response = make_response(render_template('index.html', style=styles['teal']))
+    response = make_response(render_template('index_logged_in.html'))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
