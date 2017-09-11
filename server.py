@@ -558,9 +558,20 @@ def dnevnik():
         timing = loads(tables_sch.to_json(force_ascii=False))
         alt_grading = False
 
-        for i in range(len(json_out['Уроки'])):
-            if str(json_out["Оценки"][str(i)]) != 'None' and int(float(json_out["Оценки"][str(i)])) in range(6, 11):
-                alt_grading = True
+        for i in range(len(json_out["Уроки"])):
+            try:
+                if str(json_out["Оценки"][str(i)]) != 'None' and int(float(json_out["Оценки"][str(i)])) in range(6, 11):
+                    alt_grading = True
+                    break
+
+            except KeyError:
+                try:
+                    if str(json_out["Оценки"][str(i + 1)]) != 'None' and int(float(json_out["Оценки"][str(i + 1)])) in range(6, 11):
+                        alt_grading = True
+                        break
+
+                except KeyError:
+                    pass
 
         for i in range(len(json_out['Уроки'])):
             if swapped is False:
