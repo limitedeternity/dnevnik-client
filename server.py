@@ -52,12 +52,11 @@ def timeDate(typeDate, offset, timeMonth='', timeDay=''):
 
 def schoolId(s):
 
-    if str(parse_qs(urlparse(s.get("https://schools.dnevnik.ru/school.aspx").url).query)['school'][-1]) == '1172':
-        return '1172'
+    return str(parse_qs(urlparse(s.get("https://schools.dnevnik.ru/school.aspx").url).query)['school'][-1])
 
-    else:
-        return 'not617'
 
+def groupId(s):
+    return str(parse_qs(urlparse(s.get("https://schools.dnevnik.ru/schedules/").url).query)['group'][-1])
 
 '''
 Template handling
@@ -477,20 +476,7 @@ def dnevnik():
         s.post('https://login.dnevnik.ru/login', login_payload)
 
         try:
-            if schoolId(s) == 'not617':
-                html_out = ""
-
-                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                html_out += '</div>'
-                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<h5>Упс... ¯\_(ツ)_/¯</h5>'
-                html_out += 'Похоже, что Вы учитесь не в 617-ой школе Санкт-Петербурга :>'
-                html_out += '</div>'
-
-                response = make_response(jsonify(html_out))
-                response.set_cookie('Offset', value='', max_age=0, expires=0)
-                return response
+            data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate(typeDate='year', offset=offset) + "&month=" + (str(timeMonth) if timeMonth is not '' else timeDate(typeDate='month', offset=offset)) + "&day=" + (timeDate(typeDate='day', offset=offset) if timeDay is '' or timeMonth is '' else str(timeDay) if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset) != '6' else str(int(timeDay) - 1))).content
 
         except KeyError:
             html_out = ""
@@ -506,8 +492,6 @@ def dnevnik():
             response = make_response(jsonify(html_out))
             response.set_cookie('Offset', value='', max_age=0, expires=0)
             return response
-
-        data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate(typeDate='year', offset=offset) + "&month=" + (str(timeMonth) if timeMonth is not '' else timeDate(typeDate='month', offset=offset)) + "&day=" + (timeDate(typeDate='day', offset=offset) if timeDay is '' or timeMonth is '' else str(timeDay) if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset) != '6' else str(int(timeDay) - 1))).content
 
         columns = {0: 'Уроки', 1: 'Присутствие', 2: 'Оценки', 3: 'Замечания', 4: 'ДЗ'}
         tables = None
@@ -567,9 +551,11 @@ def dnevnik():
 
         html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
 
-        timing = {0: "8:30 - 8:55", 1: "9:00 - 9:45", 2: "9:55 - 10:40", 3: "10:55 - 11:40", 4: "12:00 - 12:45", 5: "13:00 - 13:45",
-                  6: "13:55 - 14:40", 7: "14:50 - 15:35", 8: "15:45 - 16:30", 9: "16:40 - 17:25", 10: "17:35 - 18:20", 11: "18:30 - 19:15",
-                  12: "19:25 - 20:10"}
+        schedule = s.get("https://schools.dnevnik.ru/schedules/view.aspx?school=" + schoolId(s) + "&group=" + groupId(s) + "&tab=timetable").content
+        columns = {0: 'Урок', 1: 'Время'}
+        tables_sch = pd.read_html(schedule)[-1].rename(columns=columns)
+
+        timing = loads(tables_sch.to_json(force_ascii=False))
 
         for i in range(len(json_out['Уроки'])):
             if not swapped:
@@ -629,7 +615,7 @@ def dnevnik():
                 else:
                     html_out += '<h8 style="color:#212121;">ДЗ: ' + str(json_out["ДЗ"][str(i)]) + '</h8>' + "<br>"
 
-                html_out += '<h8 style="color:#212121;">Время: ' + timing[i] + '</h8>' + "<br>"
+                html_out += '<h8 style="color:#212121;">Время: ' + timing["Время"][i] + '</h8>' + "<br>"
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
 
@@ -690,7 +676,7 @@ def dnevnik():
                 else:
                     html_out += '<h8 style="color:#212121;">ДЗ: ' + str(json_out["ДЗ"][str(i + 1)]) + '</h8>' + "<br>"
 
-                html_out += '<h8 style="color:#212121;">Время: ' + timing[i + 1] + '</h8>' + "<br>"
+                html_out += '<h8 style="color:#212121;">Время: ' + timing['Время'][i + 1] + '</h8>' + "<br>"
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
 
