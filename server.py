@@ -59,14 +59,6 @@ def schoolId(s):
         return 'not617'
 
 
-def styleHandling(pos):
-    if pos == 'teal':
-        return '<link rel="stylesheet" href="/css/material.teal-blue.min.css">'
-
-    else:
-        return '<link rel="stylesheet" href="/css/material.teal-blue.min.css">'
-
-
 '''
 Template handling
 '''
@@ -74,11 +66,19 @@ Template handling
 
 @app.route("/", methods=['GET'])
 def index():
-    if 'Style' in request.cookies:
-        response = make_response(render_template('index.html', style=styleHandling(request.cookies.get('Style'))))
+    styles = {
+        'teal': '<link rel="stylesheet" href="/css/material.teal-blue.min.css">'
+    }
 
-    else:
-        response = make_response(render_template('index.html', style=styleHandling('teal')))
+    try:
+        if 'Style' in request.cookies:
+            response = make_response(render_template('index.html', style=styles[request.cookies.get('Style')]))
+
+        else:
+            response = make_response(render_template('index.html', style=styles['teal']))
+
+    except KeyError:
+        response = make_response(render_template('index.html', style=styles['teal']))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
@@ -91,11 +91,19 @@ def index():
 
 @app.route("/main", methods=['GET'])
 def main():
-    if 'Style' in request.cookies:
-        response = make_response(render_template('index_logged_in.html', style=styleHandling(request.cookies.get('Style'))))
+    styles = {
+        'teal': '<link rel="stylesheet" href="/css/material.teal-blue.min.css">'
+    }
 
-    else:
-        response = make_response(render_template('index_logged_in.html', style=styleHandling('teal')))
+    try:
+        if 'Style' in request.cookies:
+            response = make_response(render_template('index.html', style=styles[request.cookies.get('Style')]))
+
+        else:
+            response = make_response(render_template('index.html', style=styles['teal']))
+
+    except KeyError:
+        response = make_response(render_template('index.html', style=styles['teal']))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
