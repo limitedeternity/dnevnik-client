@@ -23,7 +23,6 @@ app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = environ.get("SECRET_KEY", "".join(choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for _ in range(50)))
 app.config['REMEMBER_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_SECURE'] = True
-app.config['PREFERRED_URL_SCHEME'] = 'https'
 csrf = CSRFProtect(app)
 
 
@@ -74,7 +73,6 @@ def index():
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Cache-Control'] = 'no-cache'
-    response.headers['X-Forwarded-Proto'] = 'https'
     response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
     return response
 
@@ -88,7 +86,6 @@ def main():
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Cache-Control'] = 'no-cache'
-    response.headers['X-Forwarded-Proto'] = 'https'
     response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
     return response
 
@@ -128,7 +125,8 @@ def stats():
             html_out += '</div>'
             html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
             html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-            html_out += 'Кажется, Дневник.Ру ушел в оффлайн :>'
+            html_out += 'Кажется, Дневник.Ру ушел в оффлайн :> <br>'
+            html_out += 'Если вы сумели успешно запросить данные ранее, то отключите Интернет и запросите снова.'
             html_out += '</div>'
 
             return jsonify(html_out)
@@ -435,7 +433,8 @@ def summary():
             html_out += '</div>'
             html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
             html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-            html_out += 'Либо данных по-просту нет, либо Дневник.Ру в оффлайне :>'
+            html_out += 'Либо данных попросту нет, либо Дневник.Ру в оффлайне :> <br>'
+            html_out += 'Если вы сумели успешно запросить данные ранее, то отключите Интернет и запросите снова.'
             html_out += '</div>'
 
             return jsonify(html_out)
@@ -548,7 +547,8 @@ def dnevnik():
                 html_out += '</div>'
                 html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
                 html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-                html_out += 'Либо уроков нет, либо Дневник.Ру ушел в оффлайн :>'
+                html_out += 'Либо уроков нет, либо Дневник.Ру ушел в оффлайн :> <br>'
+                html_out += 'Если вы сумели успешно запросить данные ранее, то отключите Интернет и запросите снова.'
                 html_out += '</div>'
 
             response = make_response(jsonify(html_out))
