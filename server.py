@@ -559,7 +559,7 @@ def dnevnik():
         alt_grading = False
 
         for i in range(len(json_out['Уроки'])):
-            if int(float(json_out["Оценки"][str(i)])) in range(6, 11):
+            if str(json_out["Оценки"][str(i)]) != 'None' and int(float(json_out["Оценки"][str(i)])) in range(6, 11):
                 alt_grading = True
 
         for i in range(len(json_out['Уроки'])):
