@@ -55,7 +55,7 @@ $(document).ready(function() {
         } else {
             document.cookie = "Offset=" + (- new Date().getTimezoneOffset() / 60);
 
-            var data = $("#dnevnik-date").serialize();
+            var date = $("#dnevnik-date").serialize();
             callout = function() {
                 $.ajax({
                     headers: {
@@ -64,7 +64,7 @@ $(document).ready(function() {
                     url: "/dnevnik",
                     type: "POST",
                     dataType: "json",
-                    data: data,
+                    data: date,
                     timeout: 30000,
                 })
                 .done(function(data) {
