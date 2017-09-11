@@ -59,6 +59,14 @@ def schoolId(s):
         return 'not617'
 
 
+def styleHandling(pos):
+    if pos == 'teal':
+        return '<link rel="stylesheet" href="/css/material.teal-blue.min.css">'
+
+    else:
+        return '<link rel="stylesheet" href="/css/material.teal-blue.min.css">'
+
+
 '''
 Template handling
 '''
@@ -66,7 +74,11 @@ Template handling
 
 @app.route("/", methods=['GET'])
 def index():
-    response = make_response(render_template('index.html'))
+    if 'Style' in request.cookies:
+        response = make_response(render_template('index.html', style=styleHandling(request.cookies.get('Style'))))
+
+    else:
+        response = make_response(render_template('index.html', style=styleHandling('teal')))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
@@ -79,7 +91,11 @@ def index():
 
 @app.route("/main", methods=['GET'])
 def main():
-    response = make_response(render_template('index_logged_in.html'))
+    if 'Style' in request.cookies:
+        response = make_response(render_template('index_logged_in.html', style=styleHandling(request.cookies.get('Style'))))
+
+    else:
+        response = make_response(render_template('index_logged_in.html', style=styleHandling('teal')))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
