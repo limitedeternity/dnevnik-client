@@ -565,12 +565,13 @@ def dnevnik():
         timing = loads(tables_sch.to_json(force_ascii=False))
         alt_grading = False
 
-        for i in range(len(json_out["Уроки"])):
+        for i in range(len(json_out["Оценки"])):
             try:
                 try:
-                    if str(json_out["Оценки"][str(i)]) != 'None' and (int(float(json_out["Оценки"][str(i)])) in range(6, 11)):
-                        alt_grading = True
-                        break
+                    if str(json_out["Оценки"][str(i)]) != 'None':
+                        if int(float(json_out["Оценки"][str(i)])) in range(6, 11):
+                            alt_grading = True
+                            break
 
                 except ValueError:
                     if int(str(json_out["Оценки"][str(i)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i)]).split(' ')[1]) in range(6, 11):
@@ -580,9 +581,10 @@ def dnevnik():
             except KeyError:
                 try:
                     try:
-                        if str(json_out["Оценки"][str(i + 1)]) != 'None' and (int(float(json_out["Оценки"][str(i + 1)])) in range(6, 11)):
-                            alt_grading = True
-                            break
+                        if str(json_out["Оценки"][str(i + 1)]) != 'None':
+                            if int(float(json_out["Оценки"][str(i + 1)])) in range(6, 11):
+                                alt_grading = True
+                                break
 
                     except ValueError:
                         if int(str(json_out["Оценки"][str(i + 1)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i + 1)]).split(' ')[1]) in range(6, 11):
