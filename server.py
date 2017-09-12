@@ -2,6 +2,7 @@
 
 from flask import Flask, render_template, render_template_string, make_response, send_from_directory, request, redirect, jsonify
 from random import choice
+from re import match
 from bs4 import BeautifulSoup
 from requests import Session
 from datetime import datetime, timedelta
@@ -118,6 +119,7 @@ def stats():
 
         except (ValueError, IndexError):
             html_out = ""
+            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
 
             html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
             html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
@@ -192,6 +194,7 @@ def stats():
 
     else:
         html_out = ""
+        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
 
         html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
         html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
@@ -426,6 +429,7 @@ def summary():
 
         except (ValueError, IndexError):
             html_out = ""
+            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>'
 
             html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
             html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
@@ -440,6 +444,7 @@ def summary():
 
     else:
         html_out = ""
+        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>'
 
         html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
         html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
@@ -480,6 +485,7 @@ def dnevnik():
 
         except KeyError:
             html_out = ""
+            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
 
             html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
             html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
@@ -515,6 +521,7 @@ def dnevnik():
         except (ValueError, IndexError):
             soup = BeautifulSoup(data, "lxml")
             html_out = ""
+            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
 
             if soup.title.string == 'Страница не найдена (404)':
                 html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
@@ -603,6 +610,19 @@ def dnevnik():
                     if str(json_out["Оценки"][str(i)]) == 'None':
                         html_out += '<h8 style="color:#212121;">Оценка: нет.</h8>' + "<br>"
 
+                    elif match(r"^[0-5]\ [0-5]$", str(json_out["Оценки"][str(i)])):
+                        if int(str(json_out["Оценки"][str(i)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i)]).split(' ')[1]) in range(0, 3):
+                            html_out += '<h8 style="color:red;">Оценка: ' + str(json_out["Оценки"][str(i)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i)]).split(' ')[1] + '  (ノ_<)</h8>' + "<br>"
+
+                        elif (str(json_out["Оценки"][str(i)]).split(' ')[0] or str(json_out["Оценки"][str(i)]).split(' ')[1] is "3") and (int(str(json_out["Оценки"][str(i)]).split(' ')[0]) and int(str(json_out["Оценки"][str(i)]).split(' ')[1]) in range(3, 6)):
+                            html_out += '<h8 style="color:#FF5722;">Оценка: ' + str(json_out["Оценки"][str(i)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i)]).split(' ')[1] + '  (--_--)</h8>' + "<br>"
+
+                        elif (str(json_out["Оценки"][str(i)]).split(' ')[0] or str(json_out["Оценки"][str(i)]).split(' ')[1] is "4") and (int(str(json_out["Оценки"][str(i)]).split(' ')[0]) and int(str(json_out["Оценки"][str(i)]).split(' ')[1]) in range(4, 6)):
+                            html_out += '<h8 style="color:teal;">Оценка: ' + str(json_out["Оценки"][str(i)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i)]).split(' ')[1] + '  (^_~)</h8>' + "<br>"
+
+                        elif str(json_out["Оценки"][str(i)]).split(' ')[0] and str(json_out["Оценки"][str(i)]).split(' ')[1] is "5":
+                            html_out += '<h8 style="color:green;">Оценка: ' + str(json_out["Оценки"][str(i)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i)]).split(' ')[1] + '  ( ˙꒳​˙ )</h8>' + "<br>"
+
                     elif str(int(float(json_out["Оценки"][str(i)]))) == '1':
                         html_out += '<h8 style="color:red;">Оценка: 1  (ノ_<)</h8>' + "<br>"
 
@@ -622,19 +642,35 @@ def dnevnik():
                     if str(json_out["Оценки"][str(i)]) == 'None':
                         html_out += '<h8 style="color:#212121;">Оценка: нет.</h8>' + "<br>"
 
-                    elif int(float(json_out["Оценки"][str(i)])) in range(0, 2):
+                    elif match(r"^([0-9]|1[0])\ ([0-9]|1[0])$", str(json_out["Оценки"][str(i)])):
+                        if int(str(json_out["Оценки"][str(i)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i)]).split(' ')[1]) in range(0, 3):
+                            html_out += '<h8 style="color:red;">Оценка: ' + str(json_out["Оценки"][str(i)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i)]).split(' ')[1] + '  (ノ_<)</h8>' + "<br>"
+
+                        elif (int(str(json_out["Оценки"][str(i)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i)]).split(' ')[1]) in range(3, 5)) and (int(str(json_out["Оценки"][str(i)]).split(' ')[0]) and int(str(json_out["Оценки"][str(i)]).split(' ')[1]) in range(3, 11)):
+                            html_out += '<h8 style="color:red;">Оценка: ' + str(json_out["Оценки"][str(i)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i)]).split(' ')[1] + '  (・・ )</h8>' + "<br>"
+
+                        elif (int(str(json_out["Оценки"][str(i)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i)]).split(' ')[1]) in range(5, 7)) and (int(str(json_out["Оценки"][str(i)]).split(' ')[0]) and int(str(json_out["Оценки"][str(i)]).split(' ')[1]) in range(5, 11)):
+                            html_out += '<h8 style="color:#FF5722;">Оценка: ' + str(json_out["Оценки"][str(i)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i)]).split(' ')[1] + '  (--_--)</h8>' + "<br>"
+
+                        elif (int(str(json_out["Оценки"][str(i)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i)]).split(' ')[1]) in range(7, 9)) and (int(str(json_out["Оценки"][str(i)]).split(' ')[0]) and int(str(json_out["Оценки"][str(i)]).split(' ')[1]) in range(7, 11)):
+                            html_out += '<h8 style="color:teal;">Оценка: ' + str(json_out["Оценки"][str(i)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i)]).split(' ')[1] + '  (^_~)</h8>' + "<br>"
+
+                        elif str(json_out["Оценки"][str(i)]).split(' ')[0] and str(json_out["Оценки"][str(i)]).split(' ')[1] is "10":
+                            html_out += '<h8 style="color:green;">Оценка: ' + str(json_out["Оценки"][str(i)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i)]).split(' ')[1] + '  ( ˙꒳​˙ )</h8>' + "<br>"
+
+                    elif int(float(json_out["Оценки"][str(i)])) in range(0, 3):
                         html_out += '<h8 style="color:red;">Оценка: ' + str(int(float(json_out["Оценки"][str(i)]))) + '  (ノ_<)</h8>' + "<br>"
 
-                    elif int(float(json_out["Оценки"][str(i)])) in range(2, 4):
+                    elif int(float(json_out["Оценки"][str(i)])) in range(3, 5):
                         html_out += '<h8 style="color:red;">Оценка: ' + str(int(float(json_out["Оценки"][str(i)]))) + '  (・・ )</h8>' + "<br>"
 
-                    elif int(float(json_out["Оценки"][str(i)])) in range(4, 6):
+                    elif int(float(json_out["Оценки"][str(i)])) in range(5, 7):
                         html_out += '<h8 style="color:#FF5722;">Оценка: ' + str(int(float(json_out["Оценки"][str(i)]))) + '  (--_--)</h8>' + "<br>"
 
-                    elif int(float(json_out["Оценки"][str(i)])) in range(6, 8):
+                    elif int(float(json_out["Оценки"][str(i)])) in range(7, 9):
                         html_out += '<h8 style="color:teal;">Оценка: ' + str(int(float(json_out["Оценки"][str(i)]))) + '  (^_~)</h8>' + "<br>"
 
-                    elif int(float(json_out["Оценки"][str(i)])) in range(8, 10):
+                    elif int(float(json_out["Оценки"][str(i)])) in range(9, 11):
                         html_out += '<h8 style="color:green;">Оценка: ' + str(int(float(json_out["Оценки"][str(i)]))) + '  ( ˙꒳​˙ )</h8>' + "<br>"
 
                 # ...
@@ -684,6 +720,19 @@ def dnevnik():
                     if str(json_out["Оценки"][str(i + 1)]) == 'None':
                         html_out += '<h8 style="color:#212121;">Оценка: нет.</h8>' + "<br>"
 
+                    elif match(r"^[0-5]\ [0-5]$", str(json_out["Оценки"][str(i + 1)])):
+                        if int(str(json_out["Оценки"][str(i + 1)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i + 1)]).split(' ')[1]) in range(0, 3):
+                            html_out += '<h8 style="color:red;">Оценка: ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[1] + '  (ノ_<)</h8>' + "<br>"
+
+                        elif (str(json_out["Оценки"][str(i + 1)]).split(' ')[0] or str(json_out["Оценки"][str(i + 1)]).split(' ')[1] is "3") and (int(str(json_out["Оценки"][str(i + 1)]).split(' ')[0]) and int(str(json_out["Оценки"][str(i + 1)]).split(' ')[1]) in range(3, 6)):
+                            html_out += '<h8 style="color:#FF5722;">Оценка: ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[1] + '  (--_--)</h8>' + "<br>"
+
+                        elif (str(json_out["Оценки"][str(i + 1)]).split(' ')[0] or str(json_out["Оценки"][str(i + 1)]).split(' ')[1] is "4") and (int(str(json_out["Оценки"][str(i + 1)]).split(' ')[0]) and int(str(json_out["Оценки"][str(i + 1)]).split(' ')[1]) in range(4, 6)):
+                            html_out += '<h8 style="color:teal;">Оценка: ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[1] + '  (^_~)</h8>' + "<br>"
+
+                        elif str(json_out["Оценки"][str(i + 1)]).split(' ')[0] and str(json_out["Оценки"][str(i + 1)]).split(' ')[1] is "5":
+                            html_out += '<h8 style="color:green;">Оценка: ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[1] + '  ( ˙꒳​˙ )</h8>' + "<br>"
+
                     elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '1':
                         html_out += '<h8 style="color:red;">Оценка: 1  (ノ_<)</h8>' + "<br>"
 
@@ -703,19 +752,35 @@ def dnevnik():
                     if str(json_out["Оценки"][str(i + 1)]) == 'None':
                         html_out += '<h8 style="color:#212121;">Оценка: нет.</h8>' + "<br>"
 
-                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(0, 2):
+                    elif match(r"^([0-9]|1[0])\ ([0-9]|1[0])$", str(json_out["Оценки"][str(i + 1)])):
+                        if int(str(json_out["Оценки"][str(i + 1)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i + 1)]).split(' ')[1]) in range(0, 3):
+                            html_out += '<h8 style="color:red;">Оценка: ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[1] + '  (ノ_<)</h8>' + "<br>"
+
+                        elif (int(str(json_out["Оценки"][str(i + 1)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i + 1)]).split(' ')[1]) in range(3, 5)) and (int(str(json_out["Оценки"][str(i + 1)]).split(' ')[0]) and int(str(json_out["Оценки"][str(i + 1)]).split(' ')[1]) in range(3, 11)):
+                            html_out += '<h8 style="color:red;">Оценка: ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[1] + '  (・・ )</h8>' + "<br>"
+
+                        elif (int(str(json_out["Оценки"][str(i + 1)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i + 1)]).split(' ')[1]) in range(5, 7)) and (int(str(json_out["Оценки"][str(i + 1)]).split(' ')[0]) and int(str(json_out["Оценки"][str(i + 1)]).split(' ')[1]) in range(5, 11)):
+                            html_out += '<h8 style="color:#FF5722;">Оценка: ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[1] + '  (--_--)</h8>' + "<br>"
+
+                        elif (int(str(json_out["Оценки"][str(i + 1)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i + 1)]).split(' ')[1]) in range(7, 9)) and (int(str(json_out["Оценки"][str(i + 1)]).split(' ')[0]) and int(str(json_out["Оценки"][str(i + 1)]).split(' ')[1]) in range(7, 11)):
+                            html_out += '<h8 style="color:teal;">Оценка: ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[1] + '  (^_~)</h8>' + "<br>"
+
+                        elif str(json_out["Оценки"][str(i + 1)]).split(' ')[0] and str(json_out["Оценки"][str(i + 1)]).split(' ')[1] is "10":
+                            html_out += '<h8 style="color:green;">Оценка: ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[0] + ' / ' + str(json_out["Оценки"][str(i + 1)]).split(' ')[1] + '  ( ˙꒳​˙ )</h8>' + "<br>"
+
+                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(0, 3):
                         html_out += '<h8 style="color:red;">Оценка: ' + str(int(float(json_out["Оценки"][str(i + 1)]))) + '  (ノ_<)</h8>' + "<br>"
 
-                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(2, 4):
+                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(3, 5):
                         html_out += '<h8 style="color:red;">Оценка: ' + str(int(float(json_out["Оценки"][str(i + 1)]))) + '  (・・ )</h8>' + "<br>"
 
-                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(4, 6):
+                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(5, 7):
                         html_out += '<h8 style="color:#FF5722;">Оценка: ' + str(int(float(json_out["Оценки"][str(i + 1)]))) + '  (--_--)</h8>' + "<br>"
 
-                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(6, 8):
+                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(7, 9):
                         html_out += '<h8 style="color:teal;">Оценка: ' + str(int(float(json_out["Оценки"][str(i + 1)]))) + '  (^_~)</h8>' + "<br>"
 
-                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(8, 10):
+                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(9, 11):
                         html_out += '<h8 style="color:green;">Оценка: ' + str(int(float(json_out["Оценки"][str(i + 1)]))) + '  ( ˙꒳​˙ )</h8>' + "<br>"
 
                 # ...
@@ -741,6 +806,9 @@ def dnevnik():
         return response
 
     else:
+        html_out = ""
+        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
+
         html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
         html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
         html_out += '</div>'
@@ -813,6 +881,7 @@ def logout():
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Cache-Control'] = 'no-cache'
+    response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
     return response
 
 
