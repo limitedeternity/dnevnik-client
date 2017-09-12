@@ -574,9 +574,7 @@ def dnevnik():
                             break
 
                 except ValueError:
-                    if int(str(json_out["Оценки"][str(i)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i)]).split(' ')[1]) in range(6, 11):
-                        alt_grading = True
-                        break
+                    continue
 
             except KeyError:
                 try:
@@ -587,9 +585,7 @@ def dnevnik():
                                 break
 
                     except ValueError:
-                        if int(str(json_out["Оценки"][str(i + 1)]).split(' ')[0]) or int(str(json_out["Оценки"][str(i + 1)]).split(' ')[1]) in range(6, 11):
-                            alt_grading = True
-                            break
+                        continue
 
                 except KeyError:
                     pass
