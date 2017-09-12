@@ -568,7 +568,7 @@ def dnevnik():
         for i in range(len(json_out["Уроки"])):
             try:
                 try:
-                    if str(json_out["Оценки"][str(i)]) != 'None' and int(float(json_out["Оценки"][str(i)])) in range(6, 11):
+                    if str(json_out["Оценки"][str(i)]) != 'None' and (int(float(json_out["Оценки"][str(i)])) in range(6, 11)):
                         alt_grading = True
                         break
 
@@ -580,7 +580,7 @@ def dnevnik():
             except KeyError:
                 try:
                     try:
-                        if str(json_out["Оценки"][str(i + 1)]) != 'None' and int(float(json_out["Оценки"][str(i + 1)])) in range(6, 11):
+                        if str(json_out["Оценки"][str(i + 1)]) != 'None' and (int(float(json_out["Оценки"][str(i + 1)])) in range(6, 11)):
                             alt_grading = True
                             break
 
