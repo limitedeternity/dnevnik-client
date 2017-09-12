@@ -1,4 +1,16 @@
 $(document).ready(function() {
+    function notify() {
+        if (!("Notification" in window)) {
+            console.log("This browser does not support system notifications");
+        } else if (Notification.permission === "granted") {
+            var notification = new Notification("Получены новые данные.");
+        } else if (Notification.permission === "default") {
+            Notification.requestPermission();
+        } else if (Notification.permission === 'denied') {
+            console.log("Notification permission denied.");
+        }
+    }
+
     $("#dnevnik-login").on("submit", function(a) {
         a.preventDefault();
 
@@ -56,6 +68,7 @@ $(document).ready(function() {
             document.cookie = "Offset=" + (-new Date().getTimezoneOffset() / 60);
 
             var date = $("#dnevnik-date").serialize();
+            var ajaxCalled = false;
             var callout = function() {
                 $.ajax({
                         headers: {
@@ -72,6 +85,12 @@ $(document).ready(function() {
 
                         if (localStorage.getItem('dnevnik') !== null) {
                             if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                                if (ajaxCalled === true) {
+                                    if (data !== localStorage.getItem('dnevnik')) {
+                                        notify();
+                                    }
+                                }
+
                                 localStorage.removeItem("dnevnik");
                                 localStorage.setItem('dnevnik', data);
                             }
