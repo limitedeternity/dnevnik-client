@@ -1,11 +1,16 @@
 $(document).ready(function() {
+
+    if (!("Notification" in window)) {
+        console.log("This browser does not support system notifications");
+    } else if (Notification.permission === "default") {
+        Notification.requestPermission();
+    }
+
     function notify() {
         if (!("Notification" in window)) {
             console.log("This browser does not support system notifications");
         } else if (Notification.permission === "granted") {
             var notification = new Notification("Получены новые данные.");
-        } else if (Notification.permission === "default") {
-            Notification.requestPermission();
         } else if (Notification.permission === 'denied') {
             console.log("Notification permission denied.");
         }
