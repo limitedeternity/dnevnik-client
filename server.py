@@ -173,7 +173,7 @@ def stats():
 
             # ...
             if str(json_out["4 и 5"][str(i)]) == 'None':
-                html_out += '<h8 style="color:green;">Процент: 100%</h8>' + "<br>"
+                html_out += '<h8 style="color:green;">Процент: 0%</h8>' + "<br>"
 
             elif int(json_out["4 и 5"][str(i)][:-1]) in range(80, 101):
                 html_out += '<h8 style="color:green;">Процент: ' + str(json_out["4 и 5"][str(i)]) + '</h8>' + "<br>"
