@@ -136,6 +136,9 @@ def stats():
         html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
 
         for i in range(len(json_out["Предмет"])):
+            threes = False
+            twos = False
+
             html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
             html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
             html_out += '</div>'
@@ -163,6 +166,7 @@ def stats():
 
             else:
                 html_out += '<h8 style="color:#FF5722;">3: ' + str(int(float(json_out["3"][str(i)]))) + '</h8>' + "<br>"
+                threes = True
 
             # ...
             if str(json_out["2"][str(i)]) == 'None':
@@ -170,10 +174,21 @@ def stats():
 
             else:
                 html_out += '<h8 style="color:red;">2: ' + str(int(float(json_out["2"][str(i)]))) + '</h8>' + "<br>"
+                twos = True
 
             # ...
             if str(json_out["4 и 5"][str(i)]) == 'None':
-                html_out += '<h8 style="color:#212121;">Процент: 0%</h8>' + "<br>"
+                if (threes is False) and (twos is True):
+                    html_out += '<h8 style="color:red;">Процент: 0%</h8>' + "<br>"
+
+                elif (twos is False) and (threes is True):
+                    html_out += '<h8 style="color:#FF5722;">Процент: 0%</h8>' + "<br>"
+
+                elif (twos is True) and (threes is True):
+                    html_out += '<h8 style="color:red;">Процент: 0%</h8>' + "<br>"
+
+                else:
+                    html_out += '<h8 style="color:#212121;">Процент: 0%</h8>' + "<br>"
 
             elif int(json_out["4 и 5"][str(i)][:-1]) in range(80, 101):
                 html_out += '<h8 style="color:green;">Процент: ' + str(json_out["4 и 5"][str(i)]) + '</h8>' + "<br>"
