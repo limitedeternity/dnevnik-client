@@ -184,12 +184,13 @@ def stats():
                             else:
                                 html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '">'
 
-                            html_out += '<span class="mdl-radio__label">' + name + '</span>'
+                            html_out += '<span class="mdl-radio__label">' + name.split(' ')[0] + ' ' + name.split(' ')[1] + '</span>'
                             html_out += '</label>'
+                            html_out += '<div style="display:block; height: 5px; clear:both;"></div>'
 
                         i += 1
 
-                    html_out += '<div style="display:block; height: 20px; clear:both;"></div>'
+                    html_out += '<div style="display:block; height: 15px; clear:both;"></div>'
 
                     response = make_response(jsonify(html_out))
                     response.set_cookie('Offset', value='', max_age=0, expires=0)
@@ -204,7 +205,7 @@ def stats():
                 html_out += '</div>'
                 html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
                 html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-                html_out += 'Вы - учитель. К сожалению, здесь для вас ничего нет. И вряд ли будет. Всего доброго ( ´ ∀ ` )ﾉ'
+                html_out += 'Ваш тип аккаунта не определен. Перезайдите ( ´ ∀ ` )ﾉ'
                 html_out += '</div>'
 
                 response = make_response(jsonify(html_out))
@@ -407,12 +408,13 @@ def summary():
                             else:
                                 html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '">'
 
-                            html_out += '<span class="mdl-radio__label">' + name + '</span>'
+                            html_out += '<span class="mdl-radio__label">' + name.split(' ')[0] + ' ' + name.split(' ')[1] + '</span>'
                             html_out += '</label>'
+                            html_out += '<div style="display:block; height: 5px; clear:both;"></div>'
 
                         i += 1
 
-                    html_out += '<div style="display:block; height: 20px; clear:both;"></div>'
+                    html_out += '<div style="display:block; height: 15px; clear:both;"></div>'
 
                     response = make_response(jsonify(html_out))
                     response.set_cookie('Offset', value='', max_age=0, expires=0)
@@ -427,7 +429,7 @@ def summary():
                 html_out += '</div>'
                 html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
                 html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-                html_out += 'Вы - учитель. К сожалению, здесь для вас ничего нет. И вряд ли будет. Всего доброго ( ´ ∀ ` )ﾉ'
+                html_out += 'Ваш тип аккаунта не определен. Перезайдите ( ´ ∀ ` )ﾉ'
                 html_out += '</div>'
 
                 response = make_response(jsonify(html_out))
@@ -756,12 +758,13 @@ def dnevnik():
                         else:
                             html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '">'
 
-                        html_out += '<span class="mdl-radio__label">' + name + '</span>'
+                        html_out += '<span class="mdl-radio__label">' + name.split(' ')[0] + ' ' + name.split(' ')[1] + '</span>'
                         html_out += '</label>'
+                        html_out += '<div style="display:block; height: 5px; clear:both;"></div>'
 
                     i += 1
 
-                html_out += '<div style="display:block; height: 20px; clear:both;"></div>'
+                html_out += '<div style="display:block; height: 15px; clear:both;"></div>'
 
                 response = make_response(jsonify(html_out))
                 response.set_cookie('Offset', value='', max_age=0, expires=0)
@@ -776,7 +779,7 @@ def dnevnik():
             html_out += '</div>'
             html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
             html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-            html_out += 'Вы - учитель. К сожалению, здесь для вас ничего нет. И вряд ли будет. Всего доброго ( ´ ∀ ` )ﾉ'
+            html_out += 'Ваш тип аккаунта не определен. Перезайдите ( ´ ∀ ` )ﾉ'
             html_out += '</div>'
 
             response = make_response(jsonify(html_out))
