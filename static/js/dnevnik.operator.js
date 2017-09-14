@@ -23,10 +23,17 @@ $(document).ready(function() {
         $("#login-btn").hide();
         $("#error").html("<div class='loader'>Loading...</div>");
 
+        var csrf_token = "{{ csrf_token() }}";
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                }
+            }
+        });
+
         $.ajax({
-                headers: {
-                    "X-CSRFToken": Cookies.get("csrftoken")
-                },
                 url: "/login",
                 type: "POST",
                 dataType: "json",
@@ -75,10 +82,18 @@ $(document).ready(function() {
             var date = $("#dnevnik-date").serialize();
             var ajaxCalled = false;
             var callout = function() {
+
+                var csrf_token = "{{ csrf_token() }}";
+
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                        }
+                    }
+                });
+
                 $.ajax({
-                        headers: {
-                            "X-CSRFToken": Cookies.get("csrftoken")
-                        },
                         url: "/dnevnik",
                         type: "POST",
                         dataType: "json",
@@ -86,10 +101,16 @@ $(document).ready(function() {
                         timeout: 30000,
                     })
                     .done(function(data) {
-                        $("#dnevnik-out").html(data);
+                        if (data.indexOf('<div id="children_out"></div>') !== -1) {
+                            $("#children_out").html(data.replace('<div id="children_out"></div>', ''));
+                            $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'></div>");
+                            return;
+                        } else {
+                            $("#dnevnik-out").html(data);
+                        }
 
                         if (localStorage.getItem('dnevnik') !== null) {
-                            if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                            if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1) && (data.indexOf('<div id="children_out"></div>') === -1)) {
                                 if (ajaxCalled === true) {
                                     if (data !== localStorage.getItem('dnevnik')) {
                                         notify();
@@ -101,7 +122,7 @@ $(document).ready(function() {
                             }
 
                         } else {
-                            if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                            if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)  && (data.indexOf('<div id="children_out"></div>') === -1)) {
                                 localStorage.setItem('dnevnik', data);
                             }
                         }
@@ -155,10 +176,17 @@ $(document).ready(function() {
             }
 
         } else {
+            var csrf_token = "{{ csrf_token() }}";
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                    }
+                }
+            });
+
             $.ajax({
-                    headers: {
-                        "X-CSRFToken": Cookies.get("csrftoken")
-                    },
                     url: "/stats",
                     type: "POST",
                     dataType: "json",
@@ -166,16 +194,22 @@ $(document).ready(function() {
                     timeout: 30000,
                 })
                 .done(function(data) {
-                    $("#stats-out").html(data);
-
+                    if (data.indexOf('<div id="children_out"></div>') !== -1) {
+                        $("#children_out").html(data.replace('<div id="children_out"></div>', ''));
+                        $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'></div>");
+                        return;
+                    } else {
+                        $("#stats-out").html(data);
+                    }
+                    
                     if (localStorage.getItem('stats') !== null) {
-                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)  && (data.indexOf('<div id="children_out"></div>') === -1)) {
                             localStorage.removeItem("stats");
                             localStorage.setItem('stats', data);
                         }
 
                     } else {
-                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1) && (data.indexOf('<div id="children_out"></div>') === -1)) {
                             localStorage.setItem('stats', data);
                         }
                     }
@@ -222,10 +256,17 @@ $(document).ready(function() {
             }
 
         } else {
+            var csrf_token = "{{ csrf_token() }}";
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                    }
+                }
+            });
+        
             $.ajax({
-                    headers: {
-                        "X-CSRFToken": Cookies.get("csrftoken")
-                    },
                     url: "/summary",
                     type: "POST",
                     dataType: "json",
@@ -233,16 +274,22 @@ $(document).ready(function() {
                     timeout: 30000,
                 })
                 .done(function(data) {
-                    $("#summary-out").html(data);
+                    if (data.indexOf('<div id="children_out"></div>') !== -1) {
+                        $("#children_out").html(data.replace('<div id="children_out"></div>', ''));
+                        $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'></div>");
+                        return;
+                    } else {
+                        $("#summary-out").html(data);
+                    }
 
                     if (localStorage.getItem('summary') !== null) {
-                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1) && (data.indexOf('<div id="children_out"></div>') === -1)) {
                             localStorage.removeItem("summary");
                             localStorage.setItem('summary', data);
                         }
 
                     } else {
-                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1)) {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1) && (data.indexOf('<div id="children_out"></div>') === -1)) {
                             localStorage.setItem('summary', data);
                         }
                     }
