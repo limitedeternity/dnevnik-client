@@ -73,7 +73,7 @@
                       <label class="mdl-textfield__label" for="month">Месяц (1-12)</label>
                   </div>
                   <div style="display:block; height: 5px; clear:both;"></div>
-                  <div id="children_out"></div>
+                  <div id="children_out_dnevnik"></div>
                   <button type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
                       <i class="material-icons">arrow_forward</i>
                       <span class="visuallyhidden">Next</span>
@@ -115,7 +115,7 @@
                       <label class="mdl-textfield__label" for="term">Семестр/Четверть (1-4)</label>
                   </div>
                   <div style="display:block; height: 5px; clear:both;"></div>
-                  <div id="children_out"></div>
+                  <div id="children_out_stats"></div>
                   <button type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
                       <i class="material-icons">arrow_forward</i>
                       <span class="visuallyhidden">Next</span>
@@ -153,7 +153,7 @@
                 <form action="/summary" method="post" id="dnevnik-summary">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                   <div style="display:block; height: 5px; clear:both;"></div>
-                  <div id="children_out"></div>
+                  <div id="children_out_summary"></div>
                   <button type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
                       <i class="material-icons">arrow_forward</i>
                       <span class="visuallyhidden">Next</span>
