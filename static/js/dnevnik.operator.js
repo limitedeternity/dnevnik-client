@@ -168,7 +168,7 @@ $(document).ready(function() {
                 $("#stats-out").html(localStorage.getItem('stats').replace('<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
                 return $('.mdl-layout__content').animate({
-                    scrollTop: $("#dnevnik-out").offset().top + 'px'
+                    scrollTop: $("#stats-out").offset().top + 'px'
                 }, 'fast');
 
             } else {
@@ -195,8 +195,8 @@ $(document).ready(function() {
                 })
                 .done(function(data) {
                     if (data.indexOf('<div id="children_out"></div>') !== -1) {
-                        $("#children_out").html(data.replace('<div id="children_out"></div>', ''));
-                        $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'></div>");
+                        $("#children_out_stats").html(data.replace('<div id="children_out"></div>', ''));
+                        $("#stats-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Cтатистика</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'></div>");
                         return;
                     } else {
                         $("#stats-out").html(data);
@@ -223,7 +223,7 @@ $(document).ready(function() {
                         $("#stats-out").html(localStorage.getItem('stats').replace('<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
                         $('.mdl-layout__content').animate({
-                            scrollTop: $("#dnevnik-out").offset().top + 'px'
+                            scrollTop: $("#stats-out").offset().top + 'px'
                         }, 'fast');
 
                     } else {
@@ -248,7 +248,7 @@ $(document).ready(function() {
                 $("#summary-out").html(localStorage.getItem('summary').replace('<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
                 return $('.mdl-layout__content').animate({
-                    scrollTop: $("#dnevnik-out").offset().top + 'px'
+                    scrollTop: $("#summary-out").offset().top + 'px'
                 }, 'fast');
 
             } else {
@@ -275,8 +275,8 @@ $(document).ready(function() {
                 })
                 .done(function(data) {
                     if (data.indexOf('<div id="children_out"></div>') !== -1) {
-                        $("#children_out").html(data.replace('<div id="children_out"></div>', ''));
-                        $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'></div>");
+                        $("#children_out_summary").html(data.replace('<div id="children_out"></div>', ''));
+                        $("#summary-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Итоговые</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'></div>");
                         return;
                     } else {
                         $("#summary-out").html(data);
@@ -300,10 +300,10 @@ $(document).ready(function() {
                 })
                 .fail(function() {
                     if (localStorage.getItem('summary') !== null) {
-                        $("#stats-out").html(localStorage.getItem('summary').replace('<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+                        $("#summary-out").html(localStorage.getItem('summary').replace('<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
                         $('.mdl-layout__content').animate({
-                            scrollTop: $("#dnevnik-out").offset().top + 'px'
+                            scrollTop: $("#summary-out").offset().top + 'px'
                         }, 'fast');
 
                     } else {
