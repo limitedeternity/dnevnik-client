@@ -102,7 +102,7 @@ $(document).ready(function() {
                     })
                     .done(function(data) {
                         if (data.indexOf('<div id="children_out"></div>') !== -1) {
-                            $("#children_out").html(data.replace('<div id="children_out"></div>', ''));
+                            $("#children_out_dnevnik").html(data.replace('<div id="children_out"></div>', ''));
                             $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'></div>");
                             return;
                         } else {
