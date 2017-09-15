@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="/css/styles.css">
   </head>
   <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
+    {% set counter = 0 %}
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
         <div class="mdl-layout--large-screen-only mdl-layout__header-row">
@@ -84,7 +85,6 @@
                   <div style="display:block; height: 5px; clear:both;"></div>
                   {% if opts %}
                       {% for child in opts %}
-                          {% set counter = loop.index0 %}
                           {% for name, id in child.items() %}
                               <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="child{{ counter }}">
                               {% if counter == 0 %}
@@ -95,6 +95,7 @@
                               <span class="mdl-radio__label">{{ name.split(' ')[0] }} {{ name.split(' ')[1] }}</span>
                               </label>
                           {% endfor %}
+                          {% set counter = counter + 1 %}
                           <div style="display:block; height: 5px; clear:both;"></div>
                       {% endfor %}
                       <div style="display:block; height: 15px; clear:both;"></div>
@@ -142,7 +143,6 @@
                   <div style="display:block; height: 5px; clear:both;"></div>
                   {% if opts %}
                       {% for child in opts %}
-                          {% set counter = loop.index0 %}
                           {% for name, id in child.items() %}
                               <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="child{{ counter }}">
                               {% if counter == 0 %}
@@ -153,6 +153,7 @@
                               <span class="mdl-radio__label">{{ name.split(' ')[0] }} {{ name.split(' ')[1] }}</span>
                               </label>
                           {% endfor %}
+                          {% set counter = counter + 1 %}
                           <div style="display:block; height: 5px; clear:both;"></div>
                       {% endfor %}
                       <div style="display:block; height: 15px; clear:both;"></div>
@@ -196,7 +197,6 @@
                   <div style="display:block; height: 5px; clear:both;"></div>
                   {% if opts %}
                       {% for child in opts %}
-                          {% set counter = loop.index0 %}
                           {% for name, id in child.items() %}
                               <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="child{{ counter }}">
                               {% if counter == 0 %}
@@ -207,6 +207,7 @@
                               <span class="mdl-radio__label">{{ name.split(' ')[0] }} {{ name.split(' ')[1] }}</span>
                               </label>
                           {% endfor %}
+                          {% set counter = counter + 1 %}
                           <div style="display:block; height: 5px; clear:both;"></div>
                       {% endfor %}
                       <div style="display:block; height: 15px; clear:both;"></div>
