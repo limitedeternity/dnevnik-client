@@ -163,6 +163,10 @@ def stats():
                         html_out += 'Выбран неверный тип аккаунта. Перезайдите.'
                         html_out += '</div>'
 
+                        response = make_response(jsonify(html_out))
+                        response.set_cookie('Offset', value='', max_age=0, expires=0)
+                        return response
+
                     options = soup.find_all('option')
                     opts = []
 
@@ -228,7 +232,9 @@ def stats():
             html_out += 'Если вы сумели успешно запросить данные ранее, то отключите Интернет и запросите снова.'
             html_out += '</div>'
 
-            return jsonify(html_out)
+            response = make_response(jsonify(html_out))
+            response.set_cookie('Offset', value='', max_age=0, expires=0)
+            return response
 
         html_out = ""
         html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
@@ -303,7 +309,9 @@ def stats():
             html_out += '<div style="display:block; height:5px; clear:both;"></div>'
             html_out += '</div>'
 
-        return jsonify(html_out)
+        response = make_response(jsonify(html_out))
+        response.set_cookie('Offset', value='', max_age=0, expires=0)
+        return response
 
     else:
         html_out = ""
@@ -317,7 +325,9 @@ def stats():
         html_out += 'Вы явно такого не ожидали, не правда ли?'
         html_out += '</div>'
 
-        return jsonify(html_out)
+        response = make_response(jsonify(html_out))
+        response.set_cookie('Offset', value='', max_age=0, expires=0)
+        return response
 
 
 @app.route("/summary", methods=['POST'])
@@ -383,9 +393,9 @@ def summary():
                         html_out += 'Выбран неверный тип аккаунта. Перезайдите.'
                         html_out += '</div>'
 
-                    response = make_response(jsonify(html_out))
-                    response.set_cookie('Offset', value='', max_age=0, expires=0)
-                    return response
+                        response = make_response(jsonify(html_out))
+                        response.set_cookie('Offset', value='', max_age=0, expires=0)
+                        return response
 
                     options = soup.find_all('option')
                     opts = []
@@ -634,7 +644,9 @@ def summary():
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
 
-            return jsonify(html_out)
+            response = make_response(jsonify(html_out))
+            response.set_cookie('Offset', value='', max_age=0, expires=0)
+            return response
 
         except (ValueError, IndexError):
             html_out = ""
@@ -649,7 +661,9 @@ def summary():
             html_out += 'Если вы сумели успешно запросить данные ранее, то отключите Интернет и запросите снова.'
             html_out += '</div>'
 
-            return jsonify(html_out)
+            response = make_response(jsonify(html_out))
+            response.set_cookie('Offset', value='', max_age=0, expires=0)
+            return response
 
     else:
         html_out = ""
@@ -663,7 +677,9 @@ def summary():
         html_out += 'Вы явно такого не ожидали, не правда ли?'
         html_out += '</div>'
 
-        return jsonify(html_out)
+        response = make_response(jsonify(html_out))
+        response.set_cookie('Offset', value='', max_age=0, expires=0)
+        return response
 
 
 @app.route("/dnevnik", methods=['POST'])
