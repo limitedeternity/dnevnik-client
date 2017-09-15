@@ -962,7 +962,7 @@ def login():
 
                 return jsonify(html_out)
 
-        response = make_response(render_template_string('<script>window.location.replace("/");</script>'))
+        response = make_response(render_template_string('<script>window.location.replace("/main");</script>'))
 
         response.set_cookie('DnevnikLogin', value=b32encode(b64encode(login.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
         response.set_cookie('DnevnikPass', value=b32encode(b64encode(password.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
