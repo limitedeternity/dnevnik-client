@@ -180,15 +180,23 @@ def stats():
                     i = 0
                     for child in opts:
                         for name, id in child.items():
-                            html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="child' + str(i) + '">'
 
                             if i == 0:
+                                html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-checked is-upgraded" for="child' + str(i) + '" data-upgraded=",MaterialRadio,MaterialRipple">'
                                 html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '" checked>'
 
                             else:
+                                html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" for="child' + str(i) + '" data-upgraded=",MaterialRadio,MaterialRipple">'
                                 html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '">'
 
                             html_out += '<span class="mdl-radio__label">' + name.split(' ')[0] + ' ' + name.split(' ')[1] + '</span>'
+
+                            if i == 0:
+                                html_out += '<span class="mdl-radio__outer-circle"></span><span class="mdl-radio__inner-circle"></span><span class="mdl-radio__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple is-animating" style="width: 120.794px; height: 120.794px; transform: translate(-50%, -50%) translate(21px, 21px);"></span></span>'
+
+                            else:
+                                html_out += '<span class="mdl-radio__outer-circle"></span><span class="mdl-radio__inner-circle"></span><span class="mdl-radio__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span>'
+
                             html_out += '</label>'
                             html_out += '<div style="display:block; height: 5px; clear:both;"></div>'
 
@@ -410,15 +418,23 @@ def summary():
                     i = 0
                     for child in opts:
                         for name, id in child.items():
-                            html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="child' + str(i) + '">'
 
                             if i == 0:
+                                html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-checked is-upgraded" for="child' + str(i) + '" data-upgraded=",MaterialRadio,MaterialRipple">'
                                 html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '" checked>'
 
                             else:
+                                html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" for="child' + str(i) + '" data-upgraded=",MaterialRadio,MaterialRipple">'
                                 html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '">'
 
                             html_out += '<span class="mdl-radio__label">' + name.split(' ')[0] + ' ' + name.split(' ')[1] + '</span>'
+
+                            if i == 0:
+                                html_out += '<span class="mdl-radio__outer-circle"></span><span class="mdl-radio__inner-circle"></span><span class="mdl-radio__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple is-animating" style="width: 120.794px; height: 120.794px; transform: translate(-50%, -50%) translate(21px, 21px);"></span></span>'
+
+                            else:
+                                html_out += '<span class="mdl-radio__outer-circle"></span><span class="mdl-radio__inner-circle"></span><span class="mdl-radio__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span>'
+
                             html_out += '</label>'
                             html_out += '<div style="display:block; height: 5px; clear:both;"></div>'
 
@@ -766,15 +782,23 @@ def dnevnik():
                 i = 0
                 for child in opts:
                     for name, id in child.items():
-                        html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="child' + str(i) + '">'
 
                         if i == 0:
+                            html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-checked is-upgraded" for="child' + str(i) + '" data-upgraded=",MaterialRadio,MaterialRipple">'
                             html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '" checked>'
 
                         else:
+                            html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" for="child' + str(i) + '" data-upgraded=",MaterialRadio,MaterialRipple">'
                             html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '">'
 
                         html_out += '<span class="mdl-radio__label">' + name.split(' ')[0] + ' ' + name.split(' ')[1] + '</span>'
+
+                        if i == 0:
+                            html_out += '<span class="mdl-radio__outer-circle"></span><span class="mdl-radio__inner-circle"></span><span class="mdl-radio__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple is-animating" style="width: 120.794px; height: 120.794px; transform: translate(-50%, -50%) translate(21px, 21px);"></span></span>'
+
+                        else:
+                            html_out += '<span class="mdl-radio__outer-circle"></span><span class="mdl-radio__inner-circle"></span><span class="mdl-radio__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span>'
+
                         html_out += '</label>'
                         html_out += '<div style="display:block; height: 5px; clear:both;"></div>'
 
