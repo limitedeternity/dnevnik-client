@@ -20,7 +20,7 @@ from cachecontrol import CacheControl
 from base64 import b64encode, b64decode, b32encode, b32decode
 
 
-debug = False
+debug = True
 
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = environ.get("SECRET_KEY", "".join(choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for _ in range(50)))
@@ -85,7 +85,44 @@ def index():
 
 @app.route("/main", methods=['GET'])
 def main():
-    response = make_response(render_template('index_logged_in.html'))
+    if 'DnevnikLogin' in request.cookies:
+        s = CacheControl(Session())
+
+        s.headers.update({'Upgrade-Insecure-Requests': '1',
+                          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
+                          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+                          'DNT': '1',
+                          'Accept-Encoding': 'gzip, deflate, br',
+                          'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
+
+        login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
+                         'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
+                         'exceededAttempts': 'False', 'ReturnUrl': ''}
+
+        s.post('https://login.dnevnik.ru/login', login_payload)
+
+        data = s.get("https://dnevnik.ru/").content
+        soup = BeautifulSoup(data, "lxml")
+
+        user = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__initials'}).text
+
+    if request.cookies.get("AccountType") == 'Student':
+        response = make_response(render_template('index_logged_in.html', user=user))
+
+    elif request.cookies.get("AccountType") == 'Parent':
+            data = s.get("https://children.dnevnik.ru/marks.aspx").content
+            soup = BeautifulSoup(data, "lxml")
+
+            options = soup.find_all('option')
+            opts = []
+
+            for option in options:
+                opts.append({option.text: option.attrs['value']})
+
+            response = make_response(render_template('index_logged_in.html', opts=opts, user=user))
+
+    else:
+        response = make_response(render_template('index_logged_in.html'))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
@@ -121,108 +158,14 @@ def stats():
 
         try:
             if request.cookies.get('AccountType') == 'Student':
-                try:
-                    data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=stats&period=" + (str(int(termPeriod) - 1) if termPeriod is not '' else "-1")).content
 
-                except KeyError:
-                    html_out = ""
-                    html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
-
-                    html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                    html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                    html_out += '</div>'
-                    html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                    html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-                    html_out += 'Выбран неверный тип аккаунта. Перезайдите.'
-                    html_out += '</div>'
-
-                    response = make_response(jsonify(html_out))
-                    response.set_cookie('Offset', value='', max_age=0, expires=0)
-                    return response
+                data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=stats&period=" + (str(int(termPeriod) - 1) if termPeriod is not '' else "-1")).content
 
             elif request.cookies.get('AccountType') == 'Parent':
 
                 child = request.form.get('child', '')
-                if child is not '':
-                    s.post("https://children.dnevnik.ru/marks.aspx", {'child': child})
-                    data = s.get("https://children.dnevnik.ru/marks.aspx?child=" + str(child) + "&index=-1&tab=stats").content
-
-                else:
-                    data = s.get("https://children.dnevnik.ru/marks.aspx").content
-                    soup = BeautifulSoup(data, "lxml")
-
-                    if soup.title.string == 'Страница не найдена (404)' or soup.title.string == "Отказано в доступе (403)":
-                        html_out = ""
-                        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
-
-                        html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                        html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                        html_out += '</div>'
-                        html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                        html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-                        html_out += 'Выбран неверный тип аккаунта. Перезайдите.'
-                        html_out += '</div>'
-
-                        response = make_response(jsonify(html_out))
-                        response.set_cookie('Offset', value='', max_age=0, expires=0)
-                        return response
-
-                    options = soup.find_all('option')
-                    opts = []
-
-                    for option in options:
-                        opts.append({option.text: option.attrs['value']})
-
-                    html_out = ""
-
-                    html_out += '<div id="children_out"></div>'
-
-                    i = 0
-                    for child in opts:
-                        for name, id in child.items():
-
-                            if i == 0:
-                                html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-checked is-upgraded" for="child' + str(i) + '" data-upgraded=",MaterialRadio,MaterialRipple">'
-                                html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '" checked>'
-
-                            else:
-                                html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" for="child' + str(i) + '" data-upgraded=",MaterialRadio,MaterialRipple">'
-                                html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '">'
-
-                            html_out += '<span class="mdl-radio__label">' + name.split(' ')[0] + ' ' + name.split(' ')[1] + '</span>'
-
-                            if i == 0:
-                                html_out += '<span class="mdl-radio__outer-circle"></span><span class="mdl-radio__inner-circle"></span><span class="mdl-radio__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple is-animating" style="width: 120.794px; height: 120.794px; transform: translate(-50%, -50%) translate(21px, 21px);"></span></span>'
-
-                            else:
-                                html_out += '<span class="mdl-radio__outer-circle"></span><span class="mdl-radio__inner-circle"></span><span class="mdl-radio__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span>'
-
-                            html_out += '</label>'
-                            html_out += '<div style="display:block; height: 5px; clear:both;"></div>'
-
-                        i += 1
-
-                    html_out += '<div style="display:block; height: 15px; clear:both;"></div>'
-
-                    response = make_response(jsonify(html_out))
-                    response.set_cookie('Offset', value='', max_age=0, expires=0)
-                    return response
-
-            else:
-                html_out = ""
-                html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
-
-                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                html_out += '</div>'
-                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-                html_out += 'Ваш тип аккаунта не определен. Перезайдите ( ´ ∀ ` )ﾉ'
-                html_out += '</div>'
-
-                response = make_response(jsonify(html_out))
-                response.set_cookie('Offset', value='', max_age=0, expires=0)
-                return response
+                s.post("https://children.dnevnik.ru/marks.aspx", {'child': child})
+                data = s.get("https://children.dnevnik.ru/marks.aspx?child=" + str(child) + "&index=-1&tab=stats").content
 
             tables = pd.read_html(data)[-1]
             json_out = loads(tables.to_json(force_ascii=False))
@@ -359,108 +302,13 @@ def summary():
 
         try:
             if request.cookies.get('AccountType') == 'Student':
-                try:
-                    data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=result").content
-
-                except KeyError:
-                    html_out = ""
-                    html_out += '<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>'
-
-                    html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                    html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                    html_out += '</div>'
-                    html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                    html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-                    html_out += 'Выбран неверный тип аккаунта. Перезайдите.'
-                    html_out += '</div>'
-
-                    response = make_response(jsonify(html_out))
-                    response.set_cookie('Offset', value='', max_age=0, expires=0)
-                    return response
+                data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=result").content
 
             elif request.cookies.get('AccountType') == 'Parent':
 
                 child = request.form.get('child', '')
-                if child is not '':
-                    s.post("https://children.dnevnik.ru/marks.aspx", {'child': child})
-                    data = s.get("https://children.dnevnik.ru/marks.aspx?child=" + str(child) + "&index=-1&tab=result").content
-
-                else:
-                    data = s.get("https://children.dnevnik.ru/marks.aspx").content
-                    soup = BeautifulSoup(data, "lxml")
-
-                    if soup.title.string == 'Страница не найдена (404)' or soup.title.string == "Отказано в доступе (403)":
-                        html_out = ""
-                        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>'
-
-                        html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                        html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                        html_out += '</div>'
-                        html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                        html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-                        html_out += 'Выбран неверный тип аккаунта. Перезайдите.'
-                        html_out += '</div>'
-
-                        response = make_response(jsonify(html_out))
-                        response.set_cookie('Offset', value='', max_age=0, expires=0)
-                        return response
-
-                    options = soup.find_all('option')
-                    opts = []
-
-                    for option in options:
-                        opts.append({option.text: option.attrs['value']})
-
-                    html_out = ""
-
-                    html_out += '<div id="children_out"></div>'
-
-                    i = 0
-                    for child in opts:
-                        for name, id in child.items():
-
-                            if i == 0:
-                                html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-checked is-upgraded" for="child' + str(i) + '" data-upgraded=",MaterialRadio,MaterialRipple">'
-                                html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '" checked>'
-
-                            else:
-                                html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" for="child' + str(i) + '" data-upgraded=",MaterialRadio,MaterialRipple">'
-                                html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '">'
-
-                            html_out += '<span class="mdl-radio__label">' + name.split(' ')[0] + ' ' + name.split(' ')[1] + '</span>'
-
-                            if i == 0:
-                                html_out += '<span class="mdl-radio__outer-circle"></span><span class="mdl-radio__inner-circle"></span><span class="mdl-radio__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple is-animating" style="width: 120.794px; height: 120.794px; transform: translate(-50%, -50%) translate(21px, 21px);"></span></span>'
-
-                            else:
-                                html_out += '<span class="mdl-radio__outer-circle"></span><span class="mdl-radio__inner-circle"></span><span class="mdl-radio__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span>'
-
-                            html_out += '</label>'
-                            html_out += '<div style="display:block; height: 5px; clear:both;"></div>'
-
-                        i += 1
-
-                    html_out += '<div style="display:block; height: 15px; clear:both;"></div>'
-
-                    response = make_response(jsonify(html_out))
-                    response.set_cookie('Offset', value='', max_age=0, expires=0)
-                    return response
-
-            else:
-                html_out = ""
-                html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
-
-                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                html_out += '</div>'
-                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-                html_out += 'Ваш тип аккаунта не определен. Перезайдите ( ´ ∀ ` )ﾉ'
-                html_out += '</div>'
-
-                response = make_response(jsonify(html_out))
-                response.set_cookie('Offset', value='', max_age=0, expires=0)
-                return response
+                s.post("https://children.dnevnik.ru/marks.aspx", {'child': child})
+                data = s.get("https://children.dnevnik.ru/marks.aspx?child=" + str(child) + "&index=-1&tab=result").content
 
             tables = pd.read_html(data)[-1]
 
@@ -723,108 +571,13 @@ def dnevnik():
         data = None
 
         if request.cookies.get('AccountType') == 'Student':
-            try:
-                data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate(typeDate='year', offset=offset) + "&month=" + (str(timeMonth) if timeMonth is not '' else timeDate(typeDate='month', offset=offset)) + "&day=" + (timeDate(typeDate='day', offset=offset) if timeDay is '' or timeMonth is '' else str(timeDay) if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset) != '6' else str(int(timeDay) - 1))).content
-
-            except KeyError:
-                html_out = ""
-                html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
-
-                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                html_out += '</div>'
-                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-                html_out += 'Выбран неверный тип аккаунта. Перезайдите.'
-                html_out += '</div>'
-
-                response = make_response(jsonify(html_out))
-                response.set_cookie('Offset', value='', max_age=0, expires=0)
-                return response
+            data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate(typeDate='year', offset=offset) + "&month=" + (str(timeMonth) if timeMonth is not '' else timeDate(typeDate='month', offset=offset)) + "&day=" + (timeDate(typeDate='day', offset=offset) if timeDay is '' or timeMonth is '' else str(timeDay) if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset) != '6' else str(int(timeDay) - 1))).content
 
         elif request.cookies.get('AccountType') == 'Parent':
 
             child = request.form.get('child', '')
-            if child is not '':
-                s.post("https://children.dnevnik.ru/marks.aspx", {'child': child})
-                data = s.get("https://children.dnevnik.ru/marks.aspx").content
-
-            else:
-                data = s.get("https://children.dnevnik.ru/marks.aspx").content
-                soup = BeautifulSoup(data, "lxml")
-
-                if soup.title.string == 'Страница не найдена (404)' or soup.title.string == "Отказано в доступе (403)":
-                    html_out = ""
-                    html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
-
-                    html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                    html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                    html_out += '</div>'
-                    html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                    html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-                    html_out += 'Выбран неверный тип аккаунта. Перезайдите.'
-                    html_out += '</div>'
-
-                    response = make_response(jsonify(html_out))
-                    response.set_cookie('Offset', value='', max_age=0, expires=0)
-                    return response
-
-                options = soup.find_all('option')
-                opts = []
-
-                for option in options:
-                    opts.append({option.text: option.attrs['value']})
-
-                html_out = ""
-
-                html_out += '<div id="children_out"></div>'
-
-                i = 0
-                for child in opts:
-                    for name, id in child.items():
-
-                        if i == 0:
-                            html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-checked is-upgraded" for="child' + str(i) + '" data-upgraded=",MaterialRadio,MaterialRipple">'
-                            html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '" checked>'
-
-                        else:
-                            html_out += '<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" for="child' + str(i) + '" data-upgraded=",MaterialRadio,MaterialRipple">'
-                            html_out += '<input type="radio" id="child' + str(i) + '" class="mdl-radio__button" name="child" value="' + id + '">'
-
-                        html_out += '<span class="mdl-radio__label">' + name.split(' ')[0] + ' ' + name.split(' ')[1] + '</span>'
-
-                        if i == 0:
-                            html_out += '<span class="mdl-radio__outer-circle"></span><span class="mdl-radio__inner-circle"></span><span class="mdl-radio__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple is-animating" style="width: 120.794px; height: 120.794px; transform: translate(-50%, -50%) translate(21px, 21px);"></span></span>'
-
-                        else:
-                            html_out += '<span class="mdl-radio__outer-circle"></span><span class="mdl-radio__inner-circle"></span><span class="mdl-radio__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span>'
-
-                        html_out += '</label>'
-                        html_out += '<div style="display:block; height: 5px; clear:both;"></div>'
-
-                    i += 1
-
-                html_out += '<div style="display:block; height: 15px; clear:both;"></div>'
-
-                response = make_response(jsonify(html_out))
-                response.set_cookie('Offset', value='', max_age=0, expires=0)
-                return response
-
-        else:
-            html_out = ""
-            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
-
-            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-            html_out += '</div>'
-            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-            html_out += '<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>'
-            html_out += 'Ваш тип аккаунта не определен. Перезайдите ( ´ ∀ ` )ﾉ'
-            html_out += '</div>'
-
-            response = make_response(jsonify(html_out))
-            response.set_cookie('Offset', value='', max_age=0, expires=0)
-            return response
+            s.post("https://children.dnevnik.ru/marks.aspx", {'child': child})
+            data = s.get("https://children.dnevnik.ru/marks.aspx").content
 
         columns = {0: 'Уроки', 1: 'Присутствие', 2: 'Оценки', 3: 'Замечания', 4: 'ДЗ'}
         tables = None
@@ -1185,6 +938,29 @@ def login():
             html_out += '<p style="text-align:center; color:red;">Данные неверны, либо Дневник.Ру в оффлайне ¯\_(ツ)_/¯</p>'
 
             return jsonify(html_out)
+
+        if accounttype == 'Student':
+            try:
+                schoolId(s)
+
+            except KeyError:
+                html_out = ""
+
+                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+                html_out += '<p style="text-align:center; color:red;">Выбран неверный тип аккаунта ¯\_(ツ)_/¯</p>'
+
+                return jsonify(html_out)
+
+        elif accounttype == 'Parent':
+            data = s.get("https://children.dnevnik.ru/marks.aspx").content
+            soup = BeautifulSoup(data, "lxml")
+
+            if soup.title.string == 'Страница не найдена (404)' or soup.title.string == "Отказано в доступе (403)":
+                html_out = ""
+                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+                html_out += '<p style="text-align:center; color:red;">Выбран неверный тип аккаунта ¯\_(ツ)_/¯</p>'
+
+                return jsonify(html_out)
 
         response = make_response(render_template_string('<script>window.location.replace("/");</script>'))
 

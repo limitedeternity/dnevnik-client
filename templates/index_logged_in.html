@@ -45,13 +45,22 @@
             <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"></header>
             <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
               <div class="mdl-card__supporting-text">
-                <h4>О проекте</h4>
-                Этот проект - тестовое решение для проверки некоторых аспектов интеграции проектов без наличия доступа к API. <br>
-                На данном примере - Дневник.Ру. <br> DnevnikClient - облегченная версия Дневник.Ру, расчитанная на просмотр данных, помещенная в рамки
-                Material Design. Клиент предоставляет функционал ровно в такой мере, которая требуется ученикам. Без тяжелого обвеса вроде ReactJS,
-                избыточных элементов интерфейса и функционала "соцсети". <br> Ничего лишнего. <br>
-                Исходный код доступен в моем репозитории GitHub. <br>
-                By @limitedeternity
+                {% if user %}
+                    <h4>Здравствуйте, {{ user }}</h4>
+                    Спасибо, что решили протестировать beta-версию DnevnikClient. Я очень это ценю. <br>
+                    Обо всех ошибках просьба сообщать, открывая Issue в репозитории. <br>
+                    Надеюсь, вам нравится клиент, и вы довольны его функционалом и проделанной мной работой. <br>
+                    Напоминаю, что проект - Open Source, так что вы в любой момент можете помочь разработке. <br>
+                    By @limitedeternity
+                {% else %}
+                    <h4>О проекте</h4>
+                    Этот проект - тестовое решение для проверки некоторых аспектов интеграции проектов без наличия доступа к API. <br>
+                    На данном примере - Дневник.Ру. <br> DnevnikClient - облегченная версия Дневник.Ру, расчитанная на просмотр данных, помещенная в рамки
+                    Material Design. Клиент предоставляет функционал ровно в такой мере, которая требуется ученикам. Без тяжелого обвеса вроде ReactJS,
+                    избыточных элементов интерфейса и функционала "соцсети". <br> Ничего лишнего. <br>
+                    Исходный код доступен в моем репозитории GitHub. <br>
+                    By @limitedeternity
+                {% endif %}
               </div>
             </div>
           </section>
@@ -73,7 +82,23 @@
                       <label class="mdl-textfield__label" for="month">Месяц (1-12)</label>
                   </div>
                   <div style="display:block; height: 5px; clear:both;"></div>
-                  <div id="children_out_dnevnik"></div>
+                  {% if opts %}
+                      {% for child in opts %}
+                          {% set counter = loop.index0 %}
+                          {% for name, id in child.items() %}
+                              <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="child{{ counter }}">
+                              {% if counter == 0 %}
+                                  <input type="radio" id="child{{ counter }}" class="mdl-radio__button" name="child" value="{{ id }}" checked>
+                              {% else %}
+                                  <input type="radio" id="child{{ counter }}" class="mdl-radio__button" name="child" value="{{ id }}">
+                              {% endif %}
+                              <span class="mdl-radio__label">{{ name.split(' ')[0] }} {{ name.split(' ')[1] }}</span>
+                              </label>
+                          {% endfor %}
+                          <div style="display:block; height: 5px; clear:both;"></div>
+                      {% endfor %}
+                      <div style="display:block; height: 15px; clear:both;"></div>
+                  {% endif %}
                   <button type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
                       <i class="material-icons">arrow_forward</i>
                       <span class="visuallyhidden">Next</span>
@@ -115,7 +140,23 @@
                       <label class="mdl-textfield__label" for="term">Семестр/Четверть (1-4)</label>
                   </div>
                   <div style="display:block; height: 5px; clear:both;"></div>
-                  <div id="children_out_stats"></div>
+                  {% if opts %}
+                      {% for child in opts %}
+                          {% set counter = loop.index0 %}
+                          {% for name, id in child.items() %}
+                              <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="child{{ counter }}">
+                              {% if counter == 0 %}
+                                  <input type="radio" id="child{{ counter }}" class="mdl-radio__button" name="child" value="{{ id }}" checked>
+                              {% else %}
+                                  <input type="radio" id="child{{ counter }}" class="mdl-radio__button" name="child" value="{{ id }}">
+                              {% endif %}
+                              <span class="mdl-radio__label">{{ name.split(' ')[0] }} {{ name.split(' ')[1] }}</span>
+                              </label>
+                          {% endfor %}
+                          <div style="display:block; height: 5px; clear:both;"></div>
+                      {% endfor %}
+                      <div style="display:block; height: 15px; clear:both;"></div>
+                  {% endif %}
                   <button type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
                       <i class="material-icons">arrow_forward</i>
                       <span class="visuallyhidden">Next</span>
@@ -153,7 +194,23 @@
                 <form action="/summary" method="post" id="dnevnik-summary">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                   <div style="display:block; height: 5px; clear:both;"></div>
-                  <div id="children_out_summary"></div>
+                  {% if opts %}
+                      {% for child in opts %}
+                          {% set counter = loop.index0 %}
+                          {% for name, id in child.items() %}
+                              <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="child{{ counter }}">
+                              {% if counter == 0 %}
+                                  <input type="radio" id="child{{ counter }}" class="mdl-radio__button" name="child" value="{{ id }}" checked>
+                              {% else %}
+                                  <input type="radio" id="child{{ counter }}" class="mdl-radio__button" name="child" value="{{ id }}">
+                              {% endif %}
+                              <span class="mdl-radio__label">{{ name.split(' ')[0] }} {{ name.split(' ')[1] }}</span>
+                              </label>
+                          {% endfor %}
+                          <div style="display:block; height: 5px; clear:both;"></div>
+                      {% endfor %}
+                      <div style="display:block; height: 15px; clear:both;"></div>
+                  {% endif %}
                   <button type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
                       <i class="material-icons">arrow_forward</i>
                       <span class="visuallyhidden">Next</span>
