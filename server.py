@@ -151,7 +151,7 @@ def stats():
                     data = s.get("https://children.dnevnik.ru/marks.aspx").content
                     soup = BeautifulSoup(data, "lxml")
 
-                    if soup.title.string == 'Страница не найдена (404)':
+                    if soup.title.string == 'Страница не найдена (404)' or soup.title.string == "Отказано в доступе (403)":
                         html_out = ""
                         html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
 
@@ -381,7 +381,7 @@ def summary():
                     data = s.get("https://children.dnevnik.ru/marks.aspx").content
                     soup = BeautifulSoup(data, "lxml")
 
-                    if soup.title.string == 'Страница не найдена (404)':
+                    if soup.title.string == 'Страница не найдена (404)' or soup.title.string == "Отказано в доступе (403)":
                         html_out = ""
                         html_out += '<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>'
 
@@ -737,7 +737,7 @@ def dnevnik():
                 data = s.get("https://children.dnevnik.ru/marks.aspx").content
                 soup = BeautifulSoup(data, "lxml")
 
-                if soup.title.string == 'Страница не найдена (404)':
+                if soup.title.string == 'Страница не найдена (404)' or soup.title.string == "Отказано в доступе (403)":
                     html_out = ""
                     html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
 
