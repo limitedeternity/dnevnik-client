@@ -101,16 +101,10 @@ $(document).ready(function() {
                         timeout: 30000,
                     })
                     .done(function(data) {
-                        if (data.indexOf('<div id="children_out"></div>') !== -1) {
-                            $("#children_out_dnevnik").html(data.replace('<div id="children_out"></div>', ''));
-                            $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'></div>");
-                            return;
-                        } else {
-                            $("#dnevnik-out").html(data);
-                        }
+                        $("#dnevnik-out").html(data);
 
                         if (localStorage.getItem('dnevnik') !== null) {
-                            if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1) && (data.indexOf('<div id="children_out"></div>') === -1)) {
+                            if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)) {
                                 if (ajaxCalled === true) {
                                     if (data !== localStorage.getItem('dnevnik')) {
                                         notify();
@@ -122,7 +116,7 @@ $(document).ready(function() {
                             }
 
                         } else {
-                            if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)  && (data.indexOf('<div id="children_out"></div>') === -1)) {
+                            if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)) {
                                 localStorage.setItem('dnevnik', data);
                             }
                         }
@@ -194,22 +188,16 @@ $(document).ready(function() {
                     timeout: 30000,
                 })
                 .done(function(data) {
-                    if (data.indexOf('<div id="children_out"></div>') !== -1) {
-                        $("#children_out_stats").html(data.replace('<div id="children_out"></div>', ''));
-                        $("#stats-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Cтатистика</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'></div>");
-                        return;
-                    } else {
-                        $("#stats-out").html(data);
-                    }
+                    $("#stats-out").html(data);
                     
                     if (localStorage.getItem('stats') !== null) {
-                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)  && (data.indexOf('<div id="children_out"></div>') === -1)) {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)) {
                             localStorage.removeItem("stats");
                             localStorage.setItem('stats', data);
                         }
 
                     } else {
-                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1) && (data.indexOf('<div id="children_out"></div>') === -1)) {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)) {
                             localStorage.setItem('stats', data);
                         }
                     }
@@ -274,22 +262,16 @@ $(document).ready(function() {
                     timeout: 30000,
                 })
                 .done(function(data) {
-                    if (data.indexOf('<div id="children_out"></div>') !== -1) {
-                        $("#children_out_summary").html(data.replace('<div id="children_out"></div>', ''));
-                        $("#summary-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Итоговые</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'></div>");
-                        return;
-                    } else {
-                        $("#summary-out").html(data);
-                    }
+                    $("#summary-out").html(data);
 
                     if (localStorage.getItem('summary') !== null) {
-                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1) && (data.indexOf('<div id="children_out"></div>') === -1)) {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)) {
                             localStorage.removeItem("summary");
                             localStorage.setItem('summary', data);
                         }
 
                     } else {
-                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1) && (data.indexOf('<div id="children_out"></div>') === -1)) {
+                        if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)) {
                             localStorage.setItem('summary', data);
                         }
                     }
