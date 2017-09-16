@@ -41,12 +41,13 @@ $(document).ready(function() {
                 timeout: 30000,
             })
             .done(function(data) {
-                if (data !== null) {
-                    $("#error").html(data);
-                    $("#login-btn").show();
+                $("#error").html(data);
+
+                if (data.indexOf("Аутентификация завершена.") !== -1) {
+                    setTimeout(function(){location.reload();} , 1000);
 
                 } else {
-                    location.reload();
+                    $("#login-btn").show();
                 }
 
             })
