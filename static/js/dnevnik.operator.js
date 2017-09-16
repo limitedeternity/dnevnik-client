@@ -44,7 +44,7 @@ $(document).ready(function() {
                 $("#error").html(data);
 
                 if (data.indexOf("Аутентификация завершена.") !== -1) {
-                    setTimeout(function(){location.reload();} , 1000);
+                    setTimeout(function(){location.href="/main";} , 1000);
 
                 } else {
                     $("#login-btn").show();
