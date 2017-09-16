@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, render_template_string, make_response, send_from_directory, request, redirect, jsonify
+from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify
 from random import choice
 from re import match
 from bs4 import BeautifulSoup
@@ -962,7 +962,11 @@ def login():
 
                 return jsonify(html_out)
 
-        response = make_response(render_template_string('<script>window.location.replace("/main");</script>'))
+        html_out = ""
+        html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+        html_out += '<p style="text-align:center; color:green;">Аутентификация завершена.</p>'
+
+        response = make_response(jsonify(html_out))
 
         response.set_cookie('DnevnikLogin', value=b32encode(b64encode(login.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
         response.set_cookie('DnevnikPass', value=b32encode(b64encode(password.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
