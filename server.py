@@ -991,6 +991,7 @@ def logout():
             response.set_cookie('DnevnikLogin', value='', max_age=0, expires=0)
             response.set_cookie('DnevnikPass', value='', max_age=0, expires=0)
             response.set_cookie('AccountType', value='', max_age=0, expires=0)
+            response.set_cookie('Offset', value='', max_age=0, expires=0)
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
