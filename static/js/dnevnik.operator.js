@@ -87,71 +87,72 @@ $(document).ready(function() {
         } else {
             document.cookie = "Offset=" + (-new Date().getTimezoneOffset() / 60);
 
-            var callout = function() {
+            var ajaxCalled = false;
 
-                var csrf_token = "{{ csrf_token() }}";
+            var csrf_token = "{{ csrf_token() }}";
 
-                $.ajaxSetup({
-                    beforeSend: function(xhr, settings) {
-                        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-                            xhr.setRequestHeader("X-CSRFToken", csrf_token);
-                        }
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
                     }
-                });
+                }
+            });
 
-                $.ajax({
-                        url: "/dnevnik",
-                        type: "POST",
-                        dataType: "json",
-                        data: $("#dnevnik-date").serialize(),
-                        timeout: 30000,
-                    })
-                    .done(function(data) {
-                        $("#dnevnik-out").html(data);
+            $.ajax({
+                    url: "/dnevnik",
+                    type: "POST",
+                    dataType: "json",
+                    data: $("#dnevnik-date").serialize(),
+                    timeout: 30000,
+            })
+            .done(function(data) {
+                $("#dnevnik-out").html(data);
 
-                        if (localStorage.getItem('dnevnik') !== null) {
-                            if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)) {
-                                if (ajaxCalled === true) {
-                                    if (data !== localStorage.getItem('dnevnik')) {
-                                        notify();
-                                    }
-                                }
-
-                                localStorage.removeItem("dnevnik");
-                                localStorage.setItem('dnevnik', data);
-                            }
-
-                        } else {
-                            if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)) {
-                                localStorage.setItem('dnevnik', data);
+                if (localStorage.getItem('dnevnik') !== null) {
+                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)) {
+                        if (ajaxCalled === true) {
+                            if (data !== localStorage.getItem('dnevnik')) {
+                                notify();
                             }
                         }
 
-                        $('.mdl-layout__content').animate({
-                            scrollTop: $("#dnevnik-out").offset().top + 'px'
-                        }, 'fast');
-                    })
-                    .fail(function() {
-                        if (localStorage.getItem('dnevnik') !== null) {
-                            $("#dnevnik-out").html(localStorage.getItem('dnevnik').replace('<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+                        localStorage.removeItem("dnevnik");
+                        localStorage.setItem('dnevnik', data);
+                    }
 
-                            $('.mdl-layout__content').animate({
-                                scrollTop: $("#dnevnik-out").offset().top + 'px'
-                            }, 'fast');
+                } else {
+                    if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)) {
+                        localStorage.setItem('dnevnik', data);
+                    }
+                }
 
-                        } else {
-                            location.reload();
-                        }
+                $('.mdl-layout__content').animate({
+                    scrollTop: $("#dnevnik-out").offset().top + 'px'
+                }, 'fast');
 
-                    })
-                    .always(function() {
-                        setTimeout(callout, 1000 * 60 * 5);
-                    });
+            })
+            .fail(function() {
+                if (localStorage.getItem('dnevnik') !== null) {
+                    $("#dnevnik-out").html(localStorage.getItem('dnevnik').replace('<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
-            };
+                    $('.mdl-layout__content').animate({
+                        scrollTop: $("#dnevnik-out").offset().top + 'px'
+                    }, 'fast');
 
-            callout();
+                } else {
+                    location.reload();
+                }
 
+            })
+            .always(function() {
+
+                if (!ajaxCalled) {
+                    ajaxCalled = true;
+                }
+
+                setTimeout(function(){$("#dnevnik-date").submit();}, 1000 * 60 * 5);
+            });
         }
 
     });
