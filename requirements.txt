@@ -1,5 +1,6 @@
 Flask
 Flask-WTF
+flask-sslify
 CacheControl
 waitress
 pandas
