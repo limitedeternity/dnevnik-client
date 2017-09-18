@@ -147,7 +147,7 @@ $(document).ready(function() {
 
                     })
                     .always(function() {
-                        setTimeout(callout, 1000 * 60 * 5);
+                        setTimeout(callout, 1000 * 60 * 2.5);
                     });
             };
 
