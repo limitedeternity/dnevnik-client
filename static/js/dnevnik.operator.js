@@ -87,7 +87,7 @@ $(document).ready(function() {
         } else {
             document.cookie = "Offset=" + (-new Date().getTimezoneOffset() / 60);
 
-            setInterval(function() {
+            var callout = function() {
 
                 var csrf_token = "{{ csrf_token() }}";
 
@@ -143,9 +143,14 @@ $(document).ready(function() {
                             location.reload();
                         }
 
+                    })
+                    .always(function() {
+                        setTimeout(callout, 1000 * 60 * 5);
                     });
 
-            }, 1000 * 60 * 5);
+            };
+
+            callout();
 
         }
 
