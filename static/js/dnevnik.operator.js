@@ -87,9 +87,7 @@ $(document).ready(function() {
         } else {
             document.cookie = "Offset=" + (-new Date().getTimezoneOffset() / 60);
 
-            var date = $("#dnevnik-date").serialize();
-            var ajaxCalled = false;
-            var callout = function() {
+            setInterval(function() {
 
                 var csrf_token = "{{ csrf_token() }}";
 
@@ -105,7 +103,7 @@ $(document).ready(function() {
                         url: "/dnevnik",
                         type: "POST",
                         dataType: "json",
-                        data: date,
+                        data: $("#dnevnik-date").serialize(),
                         timeout: 30000,
                     })
                     .done(function(data) {
@@ -145,13 +143,10 @@ $(document).ready(function() {
                             location.reload();
                         }
 
-                    })
-                    .always(function() {
-                        setTimeout(callout, 1000 * 60 * 2.5);
                     });
-            };
 
-            callout();
+            }, 1000 * 60 * 5);
+
         }
 
     });
