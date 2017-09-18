@@ -1,5 +1,12 @@
 $(document).ready(function() {
 
+
+    if (location.pathname == "/") {
+        if (Cookies.get('DnevnikLogin') !== undefined) {
+            location.replace("/main");
+        }
+    }
+
     if (!("Notification" in window)) {
         console.log("This browser does not support system notifications");
     } else if (Notification.permission === "default") {
