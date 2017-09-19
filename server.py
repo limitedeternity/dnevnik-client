@@ -122,7 +122,7 @@ def main():
             soup = BeautifulSoup(data, "lxml")
 
             if soup.title.string == 'Профилактические работы':
-                opts = [{"Профилактические работы", "1337"}]
+                opts = [{"Профилактические работы": "1337"}]
 
             else:
                 options = soup.find_all('option')
