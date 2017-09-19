@@ -912,12 +912,12 @@ def dnevnik():
 
 
 @app.route("/login", methods=['POST'])
-def login():
-    username = request.form.get('username', '')
+def log_in():
+    login = request.form.get('username', '')
     password = request.form.get('password', '')
     accounttype = request.form.get('accounttype', '')
 
-    if username is not '' and password is not '' and accounttype is not '':
+    if login is not '' and password is not '' and accounttype is not '':
         s = CacheControl(Session())
 
         s.headers.update({'Upgrade-Insecure-Requests': '1',
@@ -927,7 +927,7 @@ def login():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
-        login_payload = {'login': username, 'password': password,
+        login_payload = {'login': login, 'password': password,
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
@@ -972,7 +972,7 @@ def login():
 
         response = make_response(jsonify(html_out))
 
-        response.set_cookie('DnevnikLogin', value=b32encode(b64encode(username.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
+        response.set_cookie('DnevnikLogin', value=b32encode(b64encode(login.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
         response.set_cookie('DnevnikPass', value=b32encode(b64encode(password.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
         response.set_cookie('AccountType', value=str(accounttype), max_age=2592000, expires=2592000)
 
@@ -988,7 +988,7 @@ def login():
 
 
 @app.route("/logout", methods=['GET'])
-def logout():
+def log_out():
     response = make_response(redirect('/'))
 
     if 'DnevnikLogin' in request.cookies:
