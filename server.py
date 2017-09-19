@@ -108,7 +108,11 @@ def main():
         data = s.get("https://dnevnik.ru/").content
         soup = BeautifulSoup(data, "lxml")
 
-        user = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__initials'}).text
+        if soup.title.string == 'Профилактические работы':
+            user = "товарищ Тестер"
+
+        else:
+            user = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__initials'}).text
 
     if request.cookies.get("AccountType") == 'Student':
         response = make_response(render_template('index_logged_in.html', user=user))
@@ -117,11 +121,15 @@ def main():
             data = s.get("https://children.dnevnik.ru/marks.aspx").content
             soup = BeautifulSoup(data, "lxml")
 
-            options = soup.find_all('option')
-            opts = []
+            if soup.title.string == 'Профилактические работы':
+                opts = [{"Профилактические работы", "1337"}]
 
-            for option in options:
-                opts.append({option.text: option.attrs['value']})
+            else:
+                options = soup.find_all('option')
+                opts = []
+
+                for option in options:
+                    opts.append({option.text: option.attrs['value']})
 
             response = make_response(render_template('index_logged_in.html', opts=opts, user=user))
 
