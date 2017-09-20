@@ -44,7 +44,22 @@ Required functionality
 def timeDate(typeDate, offset, timeMonth='', timeDay=''):
 
     if typeDate == 'day':
-        return str((datetime.now(tz=utc) + timedelta(hours=offset)).day)
+        if (datetime.now(tz=utc) + timedelta(hours=offset)).weekday() != 6 and (datetime.now(tz=utc) + timedelta(hours=offset)).weekday() + 1 != 6:
+            if (datetime.now(tz=utc) + timedelta(hours=offset)).hour < 16:
+                return str((datetime.now(tz=utc) + timedelta(hours=offset)).day)
+
+            else:
+                return str((datetime.now(tz=utc) + timedelta(hours=offset)).day + 1)
+
+        elif (datetime.now(tz=utc) + timedelta(hours=offset)).weekday() + 1 == 6:
+            if (datetime.now(tz=utc) + timedelta(hours=offset)).hour < 16:
+                return str((datetime.now(tz=utc) + timedelta(hours=offset)).day)
+
+            else:
+                return str((datetime.now(tz=utc) + timedelta(hours=offset)).day + 2)
+
+        elif (datetime.now(tz=utc) + timedelta(hours=offset)).weekday() == 6:
+            return str((datetime.now(tz=utc) + timedelta(hours=offset)).day + 1)
 
     elif typeDate == 'month':
         return str((datetime.now(tz=utc) + timedelta(hours=offset)).month)
