@@ -49,17 +49,17 @@ def timeDate(typeDate, offset, timeMonth='', timeDay=''):
                 return str((datetime.now(tz=utc) + timedelta(hours=offset)).day)
 
             else:
-                return str((datetime.now(tz=utc) + timedelta(hours=offset)).day + 1)
+                return str((datetime.now(tz=utc) + timedelta(hours=offset, days=1)).day)
 
         elif (datetime.now(tz=utc) + timedelta(hours=offset)).weekday() + 1 == 6:
             if (datetime.now(tz=utc) + timedelta(hours=offset)).hour < 16:
                 return str((datetime.now(tz=utc) + timedelta(hours=offset)).day)
 
             else:
-                return str((datetime.now(tz=utc) + timedelta(hours=offset)).day + 2)
+                return str((datetime.now(tz=utc) + timedelta(hours=offset, days=2)).day)
 
         elif (datetime.now(tz=utc) + timedelta(hours=offset)).weekday() == 6:
-            return str((datetime.now(tz=utc) + timedelta(hours=offset)).day + 1)
+            return str((datetime.now(tz=utc) + timedelta(hours=offset, days=1)).day)
 
     elif typeDate == 'month':
         return str((datetime.now(tz=utc) + timedelta(hours=offset)).month)
