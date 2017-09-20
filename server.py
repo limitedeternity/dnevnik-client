@@ -598,7 +598,7 @@ def dnevnik():
         data = None
 
         if request.cookies.get('AccountType') == 'Student':
-            data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate(typeDate='year', offset=offset) + "&month=" + (str(timeMonth) if timeMonth is not '' else timeDate(typeDate='month', offset=offset)) + "&day=" + (timeDate(typeDate='day', offset=offset) if timeDay is '' or timeMonth is '' else str(timeDay) if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset) != '6' else str(int(timeDay) - 1))).content
+            data = s.get("https://schools.dnevnik.ru/marks.aspx?school=" + schoolId(s) + "&index=-1&tab=week&year=" + timeDate(typeDate='year', offset=offset) + "&month=" + (str(timeMonth) if timeDay is not '' and timeMonth is not '' else timeDate(typeDate='month', offset=offset)) + "&day=" + (timeDate(typeDate='day', offset=offset) if timeDay is '' or timeMonth is '' else str(timeDay))).content
 
         elif request.cookies.get('AccountType') == 'Parent':
 
@@ -612,11 +612,7 @@ def dnevnik():
 
         try:
             if timeMonth is '' or timeDay is '':
-                if timeDate(typeDate='weekday', offset=offset) != '6':
-                    tables = pd.read_html(data)[int(timeDate(typeDate='weekday', offset=offset))].rename(columns=columns)
-
-                else:
-                    tables = pd.read_html(data)[int(timeDate(typeDate='weekday', offset=offset)) - 1].rename(columns=columns)
+                tables = pd.read_html(data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=timeDate(typeDate='month', offset=offset)))].rename(columns=columns)
 
             else:
                 if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset) != '6':
