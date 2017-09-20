@@ -112,7 +112,7 @@ def main():
             user = "товарищ Тестер"
 
         else:
-            user = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__initials'}).text
+            user = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__initials'}).text[:-1]
 
     if request.cookies.get("AccountType") == 'Student':
         response = make_response(render_template('index_logged_in.html', user=user))
