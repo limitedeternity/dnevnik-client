@@ -616,10 +616,10 @@ def dnevnik():
 
             else:
                 if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset) != '6':
-                    tables = pd.read_html(data)[int(timeDate(typeDate='weekday', timeMonth=timeMonth, timeDay=timeDay, offset=offset))].rename(columns=columns)
+                    tables = pd.read_html(data)[int(timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset))].rename(columns=columns)
 
                 else:
-                    tables = pd.read_html(data)[int(timeDate(typeDate='weekday', timeMonth=timeMonth, timeDay=timeDay, offset=offset)) - 1].rename(columns=columns)
+                    tables = pd.read_html(data)[5].rename(columns=columns)
 
         except (ValueError, IndexError):
             html_out = ""
