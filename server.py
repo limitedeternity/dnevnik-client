@@ -688,7 +688,7 @@ def dnevnik():
 
                 # ...
                 if str(json_out["Присутствие"][str(i)]) == 'None':
-                    html_out += '<h8 style="color:teal;">Присутствие: отмечено.</h8>' + "<br>"
+                    html_out += '<h8 style="color:teal;">Присутствие: без отклонений.</h8>' + "<br>"
 
                 elif str(json_out["Присутствие"][str(i)]) == 'Н':
                     html_out += '<h8 style="color:red;">Присутствие: неявка.</h8>' + "<br>"
@@ -798,7 +798,7 @@ def dnevnik():
 
                 # ...
                 if str(json_out["Присутствие"][str(i + 1)]) == 'None':
-                    html_out += '<h8 style="color:teal;">Присутствие: отмечено.</h8>' + "<br>"
+                    html_out += '<h8 style="color:teal;">Присутствие: без отклонений.</h8>' + "<br>"
 
                 elif str(json_out["Присутствие"][str(i + 1)]) == 'Н':
                     html_out += '<h8 style="color:red;">Присутствие: неявка.</h8>' + "<br>"
