@@ -83,7 +83,12 @@
                       <input class="mdl-textfield__input" type="text" name="month" id="month" pattern="^([1-9]|1[012])$" value="" autocomplete="off" />
                       <label class="mdl-textfield__label" for="month">Месяц (1-12)</label>
                   </div>
-                  <div style="display:block; height: 5px; clear:both;"></div>
+                  <div style="display:block; height: 15px; clear:both;"></div>
+                  <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="last_year">
+                       <input type="checkbox" id="last_year" name="last_year" value="1" class="mdl-switch__input">
+                       <span class="mdl-switch__label">Прошлое полугодие?</span>
+                  </label>
+                  <div style="display:block; height: 15px; clear:both;"></div>
                   {% if opts %}
                       {% for child in opts %}
                           {% set counter = loop.index0 %}
