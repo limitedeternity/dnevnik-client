@@ -3,7 +3,7 @@
 from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify
 from flask_sslify import SSLify
 from random import choice
-from re import match
+from re import match, findall
 from bs4 import BeautifulSoup
 from requests import Session
 from datetime import datetime, timedelta
@@ -814,7 +814,12 @@ def dnevnik():
                     html_out += '<h8 style="color:#212121;">ДЗ: нет.  ヽ(ー_ー )ノ</h8><br>'
 
                 else:
-                    html_out += f'<h8 style="color:#212121;">ДЗ: {str(json_out["ДЗ"][str(i)])}</h8><br>'
+                    hw = str(json_out["ДЗ"][str(i)])
+                    links = findall(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)
+                    for link in links:
+                        hw.replace(link, f'<a href="{link}" target="_blank"></a>')
+
+                    html_out += f'<h8 style="color:#212121;">ДЗ: {hw}</h8><br>'
 
                 html_out += f'<h8 style="color:#212121;">Время: {timing["Время"][str(i)]}</h8><br>'
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
