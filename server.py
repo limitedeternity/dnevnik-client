@@ -817,7 +817,7 @@ def dnevnik():
                     hw = str(json_out["ДЗ"][str(i)])
                     links = findall(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)
                     for link in links:
-                        hw.replace(link, f'<a href="{link}" target="_blank"></a>')
+                        hw = hw.replace(link, f'<a href="{link}" target="_blank"></a>')
 
                     html_out += f'<h8 style="color:#212121;">ДЗ: {hw}</h8><br>'
 
@@ -932,7 +932,7 @@ def dnevnik():
                     hw = str(json_out["ДЗ"][str(i + 1)])
                     links = findall(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)
                     for link in links:
-                        hw.replace(link, f'<a href="{link}" target="_blank"></a>')
+                        hw = hw.replace(link, f'<a href="{link}" target="_blank"></a>')
 
                     html_out += f'<h8 style="color:#212121;">ДЗ: {hw}</h8><br>'
 
