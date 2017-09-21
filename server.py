@@ -929,7 +929,12 @@ def dnevnik():
                     html_out += '<h8 style="color:#212121;">ДЗ: нет.  ヽ(ー_ー )ノ</h8><br>'
 
                 else:
-                    html_out += f'<h8 style="color:#212121;">ДЗ: {str(json_out["ДЗ"][str(i + 1)])}</h8><br>'
+                    hw = str(json_out["ДЗ"][str(i + 1)])
+                    links = findall(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)
+                    for link in links:
+                        hw.replace(link, f'<a href="{link}" target="_blank"></a>')
+
+                    html_out += f'<h8 style="color:#212121;">ДЗ: {hw}</h8><br>'
 
                 html_out += f'<h8 style="color:#212121;">Время: {timing["Время"][str(i + 1)]}</h8><br>'
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
