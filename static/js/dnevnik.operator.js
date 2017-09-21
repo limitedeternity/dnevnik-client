@@ -63,10 +63,16 @@ $(document).ready(function() {
             });
     });
 
-    $("#dnevnik-date").on("submit", function(a) {
+    $("#diary-submit").on("click", function(a) {
         a.preventDefault();
 
         $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
+
+        $("#dnevnik-date").submit();
+    });
+
+    $("#dnevnik-date").on("submit", function(a) {
+        a.preventDefault();
 
         $('.mdl-layout__content').animate({
             scrollTop: $("#dnevnik-out").offset().top + 'px'
