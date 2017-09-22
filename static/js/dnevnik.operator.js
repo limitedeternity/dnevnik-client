@@ -3,6 +3,9 @@ $(document).ready(function() {
 
     if (location.pathname == "/") {
         if (Cookies.get('DnevnikLogin') !== undefined) {
+            $("#nav").html('<a href="#overview" class="mdl-layout__tab is-active">Главная</a>');
+            $("#login").remove();
+            $("#text").html("<div class='loader'>Loading...</div>");
             location.replace("/main");
         }
     }
