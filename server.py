@@ -204,7 +204,7 @@ def stats():
                 child = request.form.get('child', '')
                 data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=stats").content
 
-            tables = pd.read_html(data)[-1]
+            tables = pd.read_html(io=data)[-1]
             json_out = loads(tables.to_json(force_ascii=False))
 
         except (ValueError, IndexError):
@@ -346,7 +346,7 @@ def summary():
                 child = request.form.get('child', '')
                 data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=result").content
 
-            tables = pd.read_html(data)[-1]
+            tables = pd.read_html(io=data)[-1]
 
             header = tables.iloc[0]
             tables = tables[1:-5]
@@ -622,25 +622,25 @@ def dnevnik():
         try:
             if timeMonth is '' or timeDay is '':
                 if last_year == '1':
-                    tables = pd.read_html(data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=timeDate(typeDate='month', offset=offset), lastYear=True))].rename(columns=columns)
+                    tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=timeDate(typeDate='month', offset=offset), lastYear=True))].rename(columns=columns)
 
                 else:
-                    tables = pd.read_html(data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=timeDate(typeDate='month', offset=offset)))].rename(columns=columns)
+                    tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=timeDate(typeDate='month', offset=offset)))].rename(columns=columns)
 
             else:
                 if last_year == '1':
                     if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset, lastYear=True) != '6':
-                        tables = pd.read_html(data)[int(timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset, lastYear=True))].rename(columns=columns)
+                        tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset, lastYear=True))].rename(columns=columns)
 
                     else:
-                        tables = pd.read_html(data)[5].rename(columns=columns)
+                        tables = pd.read_html(io=data)[5].rename(columns=columns)
 
                 else:
                     if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset) != '6':
-                        tables = pd.read_html(data)[int(timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset))].rename(columns=columns)
+                        tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset))].rename(columns=columns)
 
                     else:
-                        tables = pd.read_html(data)[5].rename(columns=columns)
+                        tables = pd.read_html(io=data)[5].rename(columns=columns)
 
         except (ValueError, IndexError):
             html_out = ""
@@ -679,7 +679,7 @@ def dnevnik():
             schedule = s.get(f"https://children.dnevnik.ru/timetable.aspx?child={child}&tab=timetable").content
 
         columns = {0: 'Урок', 1: 'Время'}
-        tables_sch = pd.read_html(schedule)[-1].rename(columns=columns)
+        tables_sch = pd.read_html(io=schedule)[-1].rename(columns=columns)
 
         timing = loads(tables_sch.to_json(force_ascii=False))
         alt_grading = False
