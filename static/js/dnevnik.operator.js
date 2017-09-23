@@ -3,7 +3,7 @@ $(document).ready(function() {
 
     if (location.pathname == "/") {
         if (Cookies.get('DnevnikLogin') !== undefined) {
-            $("#nav").html('<a href="#overview" class="mdl-layout__tab is-active">Главная</a>');
+            $("#nav").html('<a href="#overview" class="mdl-layout__tab is-active">Загрузка...</a>');
             $("#login").remove();
             $("#text").html("<div class='loader'>Loading...</div>");
             location.replace("/main");
@@ -33,17 +33,18 @@ $(document).ready(function() {
         $("#login-btn").hide();
         $("#error").html("<div class='loader'>Loading...</div>");
 
-        var csrf_token = "{{ csrf_token() }}";
+        if (navigator.onLine) {
+            var csrf_token = "{{ csrf_token() }}";
 
-        $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                    }
                 }
-            }
-        });
+            });
 
-        $.ajax({
+            $.ajax({
                 url: "/login",
                 type: "POST",
                 dataType: "json",
@@ -64,6 +65,11 @@ $(document).ready(function() {
             .fail(function() {
                 location.reload();
             });
+
+        } else {
+            $("#error").html('<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:red;">Оффлайн ¯\_(ツ)_/¯</p>');
+            $("#login-btn").show();
+        }
     });
 
     $("#diary-submit").on("click", function(a) {
