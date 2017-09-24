@@ -12,7 +12,7 @@ var preLoad = function(){
               '/css/material.teal-blue.min.css',
               '/css/md_icons.css',
               '/css/Roboto.css',
-              '/css/styles.css',
+              '/css/styles-teal.css',
               '/images/favicon.png',
               '/js/dnevnik.operator.js',
               '/js/js.cookie.min.js',
