@@ -113,20 +113,6 @@ def index():
     return response
 
 
-@app.route("/index_cache", methods=['GET'])
-def index_cache():
-    response = make_response(render_template('index-cache.html'))
-
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-XSS-Protection'] = '1; mode=block'
-    response.headers['Cache-Control'] = 'no-cache'
-    response.headers['Strict-Transport-Security'] = 'max-age=31536000'
-    response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'"
-    response.set_cookie('Offset', value='', max_age=0, expires=0)
-    return response
-
-
 @app.route("/main", methods=['GET'])
 def main():
     if 'DnevnikLogin' in request.cookies:
@@ -175,65 +161,6 @@ def main():
 
     else:
         response = make_response(render_template('index_logged_in.html'))
-
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-XSS-Protection'] = '1; mode=block'
-    response.headers['Cache-Control'] = 'no-cache'
-    response.headers['Strict-Transport-Security'] = 'max-age=31536000'
-    response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'"
-    response.set_cookie('Offset', value='', max_age=0, expires=0)
-    return response
-
-
-@app.route("/main_cache", methods=['GET'])
-def main_cache():
-    if 'DnevnikLogin' in request.cookies:
-        s = CacheControl(Session())
-
-        s.headers.update({'Upgrade-Insecure-Requests': '1',
-                          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-                          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-                          'DNT': '1',
-                          'Accept-Encoding': 'gzip, deflate, br',
-                          'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
-
-        login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
-                         'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
-                         'exceededAttempts': 'False', 'ReturnUrl': ''}
-
-        s.post('https://login.dnevnik.ru/login', login_payload)
-
-        data = s.get("https://dnevnik.ru/").content
-        soup = BeautifulSoup(data, "lxml")
-
-        if soup.title.string == 'Профилактические работы':
-            user = "товарищ Тестер"
-
-        else:
-            user = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__initials'}).text[:-1]
-
-    if request.cookies.get("AccountType") == 'Student':
-        response = make_response(render_template('index_logged_in-cache.html', user=user))
-
-    elif request.cookies.get("AccountType") == 'Parent':
-            data = s.get("https://children.dnevnik.ru/marks.aspx").content
-            soup = BeautifulSoup(data, "lxml")
-
-            if soup.title.string == 'Профилактические работы':
-                opts = [{"Профилактические работы": "1337"}]
-
-            else:
-                options = soup.find_all('option')
-                opts = []
-
-                for option in options:
-                    opts.append({option.text: option.attrs['value']})
-
-            response = make_response(render_template('index_logged_in-cache.html', opts=opts, user=user))
-
-    else:
-        response = make_response(render_template('index_logged_in-cache.html'))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
