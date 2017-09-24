@@ -356,11 +356,12 @@ $(document).ready(function() {
             data: $("#dnevnik-settings").serialize(),
         })
         .done(function(data) {
-            console.log(data);
-            location.reload();
+            $("#error").html(data);
+            setTimeout(function(){location.reload();} , 500);
         })
         .fail(function() {
-            location.reload();
+            $("#error").html('<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:red;">Кто-то против смены темы c:</p>');
+            setTimeout(function(){location.reload();} , 500);
         });
     });
 
