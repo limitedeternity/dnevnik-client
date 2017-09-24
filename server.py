@@ -21,7 +21,7 @@ from cachecontrol import CacheControl
 from base64 import b64encode, b64decode, b32encode, b32decode
 
 
-debug = True
+debug = False
 
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = environ.get("SECRET_KEY", "".join(choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for _ in range(50)))
