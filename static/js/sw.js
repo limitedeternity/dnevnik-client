@@ -16,6 +16,8 @@ var preLoad = function(){
               '/css/styles-deep_purple.css',
               '/css/material.teal-blue.min.css',
               '/css/styles-teal.css',
+              '/css/material.pink-blue.min.css',
+              '/css/styles-pink.css',
               '/css/md_icons.css',
               '/css/Roboto.css',
               '/js/dnevnik.operator.js',
