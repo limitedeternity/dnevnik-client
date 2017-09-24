@@ -355,7 +355,8 @@ $(document).ready(function() {
             dataType: 'json',
             data: $("#dnevnik-settings").serialize(),
         })
-        .done(function() {
+        .done(function(data) {
+            console.log(data);
             location.reload();
         })
         .fail(function() {
