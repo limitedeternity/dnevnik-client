@@ -1,12 +1,46 @@
 $(document).ready(function() {
 
-
     if (location.pathname == "/") {
-        if (Cookies.get('DnevnikLogin') !== undefined) {
+        if (navigator.onLine) {
+            if (Cookies.get('DnevnikLogin') !== undefined) {
+                $("#nav").html('<a href="#overview" class="mdl-layout__tab is-active">Загрузка...</a>');
+                $("#login").remove();
+                $("#text").html("<div class='loader'>Loading...</div>");
+                location.replace("/main");
+            }
+        } else {
+            $("#nav").html('<a href="#overview" class="mdl-layout__tab is-active">Загрузка...</a>');
+            $("#login").remove();
+            $("#text").html("<div class='loader'>Loading...</div>");
+            location.replace("/index_cache");
+        }
+    } else if (location.pathname == "/index_cache") {
+        if (navigator.onLine) {
+            $("#nav").html('<a href="#overview" class="mdl-layout__tab is-active">Загрузка...</a>');
+            $("#login").remove();
+            $("#text").html("<div class='loader'>Loading...</div>");
+            location.replace("/");
+        } else {
+            if (Cookies.get('DnevnikLogin') !== undefined) {
+                $("#nav").html('<a href="#overview" class="mdl-layout__tab is-active">Загрузка...</a>');
+                $("#login").remove();
+                $("#text").html("<div class='loader'>Loading...</div>");
+                location.replace("/main_cache");
+            }
+        }
+    } else if (location.pathname == "/main_cache") {
+        if (navigator.onLine) {
             $("#nav").html('<a href="#overview" class="mdl-layout__tab is-active">Загрузка...</a>');
             $("#login").remove();
             $("#text").html("<div class='loader'>Loading...</div>");
             location.replace("/main");
+        }
+    } else if (location.pathname == "/main") {
+        if (!navigator.onLine) {
+            $("#nav").html('<a href="#overview" class="mdl-layout__tab is-active">Загрузка...</a>');
+            $("#login").remove();
+            $("#text").html("<div class='loader'>Loading...</div>");
+            location.replace("/main_cache");
         }
     }
 
@@ -310,6 +344,23 @@ $(document).ready(function() {
 
                 });
         }
+    });
+
+    $("#dnevnik-settings").on("submit", function(a) {
+        a.preventDefault();
+
+        $.ajax({
+            url: '/apply',
+            type: 'POST',
+            dataType: 'json',
+            data: $("#dnevnik-settings").serialize(),
+        })
+        .done(function() {
+            location.reload();
+        })
+        .fail(function() {
+            location.reload();
+        });
     });
 
     $('form').each(function() {
