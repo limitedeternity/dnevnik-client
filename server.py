@@ -1039,17 +1039,14 @@ def log_in():
 
 @app.route("/apply", methods=['POST'])
 def apply():
+    color = request.form.get('color', '')
 
     html_out = ""
-
     html_out += '<div style="display:block; height:2px; clear:both;"></div>'
     html_out += '<p style="text-align:center; color:green;">Смена цветовой схемы успешна ^^</p>'
 
     response = make_response(jsonify(html_out))
-
-    color = request.form.get('color', '')
     response.set_cookie('Theme', value=color, max_age=2592000, expires=2592000)
-
     return response
 
 
