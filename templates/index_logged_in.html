@@ -36,6 +36,12 @@
         <meta name="theme-color" content="#673AB7">
         <link rel="stylesheet" href="/css/material.deep_purple-blue.min.css">
         <link rel="stylesheet" href="/css/styles-deep_purple.css">
+    {% elif request.cookies.get('Theme') == "Pink" %}
+        <meta name="msapplication-TileColor" content="#E91E63">
+        <meta name="msapplication-navbutton-color" content="#E91E63">
+        <meta name="theme-color" content="#E91E63">
+        <link rel="stylesheet" href="/css/material.pink-blue.min.css">
+        <link rel="stylesheet" href="/css/styles-pink.css">
     {% else %}
         <meta name="msapplication-TileColor" content="teal">
         <meta name="msapplication-navbutton-color" content="teal">
@@ -91,6 +97,8 @@
                 <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--deep-orange-100 mdl-color-text--white"></header>
             {% elif request.cookies.get('Theme') == "Deep Purple" %}
                 <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--deep-purple-100 mdl-color-text--white"></header>
+            {% elif request.cookies.get('Theme') == "Pink" %}
+                <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--pink-100 mdl-color-text--white"></header>
             {% else %}
                 <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"></header>
             {% endif %}
@@ -320,6 +328,10 @@
                       <input type="radio" id="teal" name="color" value="Teal" class="mdl-radio__button" checked>
                       <span class="mdl-radio__label">Сине-зеленый</span>
                    </label>
+                   <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="pink">
+                      <input type="radio" id="pink" name="color" value="Pink" class="mdl-radio__button">
+                      <span class="mdl-radio__label">Розовый</span>
+                   </label>
                   {% elif request.cookies.get('Theme') == "Deep Orange" %}
                     <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_orange">
                       <input type="radio" id="deep_orange" name="color" value="Deep Orange" class="mdl-radio__button" checked>
@@ -334,6 +346,10 @@
                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="teal">
                       <input type="radio" id="teal" name="color" value="Teal" class="mdl-radio__button">
                       <span class="mdl-radio__label">Сине-зеленый</span>
+                   </label>
+                   <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="pink">
+                      <input type="radio" id="pink" name="color" value="Pink" class="mdl-radio__button">
+                      <span class="mdl-radio__label">Розовый</span>
                    </label>
                   {% elif request.cookies.get('Theme') == "Deep Purple" %}
                     <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_orange">
@@ -350,6 +366,29 @@
                       <input type="radio" id="teal" name="color" value="Teal" class="mdl-radio__button">
                       <span class="mdl-radio__label">Сине-зеленый</span>
                    </label>
+                   <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="pink">
+                      <input type="radio" id="pink" name="color" value="Pink" class="mdl-radio__button">
+                      <span class="mdl-radio__label">Розовый</span>
+                   </label>
+                  {% elif request.cookies.get('Theme') == "Pink" %}
+                  <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_orange">
+                      <input type="radio" id="deep_orange" name="color" value="Deep Orange" class="mdl-radio__button">
+                      <span class="mdl-radio__label">Оранжевый</span>
+                    </label>
+                    <div style="display:block; height: 15px; clear:both;"></div>
+                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_purple">
+                      <input type="radio" id="deep_purple" name="color" value="Deep Purple" class="mdl-radio__button">
+                      <span class="mdl-radio__label">Фиолетовый</span>
+                   </label>
+                   <div style="display:block; height: 15px; clear:both;"></div>
+                   <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="teal">
+                      <input type="radio" id="teal" name="color" value="Teal" class="mdl-radio__button">
+                      <span class="mdl-radio__label">Сине-зеленый</span>
+                   </label>
+                   <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="pink">
+                      <input type="radio" id="pink" name="color" value="Pink" class="mdl-radio__button" checked>
+                      <span class="mdl-radio__label">Розовый</span>
+                   </label>
                   {% else %}
                     <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_orange">
                       <input type="radio" id="deep_orange" name="color" value="Deep Orange" class="mdl-radio__button">
@@ -364,6 +403,10 @@
                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="teal">
                       <input type="radio" id="teal" name="color" value="Teal" class="mdl-radio__button" checked>
                       <span class="mdl-radio__label">Сине-зеленый</span>
+                   </label>
+                   <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="pink">
+                      <input type="radio" id="pink" name="color" value="Pink" class="mdl-radio__button">
+                      <span class="mdl-radio__label">Розовый</span>
                    </label>
                   {% endif %}
                   <div id="error"></div>

@@ -35,6 +35,12 @@
         <meta name="theme-color" content="#673AB7">
         <link rel="stylesheet" href="/css/material.deep_purple-blue.min.css">
         <link rel="stylesheet" href="/css/styles-deep_purple.css">
+    {% elif request.cookies.get('Theme') == "Pink" %}
+        <meta name="msapplication-TileColor" content="#E91E63">
+        <meta name="msapplication-navbutton-color" content="#E91E63">
+        <meta name="theme-color" content="#E91E63">
+        <link rel="stylesheet" href="/css/material.pink-blue.min.css">
+        <link rel="stylesheet" href="/css/styles-pink.css">
     {% else %}
         <meta name="msapplication-TileColor" content="teal">
         <meta name="msapplication-navbutton-color" content="teal">
@@ -86,6 +92,8 @@
                 <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--deep-orange-100 mdl-color-text--white"></header>
             {% elif request.cookies.get('Themes') == "Deep Purple" %}
                 <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--deep-purple-100 mdl-color-text--white"></header>
+            {% elif request.cookies.get('Theme') == "Pink" %}
+                <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--pink-100 mdl-color-text--white"></header>
             {% else %}
                 <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"></header>
             {% endif %}
