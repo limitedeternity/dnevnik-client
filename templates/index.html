@@ -15,6 +15,33 @@
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/js/js.cookie.min.js"></script>
     <script type="text/javascript" src="/js/dnevnik.operator.js"></script>
+    <link rel="stylesheet" href="/css/Roboto.css">
+    <link rel="stylesheet" href="/css/md_icons.css">
+    {% if request.cookies.get('Theme') == "Teal" %}
+        <meta name="msapplication-TileColor" content="teal">
+        <meta name="msapplication-navbutton-color" content="teal">
+        <meta name="theme-color" content="teal">
+        <link rel="stylesheet" href="/css/material.teal-blue.min.css">
+        <link rel="stylesheet" href="/css/styles-teal.css">
+    {% elif request.cookies.get('Theme') == "Deep Orange" %}
+        <meta name="msapplication-TileColor" content="#FF5722">
+        <meta name="msapplication-navbutton-color" content="#FF5722">
+        <meta name="theme-color" content="#FF5722">
+        <link rel="stylesheet" href="/css/material.deep_orange-blue.min.css">
+        <link rel="stylesheet" href="/css/styles-deep_orange.css">
+    {% elif request.cookies.get('Themes') == "Deep Purple" %}
+        <meta name="msapplication-TileColor" content="#673AB7">
+        <meta name="msapplication-navbutton-color" content="#673AB7">
+        <meta name="theme-color" content="#673AB7">
+        <link rel="stylesheet" href="/css/material.deep_purple-blue.min.css">
+        <link rel="stylesheet" href="/css/styles-deep_purple.css">
+    {% else %}
+        <meta name="msapplication-TileColor" content="teal">
+        <meta name="msapplication-navbutton-color" content="teal">
+        <meta name="theme-color" content="teal">
+        <link rel="stylesheet" href="/css/material.teal-blue.min.css">
+        <link rel="stylesheet" href="/css/styles-teal.css">
+    {% endif %}
     <link rel="apple-touch-icon" sizes="57x57" href="/images/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/images/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/images/apple-icon-72x72.png">
@@ -30,17 +57,10 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
     <link rel="shortcut icon" href="/images/favicon.ico">
     <meta name="msapplication-starturl" content="/">
-    <meta name="msapplication-TileColor" content="teal">
     <meta name="msapplication-TileImage" content="/images/ms-icon-144x144.png">
     <meta name="msapplication-config" content="/config/browserconfig.xml" />
-    <meta name="msapplication-navbutton-color" content="teal">
-    <meta name="theme-color" content="teal">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="/config/manifest.json" />
-    <link rel="stylesheet" href="/css/Roboto.css">
-    <link rel="stylesheet" href="/css/md_icons.css">
-    <link rel="stylesheet" href="/css/material.teal-blue.min.css">
-    <link rel="stylesheet" href="/css/styles-teal.css">
   </head>
   <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
@@ -60,7 +80,15 @@
       <main class="mdl-layout__content">
         <div class="mdl-layout__tab-panel is-active" id="overview">
           <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--4dp">
-            <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"></header>
+            {% if request.cookies.get('Theme') == "Teal" %}
+                <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"></header>
+            {% elif request.cookies.get('Theme') == "Deep Orange" %}
+                <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--deep-orange-100 mdl-color-text--white"></header>
+            {% elif request.cookies.get('Themes') == "Deep Purple" %}
+                <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--deep-purple-100 mdl-color-text--white"></header>
+            {% else %}
+                <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"></header>
+            {% endif %}
             <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
               <div class="mdl-card__supporting-text" id="text">
                 <h4>О проекте</h4>
