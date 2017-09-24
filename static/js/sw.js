@@ -6,13 +6,15 @@ self.addEventListener('install', function(event) {
 
 var preLoad = function(){
   return caches.open('dnevnik-sw').then(function(cache) {
-    return cache.addAll([
-    	        '/',
-              '/main',
-              '/css/material.teal-blue.min.css',
+
+  return cache.addAll([
+              '/',
+              '/index_cache',
+              '/main_cache',
+              '/css/material.deep_orange-blue.min.css',
+              '/css/styles-deep_orange.css',
               '/css/md_icons.css',
               '/css/Roboto.css',
-              '/css/styles-teal.css',
               '/js/dnevnik.operator.js',
               '/js/js.cookie.min.js',
               '/js/jquery.min.js',

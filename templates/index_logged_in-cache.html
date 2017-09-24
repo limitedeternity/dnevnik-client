@@ -18,31 +18,11 @@
     <script type="text/javascript" src="/js/dnevnik.operator.js"></script>
     <link rel="stylesheet" href="/css/Roboto.css">
     <link rel="stylesheet" href="/css/md_icons.css">
-    {% if request.cookies.get('Theme') == "Teal" %}
-        <meta name="msapplication-TileColor" content="teal">
-        <meta name="msapplication-navbutton-color" content="teal">
-        <meta name="theme-color" content="teal">
-        <link rel="stylesheet" href="/css/material.teal-blue.min.css">
-        <link rel="stylesheet" href="/css/styles-teal.css">
-    {% elif request.cookies.get('Theme') == "Deep Orange" %}
-        <meta name="msapplication-TileColor" content="#FF5722">
-        <meta name="msapplication-navbutton-color" content="#FF5722">
-        <meta name="theme-color" content="#FF5722">
-        <link rel="stylesheet" href="/css/material.deep_orange-blue.min.css">
-        <link rel="stylesheet" href="/css/styles-deep_orange.css">
-    {% elif request.cookies.get('Theme') == "Deep Purple" %}
-        <meta name="msapplication-TileColor" content="#673AB7">
-        <meta name="msapplication-navbutton-color" content="#673AB7">
-        <meta name="theme-color" content="#673AB7">
-        <link rel="stylesheet" href="/css/material.deep_purple-blue.min.css">
-        <link rel="stylesheet" href="/css/styles-deep_purple.css">
-    {% else %}
-        <meta name="msapplication-TileColor" content="teal">
-        <meta name="msapplication-navbutton-color" content="teal">
-        <meta name="theme-color" content="teal">
-        <link rel="stylesheet" href="/css/material.teal-blue.min.css">
-        <link rel="stylesheet" href="/css/styles-teal.css">
-    {% endif %}
+    <meta name="msapplication-TileColor" content="#FF5722">
+    <meta name="msapplication-navbutton-color" content="#FF5722">
+    <meta name="theme-color" content="#FF5722">
+    <link rel="stylesheet" href="/css/material.deep_orange-blue.min.css">
+    <link rel="stylesheet" href="/css/styles-deep_orange.css">
     <link rel="apple-touch-icon" sizes="57x57" href="/images/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/images/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/images/apple-icon-72x72.png">
@@ -78,22 +58,12 @@
           <a href="#diary" class="mdl-layout__tab">Дневник</a>
           <a href="#stats" class="mdl-layout__tab">Статистика</a>
           <a href="#summary" class="mdl-layout__tab">Итоговые</a>
-          <a href="#settings" class="mdl-layout__tab">Настройки</a>
-          <a href="/logout" class="mdl-layout__tab">Выход</a>
         </div>
       </header>
       <main class="mdl-layout__content">
         <div class="mdl-layout__tab-panel is-active" id="overview">
           <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--4dp">
-            {% if request.cookies.get('Theme') == "Teal" %}
-                <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"></header>
-            {% elif request.cookies.get('Theme') == "Deep Orange" %}
-                <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--deep-orange-100 mdl-color-text--white"></header>
-            {% elif request.cookies.get('Theme') == "Deep Purple" %}
-                <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--deep-purple-100 mdl-color-text--white"></header>
-            {% else %}
-                <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"></header>
-            {% endif %}
+            <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--deep-orange-100 mdl-color-text--white"></header>
             <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
               <div class="mdl-card__supporting-text">
                 {% if user %}
@@ -137,8 +107,9 @@
                        <input type="checkbox" id="last_year" name="last_year" value="1" class="mdl-switch__input">
                        <span class="mdl-switch__label">Прошлое полугодие?</span>
                   </label>
+                  <div style="display:block; height: 15px; clear:both;"></div>
                   {% if opts %}
-                      <div style="display:block; height: 25px; clear:both;"></div>
+                      <div style="display:block; height: 10px; clear:both;"></div>
                       {% for child in opts %}
                           {% set counter = loop.index0 %}
                           {% for name, id in child.items() %}
@@ -154,8 +125,6 @@
                           <div style="display:block; height: 5px; clear:both;"></div>
                       {% endfor %}
                       <div style="display:block; height: 15px; clear:both;"></div>
-                  {% else %}
-                  <div style="display:block; height: 35px; clear:both;"></div>
                   {% endif %}
                   <button type="submit" id="diary-submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
                       <i class="material-icons">arrow_forward</i>
@@ -294,88 +263,6 @@
                         Просто отправьте форму выше. <br>
                     </div>
                 </div>
-            </div>
-          </section>
-        </div>
-        <div class="mdl-layout__tab-panel" id="settings">
-          <section class="section--center mdl-grid mdl-grid--no-spacing">
-            <div class="mdl-card mdl-cell mdl-cell--12-col mdl-shadow--4dp">
-              <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
-                <h4 class="mdl-cell mdl-cell--12-col">Цвет</h4>
-                <form action="/apply" method="post" id="dnevnik-settings">
-                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                  <div style="display:block; height: 15px; clear:both;"></div>
-                  {% if request.cookies.get('Theme') == "Teal" %}
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_orange">
-                      <input type="radio" id="deep_orange" name="color" value="Deep Orange" class="mdl-radio__button">
-                      <span class="mdl-radio__label">Оранжевый</span>
-                    </label>
-                    <div style="display:block; height: 15px; clear:both;"></div>
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_purple">
-                      <input type="radio" id="deep_purple" name="color" value="Deep Purple" class="mdl-radio__button">
-                      <span class="mdl-radio__label">Фиолетовый</span>
-                   </label>
-                   <div style="display:block; height: 15px; clear:both;"></div>
-                   <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="teal">
-                      <input type="radio" id="teal" name="color" value="Teal" class="mdl-radio__button" checked>
-                      <span class="mdl-radio__label">Сине-зеленый</span>
-                   </label>
-                  {% elif request.cookies.get('Theme') == "Deep Orange" %}
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_orange">
-                      <input type="radio" id="deep_orange" name="color" value="Deep Orange" class="mdl-radio__button" checked>
-                      <span class="mdl-radio__label">Оранжевый</span>
-                    </label>
-                    <div style="display:block; height: 15px; clear:both;"></div>
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_purple">
-                      <input type="radio" id="deep_purple" name="color" value="Deep Purple" class="mdl-radio__button">
-                      <span class="mdl-radio__label">Фиолетовый</span>
-                   </label>
-                   <div style="display:block; height: 15px; clear:both;"></div>
-                   <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="teal">
-                      <input type="radio" id="teal" name="color" value="Teal" class="mdl-radio__button">
-                      <span class="mdl-radio__label">Сине-зеленый</span>
-                   </label>
-                  {% elif request.cookies.get('Theme') == "Deep Purple" %}
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_orange">
-                      <input type="radio" id="deep_orange" name="color" value="Deep Orange" class="mdl-radio__button">
-                      <span class="mdl-radio__label">Оранжевый</span>
-                    </label>
-                    <div style="display:block; height: 15px; clear:both;"></div>
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_purple">
-                      <input type="radio" id="deep_purple" name="color" value="Deep Purple" class="mdl-radio__button" checked>
-                      <span class="mdl-radio__label">Фиолетовый</span>
-                   </label>
-                   <div style="display:block; height: 15px; clear:both;"></div>
-                   <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="teal">
-                      <input type="radio" id="teal" name="color" value="Teal" class="mdl-radio__button">
-                      <span class="mdl-radio__label">Сине-зеленый</span>
-                   </label>
-                  {% else %}
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_orange">
-                      <input type="radio" id="deep_orange" name="color" value="Deep Orange" class="mdl-radio__button">
-                      <span class="mdl-radio__label">Оранжевый</span>
-                    </label>
-                    <div style="display:block; height: 15px; clear:both;"></div>
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_purple">
-                      <input type="radio" id="deep_purple" name="color" value="Deep Purple" class="mdl-radio__button">
-                      <span class="mdl-radio__label">Фиолетовый</span>
-                   </label>
-                   <div style="display:block; height: 15px; clear:both;"></div>
-                   <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="teal">
-                      <input type="radio" id="teal" name="color" value="Teal" class="mdl-radio__button" checked>
-                      <span class="mdl-radio__label">Сине-зеленый</span>
-                   </label>
-                  {% endif %}
-                  <div style="display:block; height: 35px; clear:both;"></div>
-                  <button type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
-                      <i class="material-icons">check</i>
-                      <span class="visuallyhidden">Apply</span>
-                      <span class="mdl-button__ripple-container">
-                          <span class="mdl-ripple is-animating" style="width: 160.392px; height: 160.392px; transform: translate(-50%, -50%) translate(14px, 16px);"></span>
-                      </span>
-                  </button>
-                </form>
-              </div>
             </div>
           </section>
         </div>
