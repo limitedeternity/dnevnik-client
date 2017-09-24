@@ -9,8 +9,7 @@ var preLoad = function(){
 
   return cache.addAll([
               '/',
-              '/index_cache',
-              '/main_cache',
+              '/main',
               '/css/material.deep_orange-blue.min.css',
               '/css/styles-deep_orange.css',
               '/css/md_icons.css',
