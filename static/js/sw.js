@@ -24,6 +24,7 @@ var preLoad = function(){
               '/js/js.cookie.min.js',
               '/js/jquery.min.js',
               '/js/material.min.js',
+              '/js/jquery.longpress.js',
               '/config/browserconfig.xml',
               '/config/manifest.json',
               '/fonts/md_icons.woff2',
