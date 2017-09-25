@@ -14,9 +14,7 @@ from os import chdir
 from json import loads
 from os.path import dirname, abspath
 from flask_wtf.csrf import CSRFProtect
-from waitress import serve
 from os import environ
-from sys import argv
 from cachecontrol import CacheControl
 from base64 import b64encode, b64decode, b32encode, b32decode
 
@@ -1107,8 +1105,4 @@ def serve_fonts(path):
 
 if __name__ == "__main__":
     chdir(dirname(abspath(__file__)))
-    if not debug:
-        serve(app, host='0.0.0.0', port=argv[1])
-
-    else:
-        app.run(host='127.0.0.1', port=int(argv[1]), debug=True)
+    app.run(debug=False, use_reloader=True)

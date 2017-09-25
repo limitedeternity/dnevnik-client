@@ -1,1 +1,1 @@
-web: python server.py $PORT
+web: gunicorn --bind 0.0.0.0:$PORT --worker-class gevent --preload server:app
