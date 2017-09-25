@@ -1105,4 +1105,4 @@ def serve_fonts(path):
 
 if __name__ == "__main__":
     chdir(dirname(abspath(__file__)))
-    app.run(debug=False, use_reloader=True)
+    app.run(debug=debug, use_reloader=True)
