@@ -3,7 +3,7 @@ Flask-WTF
 flask-sslify
 CacheControl
 gunicorn
-aiohttp
+eventlet
 pandas
 numpy
 beautifulsoup4
