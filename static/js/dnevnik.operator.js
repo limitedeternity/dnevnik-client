@@ -8,8 +8,8 @@ $(document).ready(function() {
             location.replace("/main");
         }
     } else if (location.pathname == "/main") {
-        setTimeout(function(){window.location.href += "#isReloaded";location.reload();}, 1000 * 60 * 10);
-        if (location.hash === "#isReloaded") {
+        setTimeout(function(){if (!(location.hash == "#isReloaded")){window.location.href += "#isReloaded";}location.reload();}, 1000 * 60 * 10);
+        if (location.hash == "#isReloaded") {
             $("#diary-tab").trigger('click');
         }
     }
