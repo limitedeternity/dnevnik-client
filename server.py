@@ -618,12 +618,26 @@ def dnevnik():
         swapped = False
 
         try:
-            if timeMonth is '' or timeDay is '':
+            if timeMonth is '' and timeDay is '':
                 if last_year == '1':
                     tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=timeDate(typeDate='month', offset=offset), lastYear=True))].rename(columns=columns)
 
                 else:
                     tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=timeDate(typeDate='month', offset=offset)))].rename(columns=columns)
+
+            elif timeMonth is '':
+                if last_year == '1':
+                    tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=str(timeDay), timeMonth=timeDate(typeDate='month', offset=offset), lastYear=True))].rename(columns=columns)
+
+                else:
+                    tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=str(timeDay), timeMonth=timeDate(typeDate='month', offset=offset)))].rename(columns=columns)
+
+            elif timeDay is '':
+                if last_year == '1':
+                    tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=str(timeMonth), lastYear=True))].rename(columns=columns)
+
+                else:
+                    tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=str(timeMonth)))].rename(columns=columns)
 
             else:
                 if last_year == '1':
