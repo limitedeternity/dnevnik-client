@@ -7,6 +7,14 @@ $(document).ready(function() {
             $("#text").html("<div class='loader'>Loading...</div>");
             location.replace("/main");
         }
+    } else if (location.pathname == "/main") {
+        setTimeout(function(){location.reload();}, 1000 * 60 * 10);
+
+        $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
+        
+        $("#dnevnik-date").submit();
+        $("#dnevnik-stats").submit();
+        $("#dnevnik-summary").submit();
     }
 
     if (!("Notification" in window)) {
@@ -54,7 +62,7 @@ $(document).ready(function() {
                 $("#error").html(data);
 
                 if (data.indexOf("Аутентификация завершена.") !== -1) {
-                    setTimeout(function(){location.href="/main";} , 500);
+                    setTimeout(function(){location.reload();}, 500);
 
                 } else {
                     $("#login-btn").show();
@@ -164,7 +172,6 @@ $(document).ready(function() {
 
             })
             .always(function() {
-
                 setTimeout(function(){$("#dnevnik-date").submit();}, 1000 * 60 * 5);
             });
         }
