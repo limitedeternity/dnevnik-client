@@ -9,8 +9,8 @@ $(document).ready(function() {
         }
     } else if (location.pathname == "/main") {
         setTimeout(function(){window.location.href += "#isReloaded";location.reload();}, 1000 * 60 * 10);
-        if (window.location.hash == "#isReloaded") {
-            $("#diary-tab").click();
+        if (location.hash === "#isReloaded") {
+            $("#diary-tab").trigger('click');
         }
     }
 
