@@ -8,7 +8,10 @@ $(document).ready(function() {
             location.replace("/main");
         }
     } else if (location.pathname == "/main") {
-        setTimeout(function(){location.reload();}, 1000 * 60 * 10);
+        setTimeout(function(){window.location.href += "#isReloaded";location.reload();}, 1000 * 60 * 10);
+        if (window.location.hash == "#isReloaded") {
+            $("#diary-tab").click();
+        }
     }
 
     if (!("Notification" in window)) {
