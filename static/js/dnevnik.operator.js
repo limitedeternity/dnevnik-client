@@ -10,7 +10,7 @@ $(document).ready(function() {
     } else if (location.pathname == "/main") {
         setTimeout(function(){if (!(location.hash == "#isReloaded")){window.location.href += "#isReloaded";}location.reload();}, 1000 * 60 * 10);
         if (location.hash == "#isReloaded") {
-            $("#diary-tab").trigger('click');
+            $("#diary-tab").click();
         }
     }
 
