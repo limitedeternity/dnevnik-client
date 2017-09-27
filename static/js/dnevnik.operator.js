@@ -29,28 +29,29 @@ $(document).ready(function() {
             console.log("Notification permission denied.");
         }
     }
-    var diary_selected = False;
+
+    var diary_selected = False
     $("#diary-tab").on("click", function() {
         if (!diary_selected) {
             $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
             $("#dnevnik-date").submit();
-            diary_selected = True;
+            diary_selected = True
         }
     });
 
-    var stats_selected = False;
+    var stats_selected = False
     $("#stats-tab").on("click", function() {
         if (!stats_selected) {
             $("#dnevnik-stats").submit();
-            stats_selected = True;
+            stats_selected = True
         }
     });
 
-    var summary_selected = False;
+    var summary_selected = False
     $("#summary-tab").on("click", function() {
         if (!summary_selected) {
             $("#dnevnik-summary").submit();
-            summary_selected = True;
+            summary_selected = True
         }
     });
 
