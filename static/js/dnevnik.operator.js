@@ -26,6 +26,19 @@ $(document).ready(function() {
             console.log("Notification permission denied.");
         }
     }
+    
+    $("#diary-tab").on("click", function() {
+        $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
+        $("#dnevnik-date").submit();
+    });
+
+    $("#stats-tab").on("click", function() {
+        $("#dnevnik-stats").submit();
+    });
+
+    $("#summary-tab").on("click", function() {
+        $("#dnevnik-summary").submit();
+    });
 
     $("#dnevnik-login").on("submit", function(a) {
         a.preventDefault();
