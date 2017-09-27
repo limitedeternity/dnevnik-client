@@ -9,11 +9,6 @@ $(document).ready(function() {
         }
     } else if (location.pathname == "/main") {
         setTimeout(function(){location.reload();}, 1000 * 60 * 10);
-
-        $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
-        
-        $("#dnevnik-date").submit();
-        $("#dnevnik-stats").submit();
     }
 
     if (!("Notification" in window)) {
