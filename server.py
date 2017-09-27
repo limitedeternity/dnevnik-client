@@ -606,12 +606,12 @@ def dnevnik():
         data = None
 
         if request.cookies.get('AccountType') == 'Student':
-            data = s.get(f"https://schools.dnevnik.ru/marks.aspx?school={schoolId(s)}&index=-1&tab=week&year={timeDate(typeDate='year', offset=offset, lastYear=True) if last_year == '1' else timeDate(typeDate='year', offset=offset)}&month={str(timeMonth) if timeDay is not '' and timeMonth is not '' else timeDate(typeDate='month', offset=offset)}&day={timeDate(typeDate='day', offset=offset) if timeDay is '' or timeMonth is '' else str(timeDay)}").content
+            data = s.get(f"https://schools.dnevnik.ru/marks.aspx?school={schoolId(s)}&index=-1&tab=week&year={timeDate(typeDate='year', offset=offset, lastYear=True) if last_year == '1' else timeDate(typeDate='year', offset=offset)}&month={str(timeMonth) if timeDay is not '' and timeMonth is not '' else timeDate(typeDate='month', offset=offset)}&day={timeDate(typeDate='day', offset=offset) if timeDay is '' else str(timeDay)}").content
 
         elif request.cookies.get('AccountType') == 'Parent':
 
             child = request.form.get('child', '')
-            data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=week&year={timeDate(typeDate='year', offset=offset, lastYear=True) if last_year == '1' else timeDate(typeDate='year', offset=offset)}&month={str(timeMonth) if timeDay is not '' and timeMonth is not '' else timeDate(typeDate='month', offset=offset)}&day={timeDate(typeDate='day', offset=offset) if timeDay is '' or timeMonth is '' else str(timeDay)}").content
+            data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=week&year={timeDate(typeDate='year', offset=offset, lastYear=True) if last_year == '1' else timeDate(typeDate='year', offset=offset)}&month={str(timeMonth) if timeDay is not '' and timeMonth is not '' else timeDate(typeDate='month', offset=offset)}&day={timeDate(typeDate='day', offset=offset) if timeDay is '' else str(timeDay)}").content
 
         columns = {0: 'Уроки', 1: 'Присутствие', 2: 'Оценки', 3: 'Замечания', 4: 'ДЗ'}
         tables = None
