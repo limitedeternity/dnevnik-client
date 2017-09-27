@@ -14,7 +14,6 @@ $(document).ready(function() {
         
         $("#dnevnik-date").submit();
         $("#dnevnik-stats").submit();
-        $("#dnevnik-summary").submit();
     }
 
     if (!("Notification" in window)) {
