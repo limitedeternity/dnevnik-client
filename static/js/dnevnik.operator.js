@@ -344,7 +344,7 @@ $(document).ready(function() {
         })
         .done(function(data) {
             $("#error").html(data);
-            setTimeout(function(){location.reload();} , 500);
+            setTimeout(function(){location.replace("/");} , 500);
         })
         .fail(function() {
             $("#error").html('<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:red;">Кто-то против смены темы c:</p>');
