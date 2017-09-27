@@ -172,7 +172,7 @@ $(document).ready(function() {
 
             })
             .always(function() {
-                setTimeout(function(){$("#dnevnik-date").submit();}, 1000 * 60 * 5);
+                setTimeout(function(){$("#dnevnik-date").submit();}, 1000 * 60 * 4);
             });
         }
 
