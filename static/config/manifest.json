@@ -8,7 +8,7 @@
     "short_name": "DnevnikClient",
     "theme_color": "transparent",
     "description": "Облегченная версия Дневник.Ру.",
-    "orientation": "portrait",
+    "orientation": "any",
     "background_color": "transparent",
     "related_applications": [],
     "prefer_related_applications": false,
