@@ -868,10 +868,10 @@ def dnevnik():
                             html_out += f'<h8 style="color:red;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (ノ_<)</h8><br>'
 
                         elif ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(3, 4):
-                            html_out += f'<h8 style="color:#FF5722;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (--_--)</h8><br>'
+                            html_out += f'<h8 style="color:#FF5722;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (--_--)</h8><br>'
 
                         elif ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(4, 5):
-                            html_out += f'<h8 style="color:teal;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (^_~)</h8><br>'
+                            html_out += f'<h8 style="color:teal;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (^_~)</h8><br>'
 
                         elif str(json_out["Оценки"][str(i + 1)]).split(" ")[0] is "5" and str(json_out["Оценки"][str(i + 1)]).split(" ")[1] is "5":
                             html_out += f'<h8 style="color:green;">Оценка: 5 / 5  ( ˙꒳​˙ )</h8><br>'
