@@ -752,17 +752,17 @@ def dnevnik():
                         html_out += '<h8 style="color:#212121;">Оценка: нет.</h8><br>'
 
                     elif match(r"^[0-5]\ [0-5]$", str(json_out["Оценки"][str(i)])):
-                        if int(str(json_out["Оценки"][str(i)]).split(" ")[0]) in range(0, 3) or int(str(json_out["Оценки"][str(i)]).split(" ")[1]) in range(0, 3):
+                        if ((int(str(json_out["Оценки"][str(i)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i)]).split(" ")[1])) / 2) in range(0, 3):
                             html_out += f'<h8 style="color:red;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (ノ_<)</h8><br>'
 
-                        elif (str(json_out["Оценки"][str(i)]).split(" ")[0] is "3" or str(json_out["Оценки"][str(i)]).split(" ")[1] is "3") and (int(str(json_out["Оценки"][str(i)]).split(" ")[0]) in range(3, 6) and int(str(json_out["Оценки"][str(i)]).split(" ")[1]) in range(3, 6)):
+                        elif ((int(str(json_out["Оценки"][str(i)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i)]).split(" ")[1])) / 2) in range(3, 4):
                             html_out += f'<h8 style="color:#FF5722;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (--_--)</h8><br>'
 
-                        elif (str(json_out["Оценки"][str(i)]).split(" ")[0] is "4" or str(json_out["Оценки"][str(i)]).split(" ")[1] is "4") and (int(str(json_out["Оценки"][str(i)]).split(" ")[0]) in range(4, 6) and int(str(json_out["Оценки"][str(i)]).split(" ")[1]) in range(4, 6)):
+                        elif ((int(str(json_out["Оценки"][str(i)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i)]).split(" ")[1])) / 2) in range(4, 5):
                             html_out += f'<h8 style="color:teal;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (^_~)</h8><br>'
 
                         elif str(json_out["Оценки"][str(i)]).split(" ")[0] is "5" and str(json_out["Оценки"][str(i)]).split(" ")[1] is "5":
-                            html_out += f'<h8 style="color:green;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  ( ˙꒳​˙ )</h8><br>'
+                            html_out += f'<h8 style="color:green;">Оценка: 5 / 5  ( ˙꒳​˙ )</h8><br>'
 
                     elif str(int(float(json_out["Оценки"][str(i)]))) == '1':
                         html_out += '<h8 style="color:red;">Оценка: 1  (ノ_<)</h8><br>'
@@ -784,20 +784,17 @@ def dnevnik():
                         html_out += '<h8 style="color:#212121;">Оценка: нет.</h8><br>'
 
                     elif match(r"^([0-9]|1[0])\ ([0-9]|1[0])$", str(json_out["Оценки"][str(i)])):
-                        if int(str(json_out["Оценки"][str(i)]).split(" ")[0]) in range(0, 3) or int(str(json_out["Оценки"][str(i)]).split(" ")[1]) in range(0, 3):
+                        if ((int(str(json_out["Оценки"][str(i)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i)]).split(" ")[1])) / 2) in range(0, 5):
                             html_out += f'<h8 style="color:red;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (ノ_<)</h8><br>'
 
-                        elif (int(str(json_out["Оценки"][str(i)]).split(" ")[0]) in range(3, 5) or int(str(json_out["Оценки"][str(i)]).split(" ")[1]) in range(3, 5)) and (int(str(json_out["Оценки"][str(i)]).split(" ")[0]) in range(3, 11) and int(str(json_out["Оценки"][str(i)]).split(" ")[1]) in range(3, 11)):
-                            html_out += f'<h8 style="color:red;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (・・ )</h8><br>'
-
-                        elif (int(str(json_out["Оценки"][str(i)]).split(" ")[0]) in range(5, 7) or int(str(json_out["Оценки"][str(i)]).split(" ")[1]) in range(5, 7)) and (int(str(json_out["Оценки"][str(i)]).split(" ")[0]) in range(5, 11) and int(str(json_out["Оценки"][str(i)]).split(" ")[1]) in range(5, 11)):
+                        elif ((int(str(json_out["Оценки"][str(i)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i)]).split(" ")[1])) / 2) in range(5, 7):
                             html_out += f'<h8 style="color:#FF5722;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (--_--)</h8><br>'
 
-                        elif (int(str(json_out["Оценки"][str(i)]).split(" ")[0]) in range(7, 9) or int(str(json_out["Оценки"][str(i)]).split(" ")[1]) in range(7, 9)) and (int(str(json_out["Оценки"][str(i)]).split(" ")[0]) in range(7, 11) and int(str(json_out["Оценки"][str(i)]).split(" ")[1]) in range(7, 11)):
+                        elif ((int(str(json_out["Оценки"][str(i)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i)]).split(" ")[1])) / 2) in range(7, 10):
                             html_out += f'<h8 style="color:teal;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (^_~)</h8><br>'
 
                         elif str(json_out["Оценки"][str(i)]).split(" ")[0] is "10" and str(json_out["Оценки"][str(i)]).split(" ")[1] is "10":
-                            html_out += f'<h8 style="color:green;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  ( ˙꒳​˙ )</h8><br>'
+                            html_out += f'<h8 style="color:green;">Оценка: 10 / 10  ( ˙꒳​˙ )</h8><br>'
 
                     elif int(float(json_out["Оценки"][str(i)])) in range(0, 3):
                         html_out += f'<h8 style="color:red;">Оценка: {str(int(float(json_out["Оценки"][str(i)])))}  (ノ_<)</h8><br>'
@@ -867,17 +864,17 @@ def dnevnik():
                         html_out += '<h8 style="color:#212121;">Оценка: нет.</h8><br>'
 
                     elif match(r"^[0-5]\ [0-5]$", str(json_out["Оценки"][str(i + 1)])):
-                        if int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) in range(0, 3) or int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1]) in range(0, 3):
+                        if ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(0, 3):
                             html_out += f'<h8 style="color:red;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (ノ_<)</h8><br>'
 
-                        elif (str(json_out["Оценки"][str(i + 1)]).split(" ")[0] is "3" or str(json_out["Оценки"][str(i + 1)]).split(" ")[1] is "3") and (int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) in range(3, 6) and int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1]) in range(3, 6)):
-                            html_out += f'<h8 style="color:#FF5722;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (--_--)</h8><br>'
+                        elif ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(3, 4):
+                            html_out += f'<h8 style="color:#FF5722;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (--_--)</h8><br>'
 
-                        elif (str(json_out["Оценки"][str(i + 1)]).split(" ")[0] is "4" or str(json_out["Оценки"][str(i + 1)]).split(" ")[1] is "4") and (int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) in range(4, 6) and int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1]) in range(4, 6)):
-                            html_out += f'<h8 style="color:teal;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (^_~)</h8><br>'
+                        elif ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(4, 5):
+                            html_out += f'<h8 style="color:teal;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (^_~)</h8><br>'
 
                         elif str(json_out["Оценки"][str(i + 1)]).split(" ")[0] is "5" and str(json_out["Оценки"][str(i + 1)]).split(" ")[1] is "5":
-                            html_out += f'<h8 style="color:green;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  ( ˙꒳​˙ )</h8><br>'
+                            html_out += f'<h8 style="color:green;">Оценка: 5 / 5  ( ˙꒳​˙ )</h8><br>'
 
                     elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '1':
                         html_out += '<h8 style="color:red;">Оценка: 1  (ノ_<)</h8><br>'
@@ -899,20 +896,17 @@ def dnevnik():
                         html_out += '<h8 style="color:#212121;">Оценка: нет.</h8><br>'
 
                     elif match(r"^([0-9]|1[0])\ ([0-9]|1[0])$", str(json_out["Оценки"][str(i + 1)])):
-                        if int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) in range(0, 3) or int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1]) in range(0, 3):
+                        if ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(0, 5):
                             html_out += f'<h8 style="color:red;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (ノ_<)</h8><br>'
 
-                        elif (int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) in range(3, 5) or int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1]) in range(3, 5)) and (int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) in range(3, 11) and int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1]) in range(3, 11)):
-                            html_out += f'<h8 style="color:red;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (・・ )</h8><br>'
-
-                        elif (int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) in range(5, 7) or int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1]) in range(5, 7)) and (int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) in range(5, 11) and int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1]) in range(5, 11)):
+                        elif ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(5, 7):
                             html_out += f'<h8 style="color:#FF5722;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (--_--)</h8><br>'
 
-                        elif (int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) in range(7, 9) or int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1]) in range(7, 9)) and (int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) in range(7, 11) and int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1]) in range(7, 11)):
+                        elif ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(7, 10):
                             html_out += f'<h8 style="color:teal;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (^_~)</h8><br>'
 
                         elif str(json_out["Оценки"][str(i + 1)]).split(" ")[0] is "10" and str(json_out["Оценки"][str(i + 1)]).split(" ")[1] is "10":
-                            html_out += f'<h8 style="color:green;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  ( ˙꒳​˙ )</h8><br>'
+                            html_out += f'<h8 style="color:green;">Оценка: 10 / 10  ( ˙꒳​˙ )</h8><br>'
 
                     elif int(float(json_out["Оценки"][str(i + 1)])) in range(0, 3):
                         html_out += f'<h8 style="color:red;">Оценка: {str(int(float(json_out["Оценки"][str(i + 1)])))}  (ノ_<)</h8><br>'
