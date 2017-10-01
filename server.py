@@ -999,23 +999,23 @@ def log_in():
 
             return jsonify(html_out)
 
-        try:
-            schoolId(s)
+        data = s.get("https://dnevnik.ru/").content
+        soup = BeautifulSoup(data, "lxml")
+
+        type_block = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__category'}).text
+
+        if type_block == "Ученик":
             accounttype = "Student"
 
-        except KeyError:
-            data = s.get("https://children.dnevnik.ru/marks.aspx").content
-            soup = BeautifulSoup(data, "lxml")
-
-        if soup.title.string == 'Страница не найдена (404)' or soup.title.string == "Отказано в доступе (403)":
-            html_out = ""
-            html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-            html_out += '<p style="text-align:center; color:red;">Выбран неверный тип аккаунта ¯\_(ツ)_/¯</p>'
-
-            return jsonify(html_out)
+        elif type_block == "Родитель":
+            accounttype = "Parent"
 
         else:
-            accounttype = "Parent"
+            html_out = ""
+            html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+            html_out += '<p style="text-align:center; color:red;">Вы - преподаватель. ¯\_(ツ)_/¯</p>'
+
+            return jsonify(html_out)
 
         html_out = ""
         html_out += '<div style="display:block; height:2px; clear:both;"></div>'
