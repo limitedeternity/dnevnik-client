@@ -971,9 +971,9 @@ def dnevnik():
 def log_in():
     login = request.form.get('username', '')
     password = request.form.get('password', '')
-    accounttype = request.form.get('accounttype', '')
+    accounttype = None
 
-    if login is not '' and password is not '' and accounttype is not '':
+    if login is not '' and password is not '':
         s = CacheControl(Session())
 
         s.headers.update({'Upgrade-Insecure-Requests': '1',
@@ -999,28 +999,23 @@ def log_in():
 
             return jsonify(html_out)
 
-        if accounttype == 'Student':
-            try:
-                schoolId(s)
+        try:
+            schoolId(s)
+            accounttype = "Student"
 
-            except KeyError:
-                html_out = ""
-
-                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-                html_out += '<p style="text-align:center; color:red;">Выбран неверный тип аккаунта ¯\_(ツ)_/¯</p>'
-
-                return jsonify(html_out)
-
-        elif accounttype == 'Parent':
+        except KeyError:
             data = s.get("https://children.dnevnik.ru/marks.aspx").content
             soup = BeautifulSoup(data, "lxml")
 
-            if soup.title.string == 'Страница не найдена (404)' or soup.title.string == "Отказано в доступе (403)":
-                html_out = ""
-                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-                html_out += '<p style="text-align:center; color:red;">Выбран неверный тип аккаунта ¯\_(ツ)_/¯</p>'
+        if soup.title.string == 'Страница не найдена (404)' or soup.title.string == "Отказано в доступе (403)":
+            html_out = ""
+            html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+            html_out += '<p style="text-align:center; color:red;">Выбран неверный тип аккаунта ¯\_(ツ)_/¯</p>'
 
-                return jsonify(html_out)
+            return jsonify(html_out)
+
+        else:
+            accounttype = "Parent"
 
         html_out = ""
         html_out += '<div style="display:block; height:2px; clear:both;"></div>'
