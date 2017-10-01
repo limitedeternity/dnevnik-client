@@ -7,11 +7,6 @@ $(document).ready(function() {
             $("#text").html("<div class='loader'>Loading...</div>");
             location.replace("/main");
         }
-    } else if (location.pathname == "/main") {
-        setTimeout(function(){if (!(location.hash == "#isReloaded")){window.location.href += "#isReloaded";}location.reload();}, 1000 * 60 * 10);
-        if (location.hash == "#isReloaded") {
-            $("#diary-tab").click();
-        }
     }
 
     if (!("Notification" in window)) {
