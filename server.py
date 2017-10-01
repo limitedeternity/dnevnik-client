@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify
 from flask_sslify import SSLify
-from random import choice
+from random import choice, randint
 from re import match, findall
 from bs4 import BeautifulSoup
 from requests import Session
@@ -146,7 +146,7 @@ def main():
             soup = BeautifulSoup(data, "lxml")
 
             if soup.title.string == 'Профилактические работы':
-                opts = [{"Профилактические работы": "1337"}]
+                opts = [{"Профилактические работы": str(randint(0, 2000))}]
 
             else:
                 options = soup.find_all('option')
