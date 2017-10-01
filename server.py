@@ -92,6 +92,7 @@ def schoolId(s):
 def groupId(s):
     return str(parse_qs(urlparse(s.get("https://schools.dnevnik.ru/schedules/").url).query)['group'][-1])
 
+
 '''
 Template handling
 '''
@@ -168,6 +169,11 @@ def main():
     response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'"
     response.set_cookie('Offset', value='', max_age=0, expires=0)
     return response
+
+
+'''
+Implementation
+'''
 
 
 @app.route("/stats", methods=['POST'])
