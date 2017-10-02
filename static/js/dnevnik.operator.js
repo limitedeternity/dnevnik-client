@@ -160,7 +160,7 @@ $(document).ready(function() {
                             notify();
                         }
 
-                        localStorage.removeItem("dnevnik-" + Cookies.get('DnevnikLogin'));
+                        localStorage.removeItem('dnevnik-' + Cookies.get('DnevnikLogin'));
                         localStorage.setItem('dnevnik-' + Cookies.get('DnevnikLogin'), data);
                     }
 
@@ -239,7 +239,7 @@ $(document).ready(function() {
                     
                     if (localStorage.getItem('stats-' + Cookies.get('DnevnikLogin')) !== null) {
                         if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)) {
-                            localStorage.removeItem("stats-" + Cookies.get('DnevnikLogin'));
+                            localStorage.removeItem('stats-' + Cookies.get('DnevnikLogin'));
                             localStorage.setItem('stats-' + Cookies.get('DnevnikLogin'), data);
                         }
 
@@ -313,7 +313,7 @@ $(document).ready(function() {
 
                     if (localStorage.getItem('summary-' + Cookies.get('DnevnikLogin')) !== null) {
                         if ((data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) && (data.indexOf("<h5>Ох, похоже, что-то не так ( ͡° ͜ʖ ͡°)</h5>") === -1)) {
-                            localStorage.removeItem("summary-" + Cookies.get('DnevnikLogin'));
+                            localStorage.removeItem('summary-' + Cookies.get('DnevnikLogin'));
                             localStorage.setItem('summary-' + Cookies.get('DnevnikLogin'), data);
                         }
 
