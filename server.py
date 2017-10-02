@@ -830,7 +830,7 @@ def dnevnik():
 
                 else:
                     hw = str(json_out["ДЗ"][str(i)])
-                    links = findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)
+                    links = list(set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)))
                     for link in links:
                         hw = hw.replace(link, f'<a href="{link}" target="_blank">[ссылка]</a>')
 
@@ -942,7 +942,7 @@ def dnevnik():
 
                 else:
                     hw = str(json_out["ДЗ"][str(i + 1)])
-                    links = findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)
+                    links = list(set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)))
                     for link in links:
                         hw = hw.replace(link, f'<a href="{link}" target="_blank">[ссылка]</a>')
 
