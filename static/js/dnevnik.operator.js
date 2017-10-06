@@ -28,8 +28,18 @@ $(document).ready(function() {
     var diary_selected = false;
     $("#diary-tab").on("click", function() {
         if (!diary_selected) {
-            $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
-            $("#dnevnik-date").submit();
+            if (localStorage.getItem('dnevnik-' + Cookies.get('DnevnikLogin')) !== null) {
+                $("#dnevnik-out").html(localStorage.getItem('dnevnik-' + Cookies.get('DnevnikLogin')).replace('<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+
+                $('.mdl-layout__content').animate({
+                    scrollTop: $("#dnevnik-out").offset().top + 'px'
+                }, 'fast');
+
+            } else {
+                $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
+                $("#dnevnik-date").submit();
+            }
+
             diary_selected = true;
         }
     });
@@ -37,7 +47,17 @@ $(document).ready(function() {
     var stats_selected = false;
     $("#stats-tab").on("click", function() {
         if (!stats_selected) {
-            $("#dnevnik-stats").submit();
+            if (localStorage.getItem('stats-' + Cookies.get('DnevnikLogin')) !== null) {
+                $("#stats-out").html(localStorage.getItem('stats-' + Cookies.get('DnevnikLogin')).replace('<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+
+                $('.mdl-layout__content').animate({
+                    scrollTop: $("#stats-out").offset().top + 'px'
+                }, 'fast');
+
+            } else {
+                $("#dnevnik-stats").submit();
+            }
+            
             stats_selected = true;
         }
     });
@@ -45,7 +65,17 @@ $(document).ready(function() {
     var summary_selected = false;
     $("#summary-tab").on("click", function() {
         if (!summary_selected) {
-            $("#dnevnik-summary").submit();
+            if (localStorage.getItem('summary-' + Cookies.get('DnevnikLogin')) !== null) {
+                $("#summary-out").html(localStorage.getItem('summary-' + Cookies.get('DnevnikLogin')).replace('<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
+
+                $('.mdl-layout__content').animate({
+                    scrollTop: $("#summary-out").offset().top + 'px'
+                }, 'fast');
+
+            } else {
+                $("#dnevnik-summary").submit();
+            }
+
             summary_selected = true;
         }
     });
@@ -96,7 +126,7 @@ $(document).ready(function() {
         }
     });
 
-    $("#diary-submit").longpress(function(a) {
+    $("#diary-submit").longpress(function() {
         if (localStorage.getItem('dnevnik-' + Cookies.get('DnevnikLogin')) !== null) {
             $("#dnevnik-out").html(localStorage.getItem('dnevnik-' + Cookies.get('DnevnikLogin')).replace('<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
 
@@ -105,7 +135,7 @@ $(document).ready(function() {
             }, 'fast');
         }
 
-    }, function(e) {
+    }, function() {
         
         $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
         $("#dnevnik-date").submit();
