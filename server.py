@@ -1010,10 +1010,10 @@ def log_in():
 
         type_block = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__category'}).text
 
-        if type_block == "Ученик":
+        if "Ученик" in type_block:
             accounttype = "Student"
 
-        elif type_block == "Родитель":
+        elif "Родитель" in type_block:
             accounttype = "Parent"
 
         else:
