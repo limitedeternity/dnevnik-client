@@ -127,7 +127,7 @@ def main():
         data = s.get("https://login.dnevnik.ru/login").content
         soup = BeautifulSoup(data, "lxml")
 
-        captcha_id = soup.find('input', {'class': 'captcha__value'})['value']
+        captcha_id = soup.find('input', {'class': 'captcha__value'}).attrs['value']
 
         login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
                          'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
@@ -198,7 +198,7 @@ def stats():
         data = s.get("https://login.dnevnik.ru/login").content
         soup = BeautifulSoup(data, "lxml")
 
-        captcha_id = soup.find('input', {'class': 'captcha__value'})['value']
+        captcha_id = soup.find('input', {'class': 'captcha__value'}).attrs['value']
 
         login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
                          'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
@@ -348,7 +348,7 @@ def summary():
         data = s.get("https://login.dnevnik.ru/login").content
         soup = BeautifulSoup(data, "lxml")
 
-        captcha_id = soup.find('input', {'class': 'captcha__value'})['value']
+        captcha_id = soup.find('input', {'class': 'captcha__value'}).attrs['value']
 
         login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
                          'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
@@ -623,7 +623,7 @@ def dnevnik():
         data = s.get("https://login.dnevnik.ru/login").content
         soup = BeautifulSoup(data, "lxml")
 
-        captcha_id = soup.find('input', {'class': 'captcha__value'})['value']
+        captcha_id = soup.find('input', {'class': 'captcha__value'}).attrs['value']
 
         login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
                          'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
@@ -1013,7 +1013,7 @@ def log_in():
         data = s.get("https://login.dnevnik.ru/login").content
         soup = BeautifulSoup(data, "lxml")
 
-        captcha_id = soup.find('input', {'class': 'captcha__value'})['value']
+        captcha_id = soup.find('input', {'class': 'captcha__value'}).attrs['value']
 
         login_payload = {'login': login, 'password': password,
                          'exceededAttempts': 'False', 'ReturnUrl': '', 'Captcha.Id': captcha_id}
