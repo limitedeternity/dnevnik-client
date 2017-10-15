@@ -124,9 +124,14 @@ def main():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
+        data = s.get("https://login.dnevnik.ru/login").content
+        soup = BeautifulSoup(data, "lxml")
+
+        captcha_id = soup.find('input', {'class': 'captcha__value'})['value']
+
         login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
                          'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
-                         'exceededAttempts': 'False', 'ReturnUrl': ''}
+                         'exceededAttempts': 'False', 'ReturnUrl': '', 'Captcha.Id': captcha_id}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
 
@@ -190,11 +195,17 @@ def stats():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
+        data = s.get("https://login.dnevnik.ru/login").content
+        soup = BeautifulSoup(data, "lxml")
+
+        captcha_id = soup.find('input', {'class': 'captcha__value'})['value']
+
         login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
                          'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
-                         'exceededAttempts': 'False', 'ReturnUrl': ''}
+                         'exceededAttempts': 'False', 'ReturnUrl': '', 'Captcha.Id': captcha_id}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
+
         json_out = None
         data = None
 
@@ -334,9 +345,14 @@ def summary():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
+        data = s.get("https://login.dnevnik.ru/login").content
+        soup = BeautifulSoup(data, "lxml")
+
+        captcha_id = soup.find('input', {'class': 'captcha__value'})['value']
+
         login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
                          'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
-                         'exceededAttempts': 'False', 'ReturnUrl': ''}
+                         'exceededAttempts': 'False', 'ReturnUrl': '', 'Captcha.Id': captcha_id}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
         data = None
@@ -604,9 +620,14 @@ def dnevnik():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
+        data = s.get("https://login.dnevnik.ru/login").content
+        soup = BeautifulSoup(data, "lxml")
+
+        captcha_id = soup.find('input', {'class': 'captcha__value'})['value']
+
         login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
                          'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
-                         'exceededAttempts': 'False', 'ReturnUrl': ''}
+                         'exceededAttempts': 'False', 'ReturnUrl': '', 'Captcha.Id': captcha_id}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
         data = None
@@ -989,8 +1010,13 @@ def log_in():
                           'Accept-Encoding': 'gzip, deflate, br',
                           'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
+        data = s.get("https://login.dnevnik.ru/login").content
+        soup = BeautifulSoup(data, "lxml")
+
+        captcha_id = soup.find('input', {'class': 'captcha__value'})['value']
+
         login_payload = {'login': login, 'password': password,
-                         'exceededAttempts': 'False', 'ReturnUrl': ''}
+                         'exceededAttempts': 'False', 'ReturnUrl': '', 'Captcha.Id': captcha_id}
 
         s.post('https://login.dnevnik.ru/login', login_payload)
 
