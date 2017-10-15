@@ -1072,7 +1072,7 @@ def log_out():
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Cache-Control'] = 'no-cache'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000'
-    response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'"
+    response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'"
     return response
 
 
