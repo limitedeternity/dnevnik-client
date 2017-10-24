@@ -376,27 +376,38 @@ $(document).ready(function() {
     });
 
     $("#dnevnik-settings").on("submit", function(a) {
-        a.preventDefault();
+        if (navigator.onLine) {
+            a.preventDefault();
 
-        $.ajax({
-            url: '/apply',
-            type: 'POST',
-            dataType: 'json',
-            data: $("#dnevnik-settings").serialize(),
-        })
-        .done(function(data) {
-            $("#error").html(data);
-            setTimeout(function(){location.replace("/");} , 500);
-        })
-        .fail(function() {
-            $("#error").html('<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:red;">Кто-то против смены темы c:</p>');
-            setTimeout(function(){location.reload();} , 500);
-        });
+            $.ajax({
+                url: '/apply',
+                type: 'POST',
+                dataType: 'json',
+                data: $("#dnevnik-settings").serialize(),
+            })
+            .done(function(data) {
+                $("#error").html(data);
+            })
+            .fail(function() {
+                $("#error").html('<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:red;">Кто-то против смены темы c:</p>');
+            })
+            .always(function() {
+                setTimeout(function(){location.replace("/");} , 500);
+            });
+        }
     });
 
     $("#logout").on("click", function() {
-        Object.keys(localStorage).forEach(key => localStorage.removeItem(key));
-        location.href = "/logout";
+        if (navigator.onLine) {
+            Object.keys(localStorage).forEach(key => localStorage.removeItem(key));
+            location.href = "/logout";
+        }
+    });
+
+    $("#reset-storage").on("click", function() {
+        if (navigator.onLine) {
+            Object.keys(localStorage).forEach(key => localStorage.removeItem(key));
+        }
     });
 
     $('form').each(function() {
