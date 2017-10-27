@@ -1001,7 +1001,7 @@ def log_in():
             html_out = ""
 
             html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-            html_out += '<p style="text-align:center; color:red;">Данные неверны, либо Дневник.Ру в оффлайне ¯\_(ツ)_/¯</p>'
+            html_out += '<p style="text-align:center; color:red;">Данные неверны. Если это ошибка, попробуйте зайти через офф. сайт и вернуться. ¯\_(ツ)_/¯</p>'
 
             return jsonify(html_out)
 
