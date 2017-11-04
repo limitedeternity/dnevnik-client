@@ -221,7 +221,7 @@ def stats():
             html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
             html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
             html_out += 'Кажется, Дневник.Ру ушел в оффлайн :> <br>'
-            html_out += 'Если вы сумели успешно запросить данные ранее, то отключите Интернет и запросите снова.'
+            html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
             html_out += '</div>'
 
             response = make_response(jsonify(html_out))
@@ -562,7 +562,7 @@ def summary():
             html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
             html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
             html_out += 'Либо данных попросту нет, либо Дневник.Ру в оффлайне :> <br>'
-            html_out += 'Если вы сумели успешно запросить данные ранее, то отключите Интернет и запросите снова.'
+            html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
             html_out += '</div>'
 
             response = make_response(jsonify(html_out))
@@ -670,7 +670,7 @@ def dnevnik():
             html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
             html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
             html_out += 'Либо уроков нет, либо Дневник.Ру ушел в оффлайн :> <br>'
-            html_out += 'Если вы сумели успешно запросить данные ранее, то отключите Интернет и запросите снова.'
+            html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
             html_out += '</div>'
 
             response = make_response(jsonify(html_out))
