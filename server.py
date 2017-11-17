@@ -6,6 +6,7 @@ from random import choice, randint
 from re import match, findall
 from bs4 import BeautifulSoup
 from requests import Session
+from requests.exceptions import ConnectionError
 from datetime import datetime, timedelta
 from pytz import utc
 import pandas as pd
@@ -128,12 +129,18 @@ def main():
                          'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
-        s.post('https://login.dnevnik.ru/login', login_payload)
+        offline = False
+
+        try:
+            s.post('https://login.dnevnik.ru/login', login_payload)
+
+        except ConnectionError:
+            offline = True
 
         data = s.get("https://dnevnik.ru/").content
         soup = BeautifulSoup(data, "lxml")
 
-        if soup.title.string == 'Профилактические работы':
+        if soup.title.string == 'Профилактические работы' or offline:
             user = "товарищ Тестер"
 
         else:
@@ -146,7 +153,7 @@ def main():
             data = s.get("https://children.dnevnik.ru/marks.aspx").content
             soup = BeautifulSoup(data, "lxml")
 
-            if soup.title.string == 'Профилактические работы':
+            if soup.title.string == 'Профилактические работы' or offline:
                 opts = [{"Профилактические работы": str(randint(0, 2000))}]
 
             else:
@@ -194,7 +201,26 @@ def stats():
                          'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
-        s.post('https://login.dnevnik.ru/login', login_payload)
+        try:
+            s.post('https://login.dnevnik.ru/login', login_payload)
+
+        except ConnectionError:
+            html_out = ""
+            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
+
+            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+            html_out += '</div>'
+            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+            html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
+            html_out += 'Кажется, Дневник.Ру ушел в оффлайн :> <br>'
+            html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
+            html_out += '</div>'
+
+            response = make_response(jsonify(html_out))
+            response.set_cookie('Offset', value='', max_age=0, expires=0)
+            return response
+
         json_out = None
         data = None
 
@@ -338,7 +364,26 @@ def summary():
                          'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
-        s.post('https://login.dnevnik.ru/login', login_payload)
+        try:
+            s.post('https://login.dnevnik.ru/login', login_payload)
+
+        except ConnectionError:
+            html_out = ""
+            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>'
+
+            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+            html_out += '</div>'
+            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+            html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
+            html_out += 'Либо данных попросту нет, либо Дневник.Ру в оффлайне :> <br>'
+            html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
+            html_out += '</div>'
+
+            response = make_response(jsonify(html_out))
+            response.set_cookie('Offset', value='', max_age=0, expires=0)
+            return response
+
         data = None
 
         try:
@@ -608,7 +653,26 @@ def dnevnik():
                          'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
-        s.post('https://login.dnevnik.ru/login', login_payload)
+        try:
+            s.post('https://login.dnevnik.ru/login', login_payload)
+
+        except ConnectionError:
+            html_out = ""
+            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
+
+            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+            html_out += '</div>'
+            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+            html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
+            html_out += 'Либо уроков нет, либо Дневник.Ру ушел в оффлайн :> <br>'
+            html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
+            html_out += '</div>'
+
+            response = make_response(jsonify(html_out))
+            response.set_cookie('Offset', value='', max_age=0, expires=0)
+            return response
+
         data = None
 
         if request.cookies.get('AccountType') == 'Student':
@@ -992,7 +1056,16 @@ def log_in():
         login_payload = {'login': login, 'password': password,
                          'exceededAttempts': 'False', 'ReturnUrl': ''}
 
-        s.post('https://login.dnevnik.ru/login', login_payload)
+        try:
+            s.post('https://login.dnevnik.ru/login', login_payload)
+
+        except ConnectionError:
+            html_out = ""
+
+            html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+            html_out += '<p style="text-align:center; color:red;">Системы Дневник.Ру оффлайн. ¯\_(ツ)_/¯</p>'
+
+            return jsonify(html_out)
 
         try:
             s.cookies.get_dict()['DnevnikAuth_a']
@@ -1059,9 +1132,26 @@ def apply():
 
 @app.route("/logout", methods=['GET'])
 def log_out():
+    s = CacheControl(Session())
+
+    s.headers.update({'Upgrade-Insecure-Requests': '1',
+                      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
+                      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+                      'DNT': '1',
+                      'Accept-Encoding': 'gzip, deflate, br',
+                      'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
+
+    offline = False
+
+    try:
+        s.get('https://dnevnik.ru/')
+
+    except ConnectionError:
+        offline = True
+
     response = make_response(redirect('/'))
 
-    if 'DnevnikLogin' in request.cookies:
+    if 'DnevnikLogin' in request.cookies and not offline:
             response.set_cookie('DnevnikLogin', value='', max_age=0, expires=0)
             response.set_cookie('DnevnikPass', value='', max_age=0, expires=0)
             response.set_cookie('AccountType', value='', max_age=0, expires=0)
