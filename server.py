@@ -1037,84 +1037,89 @@ def dnevnik():
         return response
 
 
-@app.route("/login", methods=['POST'])
+@app.route("/login", methods=['GET', 'POST'])
 def log_in():
-    login = request.form.get('username', '')
-    password = request.form.get('password', '')
-    accounttype = None
+    if request.method == 'POST':
+        login = request.form.get('username', '')
+        password = request.form.get('password', '')
+        accounttype = None
 
-    if login is not '' and password is not '':
-        s = CacheControl(Session())
+        if login is not '' and password is not '':
+            s = CacheControl(Session())
 
-        s.headers.update({'Upgrade-Insecure-Requests': '1',
-                          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-                          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-                          'DNT': '1',
-                          'Accept-Encoding': 'gzip, deflate, br',
-                          'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
+            s.headers.update({'Upgrade-Insecure-Requests': '1',
+                              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
+                              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+                              'DNT': '1',
+                              'Accept-Encoding': 'gzip, deflate, br',
+                              'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
-        login_payload = {'login': login, 'password': password,
-                         'exceededAttempts': 'False', 'ReturnUrl': ''}
+            login_payload = {'login': login, 'password': password,
+                             'exceededAttempts': 'False', 'ReturnUrl': ''}
 
-        try:
-            s.post('https://login.dnevnik.ru/login', login_payload)
+            try:
+                s.post('https://login.dnevnik.ru/login', login_payload)
 
-        except ConnectionError:
+            except ConnectionError:
+                html_out = ""
+
+                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+                html_out += '<p style="text-align:center; color:red;">Системы Дневник.Ру оффлайн. ¯\_(ツ)_/¯</p>'
+
+                return jsonify(html_out)
+
+            try:
+                s.cookies.get_dict()['DnevnikAuth_a']
+
+            except KeyError:
+                html_out = ""
+
+                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+                html_out += '<p style="text-align:center; color:red;">Данные неверны. Если это ошибка, попробуйте зайти через офф. сайт и вернуться. ¯\_(ツ)_/¯</p>'
+
+                return jsonify(html_out)
+
+            data = s.get("https://dnevnik.ru/").content
+            soup = BeautifulSoup(data, "lxml")
+
+            type_block = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__category'}).text
+
+            if "Ученик" in type_block:
+                accounttype = "Student"
+
+            elif "Родитель" in type_block:
+                accounttype = "Parent"
+
+            else:
+                html_out = ""
+                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+                html_out += '<p style="text-align:center; color:red;">Вы - преподаватель. ¯\_(ツ)_/¯</p>'
+
+                return jsonify(html_out)
+
             html_out = ""
-
             html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-            html_out += '<p style="text-align:center; color:red;">Системы Дневник.Ру оффлайн. ¯\_(ツ)_/¯</p>'
+            html_out += '<p style="text-align:center; color:green;">Аутентификация завершена.</p>'
 
-            return jsonify(html_out)
+            response = make_response(jsonify(html_out))
 
-        try:
-            s.cookies.get_dict()['DnevnikAuth_a']
+            response.set_cookie('DnevnikLogin', value=b32encode(b64encode(login.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
+            response.set_cookie('DnevnikPass', value=b32encode(b64encode(password.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
+            response.set_cookie('AccountType', value=str(accounttype), max_age=2592000, expires=2592000)
 
-        except KeyError:
-            html_out = ""
-
-            html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-            html_out += '<p style="text-align:center; color:red;">Данные неверны. Если это ошибка, попробуйте зайти через офф. сайт и вернуться. ¯\_(ツ)_/¯</p>'
-
-            return jsonify(html_out)
-
-        data = s.get("https://dnevnik.ru/").content
-        soup = BeautifulSoup(data, "lxml")
-
-        type_block = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__category'}).text
-
-        if "Ученик" in type_block:
-            accounttype = "Student"
-
-        elif "Родитель" in type_block:
-            accounttype = "Parent"
+            return response
 
         else:
             html_out = ""
+
             html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-            html_out += '<p style="text-align:center; color:red;">Вы - преподаватель. ¯\_(ツ)_/¯</p>'
+            html_out += '<p style="text-align:center; color:red;">Данные отсутствуют ¯\_(ツ)_/¯</p>'
 
             return jsonify(html_out)
 
-        html_out = ""
-        html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-        html_out += '<p style="text-align:center; color:green;">Аутентификация завершена.</p>'
-
-        response = make_response(jsonify(html_out))
-
-        response.set_cookie('DnevnikLogin', value=b32encode(b64encode(login.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
-        response.set_cookie('DnevnikPass', value=b32encode(b64encode(password.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
-        response.set_cookie('AccountType', value=str(accounttype), max_age=2592000, expires=2592000)
-
-        return response
-
     else:
-        html_out = ""
-
-        html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-        html_out += '<p style="text-align:center; color:red;">Данные отсутствуют ¯\_(ツ)_/¯</p>'
-
-        return jsonify(html_out)
+        response = make_response(redirect("/"))
+        return response
 
 
 @app.route("/apply", methods=['POST'])
