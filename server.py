@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify
+from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify, Markup
 from flask_sslify import SSLify
 from random import choice, randint
 from re import match, findall, sub, DOTALL
@@ -151,50 +151,32 @@ def main():
             recent_data = None
 
         else:
-            recent_marks = soup.find_all('div', {'class': '_1smCg'})[:6]
+            recent_marks = soup.find_all('div', {'class': '_1smCg'})[:3]
 
-            recent_data = ""
-            recent_data += """<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">"""
-            recent_data += """<div class="mdl-card mdl-cell mdl-cell--12-col">"""
-            recent_data += """<div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">"""
-            recent_data += """<h4 class="mdl-cell mdl-cell--12-col">Последние оценки</h4>"""
+            recent_data = {}
 
-            for each in recent_marks:
-                mark = each.find('a', {'class': '_2TgEf'}).text
-                subject = each.find('a', {'class': '_31Whp'}).text
-                work = each.find('a', {'class': '_2Rj1d'}).text
-                date = sub(r"(<!--.*?-->)", "", each.find('a', {'class': '_3-WPZ'}).text, flags=DOTALL).replace("за урок", "").strip()
-
-                recent_data += """<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">"""
-                recent_data += """<div class="section__circle-container__circle mdl-color--primary"></div>"""
-                recent_data += "</div>"
-                recent_data += """<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">"""
-                recent_data += """<div style="display:block; height:2px; clear:both;"></div>"""
-                recent_data += f"<h5>{subject}</h5>"
-                recent_data += f"<h8>Дата: {date}</h8><br>"
-                recent_data += f"<h8>Вид работы: {work}</h8><br>"
+            for i in range(recent_marks):
+                mark = recent_marks[i].find('a', {'class': '_2TgEf'}).text
+                subject = recent_marks[i].find('a', {'class': '_31Whp'}).text
+                work = recent_marks[i].find('a', {'class': '_2Rj1d'}).text
+                date = sub(r"(<!--.*?-->)", "", recent_marks[i].find('a', {'class': '_3-WPZ'}).text, flags=DOTALL).replace("за урок", "").strip()
 
                 if int(mark) == 5:
-                    recent_data += """<h8 style="color:green;">Оценка: {mark}</h8><br>"""
+                    mark_markup = f"""<h8 style="color:green;">Оценка: {mark}</h8><br>"""
 
                 elif int(mark) == 4:
-                    recent_data += """<h8 style="color:teal;">Оценка: {mark}</h8><br>"""
+                    mark_markup += f"""<h8 style="color:teal;">Оценка: {mark}</h8><br>"""
 
                 elif int(mark) == 3:
-                    recent_data += """<h8 style="color:#FF5722;">Оценка: {mark}</h8><br>"""
+                    mark_markup += f"""<h8 style="color:#FF5722;">Оценка: {mark}</h8><br>"""
 
                 elif int(mark) == 2 or int(mark) == 1:
-                    recent_data += """<h8 style="color:red;">Оценка: {mark}</h8><br>"""
+                    mark_markup += f"""<h8 style="color:red;">Оценка: {mark}</h8><br>"""
 
-                recent_data += """<div style="display:block; height:5px; clear:both;"></div>"""
-                recent_data += "</div>"
-
-            recent_data += "</div>"
-            recent_data += "</div>"
-            recent_data += "</section>"
+                recent_data[i + 1] = {"Предмет": subject, "Дата": date, "Тип работы": work, "Оценка": Markup(mark_markup)}
 
         if recent_data is not None:
-            response = make_response(render_template('index_logged_in.html', user=user, recent_data=recent_data))
+            response = make_response(render_template('index_logged_in.html', user=user, recent_marks=recent_data))
 
         else:
             response = make_response(render_template('index_logged_in.html', user=user))
