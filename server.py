@@ -137,7 +137,7 @@ def main():
         except ConnectionError:
             offline = True
 
-        data = s.get("https://dnevnik.ru/feed/").content
+        data = s.get("https://dnevnik.ru/feed/").text
         soup = BeautifulSoup(data, "lxml")
 
         if soup.title.string == 'Профилактические работы' or offline:
@@ -146,59 +146,30 @@ def main():
         else:
             user = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__initials'}).text[:-1]
 
-    if request.cookies.get("AccountType") == 'Student':
-        if soup.title.string == 'Профилактические работы' or offline:
-            recent_marks = None
+        if request.cookies.get("AccountType") == 'Student':
+                response = make_response(render_template('index_logged_in.html', user=user))
+
+        elif request.cookies.get("AccountType") == 'Parent':
+                data = s.get("https://children.dnevnik.ru/marks.aspx").text
+                soup = BeautifulSoup(data, "lxml")
+
+                if soup.title.string == 'Профилактические работы' or offline:
+                    opts = [{"Профилактические работы": str(randint(0, 2000))}]
+
+                else:
+                    options = soup.find_all('option')
+                    opts = []
+
+                    for option in options:
+                        opts.append({option.text: option.attrs['value']})
+
+                response = make_response(render_template('index_logged_in.html', opts=opts, user=user))
 
         else:
-            recent_marks = {}
-            recent_data = soup.find_all('div', {'class': '_1smCg'})[:3]
-
-            for num, each in enumerate(recent_data, 1):
-                mark = each.find('a', {'class': '_2TgEf'}).text
-                subject = each.find('a', {'class': '_31Whp'}).text
-                work = each.find('a', {'class': '_2Rj1d'}).text
-                date = sub(r"(<!--.*?-->)", "", each.find('a', {'class': '_3-WPZ'}).text, flags=DOTALL).replace("за урок", "").strip()
-                mark_markup = None
-
-                if int(mark) == 5:
-                    mark_markup = f"""<h8 style="color:green;">Оценка: {mark}</h8><br>"""
-
-                elif int(mark) == 4:
-                    mark_markup = f"""<h8 style="color:teal;">Оценка: {mark}</h8><br>"""
-
-                elif int(mark) == 3:
-                    mark_markup = f"""<h8 style="color:#FF5722;">Оценка: {mark}</h8><br>"""
-
-                elif int(mark) == 2 or int(mark) == 1:
-                    mark_markup = f"""<h8 style="color:red;">Оценка: {mark}</h8><br>"""
-
-                recent_marks.update({f"{num}": {"Предмет": subject, "Дата": date, "Тип работы": work, "Оценка": mark_markup}})
-
-        if recent_marks is not None:
-            response = make_response(render_template('index_logged_in.html', user=user, recent_marks=recent_marks))
-
-        else:
-            response = make_response(render_template('index_logged_in.html', user=user))
-
-    elif request.cookies.get("AccountType") == 'Parent':
-            data = s.get("https://children.dnevnik.ru/marks.aspx").content
-            soup = BeautifulSoup(data, "lxml")
-
-            if soup.title.string == 'Профилактические работы' or offline:
-                opts = [{"Профилактические работы": str(randint(0, 2000))}]
-
-            else:
-                options = soup.find_all('option')
-                opts = []
-
-                for option in options:
-                    opts.append({option.text: option.attrs['value']})
-
-            response = make_response(render_template('index_logged_in.html', opts=opts, user=user))
+            response = make_response(render_template('index_logged_in.html'))
 
     else:
-        response = make_response(render_template('index_logged_in.html'))
+        response = make_response(redirect("/"))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
@@ -259,12 +230,12 @@ def stats():
         try:
             if request.cookies.get('AccountType') == 'Student':
 
-                data = s.get(f"https://schools.dnevnik.ru/marks.aspx?school={schoolId(s)}&index=-1&tab=stats&period={str(int(termPeriod) - 1) if termPeriod is not '' else '-1'}").content
+                data = s.get(f"https://schools.dnevnik.ru/marks.aspx?school={schoolId(s)}&index=-1&tab=stats&period={str(int(termPeriod) - 1) if termPeriod is not '' else '-1'}").text
 
             elif request.cookies.get('AccountType') == 'Parent':
 
                 child = request.form.get('child', '')
-                data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=stats").content
+                data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=stats").text
 
             tables = pd.read_html(io=data)[-1]
             json_out = loads(tables.to_json(force_ascii=False))
@@ -420,12 +391,12 @@ def summary():
 
         try:
             if request.cookies.get('AccountType') == 'Student':
-                data = s.get(f"https://schools.dnevnik.ru/marks.aspx?school={schoolId(s)}&index=-1&tab=result").content
+                data = s.get(f"https://schools.dnevnik.ru/marks.aspx?school={schoolId(s)}&index=-1&tab=result").text
 
             elif request.cookies.get('AccountType') == 'Parent':
 
                 child = request.form.get('child', '')
-                data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=result").content
+                data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=result").text
 
             tables = pd.read_html(io=data)[-1]
 
@@ -708,12 +679,12 @@ def dnevnik():
         data = None
 
         if request.cookies.get('AccountType') == 'Student':
-            data = s.get(f"https://schools.dnevnik.ru/marks.aspx?school={schoolId(s)}&index=-1&tab=week&year={timeDate(typeDate='year', offset=offset, lastYear=True) if last_year == '1' else timeDate(typeDate='year', offset=offset)}&month={str(timeMonth) if timeDay is not '' and timeMonth is not '' else timeDate(typeDate='month', offset=offset)}&day={timeDate(typeDate='day', offset=offset) if timeDay is '' else str(timeDay)}").content
+            data = s.get(f"https://schools.dnevnik.ru/marks.aspx?school={schoolId(s)}&index=-1&tab=week&year={timeDate(typeDate='year', offset=offset, lastYear=True) if last_year == '1' else timeDate(typeDate='year', offset=offset)}&month={str(timeMonth) if timeDay is not '' and timeMonth is not '' else timeDate(typeDate='month', offset=offset)}&day={timeDate(typeDate='day', offset=offset) if timeDay is '' else str(timeDay)}").text
 
         elif request.cookies.get('AccountType') == 'Parent':
 
             child = request.form.get('child', '')
-            data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=week&year={timeDate(typeDate='year', offset=offset, lastYear=True) if last_year == '1' else timeDate(typeDate='year', offset=offset)}&month={str(timeMonth) if timeDay is not '' and timeMonth is not '' else timeDate(typeDate='month', offset=offset)}&day={timeDate(typeDate='day', offset=offset) if timeDay is '' else str(timeDay)}").content
+            data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=week&year={timeDate(typeDate='year', offset=offset, lastYear=True) if last_year == '1' else timeDate(typeDate='year', offset=offset)}&month={str(timeMonth) if timeDay is not '' and timeMonth is not '' else timeDate(typeDate='month', offset=offset)}&day={timeDate(typeDate='day', offset=offset) if timeDay is '' else str(timeDay)}").text
 
         columns = {0: 'Уроки', 1: 'Присутствие', 2: 'Оценки', 3: 'Замечания', 4: 'ДЗ'}
         tables = None
@@ -787,10 +758,10 @@ def dnevnik():
         schedule = None
 
         if request.cookies.get("AccountType") == 'Student':
-            schedule = s.get(f"https://schools.dnevnik.ru/schedules/view.aspx?school={schoolId(s)}&group={groupId(s)}&tab=timetable").content
+            schedule = s.get(f"https://schools.dnevnik.ru/schedules/view.aspx?school={schoolId(s)}&group={groupId(s)}&tab=timetable").text
 
         elif request.cookies.get("AccountType") == 'Parent':
-            schedule = s.get(f"https://children.dnevnik.ru/timetable.aspx?child={child}&tab=timetable").content
+            schedule = s.get(f"https://children.dnevnik.ru/timetable.aspx?child={child}&tab=timetable").text
 
         columns = {0: 'Урок', 1: 'Время'}
         tables_sch = pd.read_html(io=schedule)[-1].rename(columns=columns)
@@ -1111,7 +1082,7 @@ def log_in():
 
                 return jsonify(html_out)
 
-            data = s.get("https://dnevnik.ru/").content
+            data = s.get("https://dnevnik.ru/feed/").text
             soup = BeautifulSoup(data, "lxml")
 
             type_block = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__category'}).text
