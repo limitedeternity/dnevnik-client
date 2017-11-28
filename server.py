@@ -159,18 +159,19 @@ def main():
                 subject = each.find('a', {'class': '_31Whp'}).text
                 work = each.find('a', {'class': '_2Rj1d'}).text
                 date = sub(r"(<!--.*?-->)", "", each.find('a', {'class': '_3-WPZ'}).text, flags=DOTALL).replace("за урок", "").strip()
+                mark_markup = None
 
                 if int(mark) == 5:
                     mark_markup = f"""<h8 style="color:green;">Оценка: {mark}</h8><br>"""
 
                 elif int(mark) == 4:
-                    mark_markup += f"""<h8 style="color:teal;">Оценка: {mark}</h8><br>"""
+                    mark_markup = f"""<h8 style="color:teal;">Оценка: {mark}</h8><br>"""
 
                 elif int(mark) == 3:
-                    mark_markup += f"""<h8 style="color:#FF5722;">Оценка: {mark}</h8><br>"""
+                    mark_markup = f"""<h8 style="color:#FF5722;">Оценка: {mark}</h8><br>"""
 
                 elif int(mark) == 2 or int(mark) == 1:
-                    mark_markup += f"""<h8 style="color:red;">Оценка: {mark}</h8><br>"""
+                    mark_markup = f"""<h8 style="color:red;">Оценка: {mark}</h8><br>"""
 
                 recent_marks.update({f"{num}": {"Предмет": subject, "Дата": date, "Тип работы": work, "Оценка": mark_markup}})
 
