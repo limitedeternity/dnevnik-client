@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify, Markup
+from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify
 from flask_sslify import SSLify
 from random import choice, randint
 from re import match, findall, sub, DOTALL
@@ -137,7 +137,7 @@ def main():
         except ConnectionError:
             offline = True
 
-        data = s.get("https://dnevnik.ru/").content
+        data = s.get("https://dnevnik.ru/feed/").content
         soup = BeautifulSoup(data, "lxml")
 
         if soup.title.string == 'Профилактические работы' or offline:
@@ -163,7 +163,7 @@ def main():
                 mark = each.find('a', {'class': '_2TgEf'}).text
                 subject = each.find('a', {'class': '_31Whp'}).text
                 work = each.find('a', {'class': '_2Rj1d'}).text
-                date = sub(r"(<!--.*?-->)", "", each.find('a', {'class': '_3-WPZ'}).text, flags=DOTALL).replace("за урок", "") + "."
+                date = sub(r"(<!--.*?-->)", "", each.find('a', {'class': '_3-WPZ'}).text, flags=DOTALL).replace("за урок", "").strip()
 
                 recent_data += """<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">"""
                 recent_data += """<div class="section__circle-container__circle mdl-color--primary"></div>"""
@@ -194,7 +194,7 @@ def main():
             recent_data += "</section>"
 
         if recent_data is not None:
-            response = make_response(render_template('index_logged_in.html', user=user, recent_data=Markup(recent_data)))
+            response = make_response(render_template('index_logged_in.html', user=user, recent_data=recent_data))
 
         else:
             response = make_response(render_template('index_logged_in.html', user=user))
