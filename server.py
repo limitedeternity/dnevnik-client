@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify, Markup
+from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify
 from flask_sslify import SSLify
 from random import choice, randint
 from re import match, findall, sub, DOTALL
@@ -148,14 +148,13 @@ def main():
 
     if request.cookies.get("AccountType") == 'Student':
         if soup.title.string == 'Профилактические работы' or offline:
-            recent_data = None
+            recent_marks = None
 
         else:
-            recent_marks = soup.find_all('div', {'class': '_1smCg'})[:3]
+            recent_marks = {}
+            recent_data = soup.find_all('div', {'class': '_1smCg'})[:3]
 
-            recent_data = {}
-
-            for each in recent_marks:
+            for num, each in enumerate(recent_data, 1):
                 mark = each.find('a', {'class': '_2TgEf'}).text
                 subject = each.find('a', {'class': '_31Whp'}).text
                 work = each.find('a', {'class': '_2Rj1d'}).text
@@ -173,10 +172,10 @@ def main():
                 elif int(mark) == 2 or int(mark) == 1:
                     mark_markup += f"""<h8 style="color:red;">Оценка: {mark}</h8><br>"""
 
-                recent_data[i + 1] = {"Предмет": subject, "Дата": date, "Тип работы": work, "Оценка": Markup(mark_markup)}
+                recent_marks[num] = {"Предмет": subject, "Дата": date, "Тип работы": work, "Оценка": mark_markup}
 
-        if recent_data is not None:
-            response = make_response(render_template('index_logged_in.html', user=user, recent_marks=recent_data))
+        if recent_marks is not None:
+            response = make_response(render_template('index_logged_in.html', user=user, recent_marks=recent_marks))
 
         else:
             response = make_response(render_template('index_logged_in.html', user=user))

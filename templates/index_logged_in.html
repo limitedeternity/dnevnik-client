@@ -141,7 +141,7 @@
                           <h5>{{number}}. {{ data_dict['Предмет'] }}</h5>
                           <h8>Дата: {{ data_dict['Дата'] }}</h8><br>
                           <h8>Тип работы: {{ data_dict['Тип работы'] }}</h8><br>
-                          {{ data_dict['Оценка'] }}
+                          {{ data_dict['Оценка'] | safe }}
                           <div style="display:block; height:5px; clear:both;"></div>
                         </div>
                     {% endfor %}
