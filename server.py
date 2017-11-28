@@ -155,11 +155,11 @@ def main():
 
             recent_data = {}
 
-            for i in range(recent_marks):
-                mark = recent_marks[i].find('a', {'class': '_2TgEf'}).text
-                subject = recent_marks[i].find('a', {'class': '_31Whp'}).text
-                work = recent_marks[i].find('a', {'class': '_2Rj1d'}).text
-                date = sub(r"(<!--.*?-->)", "", recent_marks[i].find('a', {'class': '_3-WPZ'}).text, flags=DOTALL).replace("за урок", "").strip()
+            for each in recent_marks:
+                mark = each.find('a', {'class': '_2TgEf'}).text
+                subject = each.find('a', {'class': '_31Whp'}).text
+                work = each.find('a', {'class': '_2Rj1d'}).text
+                date = sub(r"(<!--.*?-->)", "", each.find('a', {'class': '_3-WPZ'}).text, flags=DOTALL).replace("за урок", "").strip()
 
                 if int(mark) == 5:
                     mark_markup = f"""<h8 style="color:green;">Оценка: {mark}</h8><br>"""
