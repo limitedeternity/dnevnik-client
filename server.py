@@ -172,7 +172,7 @@ def main():
                 elif int(mark) == 2 or int(mark) == 1:
                     mark_markup += f"""<h8 style="color:red;">Оценка: {mark}</h8><br>"""
 
-                recent_marks[num] = {"Предмет": subject, "Дата": date, "Тип работы": work, "Оценка": mark_markup}
+                recent_marks.update({f"{num}": {"Предмет": subject, "Дата": date, "Тип работы": work, "Оценка": mark_markup}})
 
         if recent_marks is not None:
             response = make_response(render_template('index_logged_in.html', user=user, recent_marks=recent_marks))
