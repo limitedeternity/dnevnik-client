@@ -3,7 +3,7 @@
 from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify
 from flask_sslify import SSLify
 from random import choice, randint
-from re import match, findall, sub, DOTALL
+from re import match, findall
 from bs4 import BeautifulSoup
 from requests import Session
 from requests.exceptions import ConnectionError
