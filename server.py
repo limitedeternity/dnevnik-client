@@ -140,7 +140,7 @@ def main():
         data = s.get("https://dnevnik.ru/feed/").text
         soup = BeautifulSoup(data, "lxml")
 
-        if soup.title.string == 'Профилактические работы' or 'Ошибка на сервере' in soup.title.string or offline:
+        if ('Профилактические работы' in soup.title.string) or ('Ошибка на сервере' in soup.title.string) or offline:
             user = "товарищ Тестер"
 
         else:
