@@ -138,7 +138,7 @@ def main():
             offline = True
 
         data = s.get("https://dnevnik.ru/feed/").text
-        soup = BeautifulSoup(data, "lxml")
+        soup = BeautifulSoup(data, "html.parser")
 
         if ('Профилактические работы' in soup.title.string) or ('Ошибка на сервере' in soup.title.string) or offline:
             user = "товарищ Тестер"
@@ -151,7 +151,7 @@ def main():
 
         elif request.cookies.get("AccountType") == 'Parent':
                 data = s.get("https://children.dnevnik.ru/marks.aspx").text
-                soup = BeautifulSoup(data, "lxml")
+                soup = BeautifulSoup(data, "html.parser")
 
                 if soup.title.string == 'Профилактические работы' or 'Ошибка на сервере' in soup.title.string or offline:
                     opts = [{"Профилактические работы": str(randint(0, 2000))}]
@@ -1078,7 +1078,7 @@ def log_in():
                 return jsonify(html_out)
 
             data = s.get("https://dnevnik.ru/feed/").text
-            soup = BeautifulSoup(data, "lxml")
+            soup = BeautifulSoup(data, "html.parser")
 
             type_block = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__category'}).text
 
