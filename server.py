@@ -181,11 +181,6 @@ def main():
     return response
 
 
-'''
-Implementation
-'''
-
-
 @app.route("/stats", methods=['POST'])
 def stats():
     if 'DnevnikLogin' in request.cookies:
