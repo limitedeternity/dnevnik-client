@@ -6,6 +6,7 @@ from random import choice, randint
 from re import match, findall
 from bs4 import BeautifulSoup
 from requests import Session
+from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError
 from datetime import datetime, timedelta
 from pytz import utc
@@ -117,6 +118,8 @@ def index():
 def main():
     if 'DnevnikLogin' in request.cookies:
         s = CacheControl(Session())
+        s.mount('http://', HTTPAdapter(max_retries=5))
+        s.mount('https://', HTTPAdapter(max_retries=5))
 
         s.headers.update({'Upgrade-Insecure-Requests': '1',
                           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
@@ -185,6 +188,8 @@ def main():
 def stats():
     if 'DnevnikLogin' in request.cookies:
         s = CacheControl(Session())
+        s.mount('http://', HTTPAdapter(max_retries=5))
+        s.mount('https://', HTTPAdapter(max_retries=5))
 
         termPeriod = request.form.get('term', '')
 
@@ -350,6 +355,8 @@ def stats():
 def summary():
     if 'DnevnikLogin' in request.cookies:
         s = CacheControl(Session())
+        s.mount('http://', HTTPAdapter(max_retries=5))
+        s.mount('https://', HTTPAdapter(max_retries=5))
 
         s.headers.update({'Upgrade-Insecure-Requests': '1',
                           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
@@ -633,6 +640,8 @@ def summary():
 def dnevnik():
     if 'DnevnikLogin' in request.cookies:
         s = CacheControl(Session())
+        s.mount('http://', HTTPAdapter(max_retries=5))
+        s.mount('https://', HTTPAdapter(max_retries=5))
 
         timeMonth = request.form.get('month', '')
         timeDay = request.form.get('day', '')
@@ -1044,6 +1053,8 @@ def log_in():
 
         if login is not '' and password is not '':
             s = CacheControl(Session())
+            s.mount('http://', HTTPAdapter(max_retries=5))
+            s.mount('https://', HTTPAdapter(max_retries=5))
 
             s.headers.update({'Upgrade-Insecure-Requests': '1',
                               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
@@ -1136,6 +1147,8 @@ def apply():
 @app.route("/logout", methods=['GET'])
 def log_out():
     s = CacheControl(Session())
+    s.mount('http://', HTTPAdapter(max_retries=5))
+    s.mount('https://', HTTPAdapter(max_retries=5))
 
     s.headers.update({'Upgrade-Insecure-Requests': '1',
                       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
