@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify
+from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify, abort
 from flask_sslify import SSLify
 from random import choice, randint
 from re import match, findall
@@ -1191,6 +1191,9 @@ def serviceworker():
 def serve_sw(path):
     if path != 'sw.js':
         return send_from_directory('sw', path)
+    
+    else:
+        abort(404)
 
 
 if __name__ == "__main__":
