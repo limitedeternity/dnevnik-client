@@ -11,3 +11,4 @@ requests
 lxml
 html5lib
 pytz
+whitenoise
