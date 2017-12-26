@@ -2,6 +2,7 @@
 
 from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify, abort
 from flask_sslify import SSLify
+import flask_profiler
 from random import choice, randint
 from re import match, findall
 from bs4 import BeautifulSoup
@@ -27,6 +28,23 @@ debug = False
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = environ.get("SECRET_KEY", "".join(choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for _ in range(50)))
 app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/")
+
+app.config["flask_profiler"] = {
+    "enabled": debug,
+    "storage": {
+        "engine": "sqlite"
+    },
+    "basicAuth":{
+        "enabled": True,
+        "username": "admin",
+        "password": "1234" # lol
+    },
+    "ignore": [
+	    r"^/js/.*",
+        r"^/css/.*"
+	]
+}
+
 
 if not debug:
     app.config['REMEMBER_COOKIE_SECURE'] = True
@@ -1191,11 +1209,12 @@ def serviceworker():
 def serve_sw(path):
     if path != 'sw.js':
         return send_from_directory('sw', path)
-    
+
     else:
         abort(404)
 
 
+flask_profiler.init_app(app)
 if __name__ == "__main__":
     chdir(dirname(abspath(__file__)))
     app.run(debug=debug, use_reloader=True)

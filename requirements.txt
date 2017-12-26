@@ -12,3 +12,4 @@ lxml
 html5lib
 pytz
 whitenoise
+flask_profiler
