@@ -28,7 +28,7 @@ if not debug:
     app.config['REMEMBER_COOKIE_SECURE'] = True
     app.config['SESSION_COOKIE_SECURE'] = True
 
-    cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+    cache = Cache(app, config={'CACHE_TYPE': 'redis', 'CACHE_REDIS_URL': environ.get("REDIS_URL")})
     csrf = CSRFProtect(app)
     sslify = SSLify(app)
 
