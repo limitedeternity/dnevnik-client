@@ -237,13 +237,13 @@ def stats():
                                 html_out += f'<h8 style="color:{coloring(markTuple[0][1])};">{markTuple[0][0]}: {markTuple[1]}</h8><br>'
 
                         except (KeyError, IndexError):
-                            pass
+                            print(";")
 
                         try:
                             html_out += f'<h8 style="color:{coloring(subjectData["FinalMark"]["Values"][0]["Mood"])};">Итоговое значение: {subjectData["FinalMark"]["Values"][0]["Value"]}</h8><br>'
 
                         except (KeyError, IndexError, TypeError):
-                            pass
+                            print(";")
 
                         try:
                             response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&subjectId={subjectId}&access_token={access_token}")
@@ -253,8 +253,8 @@ def stats():
                             html_out += f'<h8 style="color:{coloring(average_mark["Mood"])};">Среднее значение: {average_mark["CommonWorksAvg"]["Value"]}</h8><br>'
                             html_out += f'<h8 style="color:{coloring(average_mark["Mood"])};">Среднее значение (важн.): {average_mark["ImportantWorksAvg"]["Value"]}</h8><br>'
 
-                        except KeyError:
-                            pass
+                        except (KeyError, ConnectionError):
+                            print(";")
 
                         html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                         html_out += '</div>'
