@@ -73,11 +73,10 @@ $(document).ready(function () {
         a.preventDefault();
 
         $("#error").show();
-        $("#login-btn").hide();
         $("#error").html("<div class='loader'>Loading...</div>");
 
         if (navigator.onLine) {
-            location.href = "https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=Schools,Relatives,EduGroups,Lessons,Marks,EduWorks,Avatar&redirect_uri=https://dnevnik-client.herokuapp.com/";
+            location.href = "https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo&redirect_uri=https://dnevnik-client.herokuapp.com/";
 
         } else {
             $("#error").html('<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:red;">Оффлайн ¯\_(ツ)_/¯</p>');
