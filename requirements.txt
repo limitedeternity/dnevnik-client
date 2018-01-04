@@ -9,4 +9,3 @@ requests
 requests[security]
 pytz
 whitenoise
-brotlipy

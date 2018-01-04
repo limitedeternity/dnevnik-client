@@ -8,21 +8,14 @@ from random import choice, randint
 from re import findall
 from json import loads
 from pytz import utc
-from subprocess import call
-
-# Flask with some improvements
 from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify, abort
-from flask.ext.cache import Cache # Caching
+from flask_cache import Cache # Caching
 from flask_sslify import SSLify # Ensure HTTPS
 from flask_wtf.csrf import CSRFProtect # CSRF
 from whitenoise import WhiteNoise # Easy static serve
-
-# Requests
 from requests import Session
 from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError
-
-# Requests caching
 from cachecontrol import CacheControl
 
 debug = False
@@ -32,7 +25,6 @@ app.config['SECRET_KEY'] = environ.get("SECRET_KEY", "".join(choice("abcdefghijk
 app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/")
 
 if not debug:
-    call("python -m whitenoise.compress --no-gzip static/")
     app.config['REMEMBER_COOKIE_SECURE'] = True
     app.config['SESSION_COOKIE_SECURE'] = True
 
