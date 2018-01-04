@@ -1,7 +1,6 @@
 Flask
 Flask-WTF
 flask-sslify
-flask-compress
 Flask-Cache
 CacheControl
 gunicorn
@@ -10,3 +9,4 @@ requests
 requests[security]
 pytz
 whitenoise
+brotlipy
