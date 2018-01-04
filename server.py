@@ -7,15 +7,23 @@ from datetime import datetime, timedelta
 from random import choice, randint
 from re import findall
 from json import loads
+from pytz import utc
+
+# Flask with some improvements
 from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify, abort
-from flask_sslify import SSLify
+from flask.ext.cache import Cache # Caching
+from flask_sslify import SSLify # Ensure HTTPS
+from flask_compress import Compress # GZip compression
+from flask_wtf.csrf import CSRFProtect # CSRF
+from whitenoise import WhiteNoise # Easy static serve
+
+# Requests
 from requests import Session
 from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError
-from pytz import utc
-from flask_wtf.csrf import CSRFProtect
+
+# Requests caching
 from cachecontrol import CacheControl
-from whitenoise import WhiteNoise
 
 debug = False
 
@@ -26,9 +34,11 @@ app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/")
 if not debug:
     app.config['REMEMBER_COOKIE_SECURE'] = True
     app.config['SESSION_COOKIE_SECURE'] = True
-    sslify = SSLify(app)
 
-csrf = CSRFProtect(app)
+    Compress(app)
+    cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+    csrf = CSRFProtect(app)
+    sslify = SSLify(app)
 
 
 '''
