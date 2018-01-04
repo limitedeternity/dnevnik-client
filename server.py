@@ -63,7 +63,6 @@ def timeDate(typeDate, offset):
         return str(time.month)
 
     elif typeDate == 'year':
-        return '2017'
         return str(time.year)
 
 
