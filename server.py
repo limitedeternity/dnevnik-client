@@ -237,13 +237,13 @@ def stats():
                                 html_out += f'<h8 style="color:{coloring(markTuple[0][1])};">{markTuple[0][0]}: {markTuple[1]}</h8><br>'
 
                         except (KeyError, IndexError):
-                            print(";")
+                            pass
 
                         try:
                             html_out += f'<h8 style="color:{coloring(subjectData["FinalMark"]["Values"][0]["Mood"])};">Итоговое значение: {subjectData["FinalMark"]["Values"][0]["Value"]}</h8><br>'
 
                         except (KeyError, IndexError, TypeError):
-                            print(";")
+                            pass
 
                         try:
                             if request.cookies.get('AccountType') == 'Student':
@@ -260,7 +260,7 @@ def stats():
                             html_out += f'<h8 style="color:{coloring(average_mark["Mood"])};">Среднее значение (важн.): {average_mark["ImportantWorksAvg"]["Value"]}</h8><br>'
 
                         except (KeyError, ConnectionError):
-                            print(";")
+                            pass
 
                         html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                         html_out += '</div>'
