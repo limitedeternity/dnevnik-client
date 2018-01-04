@@ -4,13 +4,7 @@ flask-sslify
 CacheControl
 gunicorn
 eventlet
-pandas
-numpy
-beautifulsoup4
 requests
 requests[security]
-lxml
-html5lib
 pytz
 whitenoise
-flask_profiler

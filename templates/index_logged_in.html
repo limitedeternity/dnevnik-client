@@ -87,7 +87,6 @@
           <a href="#overview" class="mdl-layout__tab is-active">Главная</a>
           <a href="#diary" id="diary-tab" class="mdl-layout__tab">Дневник</a>
           <a href="#stats" id="stats-tab" class="mdl-layout__tab">Статистика</a>
-          <a href="#summary" id="summary-tab" class="mdl-layout__tab">Итоговые</a>
           <a href="#settings" class="mdl-layout__tab">Настройки</a>
           <a href="#" id="logout" class="mdl-layout__tab">Выход</a>
         </div>
@@ -114,7 +113,7 @@
                     Обо всех ошибках просьба сообщать, открывая Issue в <a href="https://github.com/limitedeternity/dnevnik-client/" target="_blank">репозитории на GitHub</a>. <br>
                     Надеюсь, вам нравится клиент, и вы довольны его функционалом и проделанной мной работой. <br>
                     Напоминаю, что проект - Open Source, так что вы в любой момент можете помочь разработке. <br>
-                    By @limitedeternity
+                    By <a href="https://github.com/limitedeternity/" target="_blank">@limitedeternity</a>
                 {% else %}
                     <h4>О проекте</h4>
                     Этот проект - тестовое решение для проверки некоторых аспектов интеграции проектов без наличия доступа к API. <br>
@@ -122,7 +121,7 @@
                     Material Design. Клиент предоставляет функционал ровно в такой мере, которая требуется ученикам. Без тяжелого обвеса вроде ReactJS,
                     избыточных элементов интерфейса и функционала "соцсети". <br> Ничего лишнего. <br>
                     Исходный код доступен в моем <a href="https://github.com/limitedeternity/dnevnik-client/" target="_blank">репозитории GitHub</a>. <br>
-                    By @limitedeternity
+                    By <a href="https://github.com/limitedeternity/" target="_blank">@limitedeternity</a>
                 {% endif %}
               </div>
             </div>
@@ -144,13 +143,8 @@
                       <input class="mdl-textfield__input" type="text" name="month" id="month" pattern="^([1-9]|1[012])$" value="" autocomplete="off" />
                       <label class="mdl-textfield__label" for="month">Месяц (1-12)</label>
                   </div>
-                  <div style="display:block; height: 15px; clear:both;"></div>
-                  <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="last_year">
-                       <input type="checkbox" id="last_year" name="last_year" value="1" class="mdl-switch__input">
-                       <span class="mdl-switch__label">Прошлое полугодие?</span>
-                  </label>
                   {% if opts %}
-                      <div style="display:block; height: 25px; clear:both;"></div>
+                      <div style="display:block; height: 15px; clear:both;"></div>
                       {% for child in opts %}
                           {% set counter = loop.index0 %}
                           {% for name, id in child.items() %}
@@ -196,7 +190,7 @@
                 <form action="/stats" method="post" id="dnevnik-stats">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                   <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                      <input class="mdl-textfield__input" type="text" name="term" id="term" pattern="^([1-4]{1})$" value="" autocomplete="off" />
+                      <input class="mdl-textfield__input" type="text" name="term" pattern="^([1-4]{1})$" value="" autocomplete="off" />
                       <label class="mdl-textfield__label" for="term">Семестр/Четверть (1-4)</label>
                   </div>
                   <div style="display:block; height: 5px; clear:both;"></div>
@@ -232,50 +226,6 @@
             <div class="mdl-card mdl-cell mdl-cell--12-col">
               <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing" id="stats-out">
                 <h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>
-              </div>
-            </div>
-          </section>
-        </div>
-        <div class="mdl-layout__tab-panel" id="summary">
-          <section class="section--center mdl-grid mdl-grid--no-spacing">
-            <div class="mdl-card mdl-cell mdl-cell--12-col mdl-shadow--4dp">
-              <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
-                <h4 class="mdl-cell mdl-cell--12-col">Запрос</h4>
-                <form action="/summary" method="post" id="dnevnik-summary">
-                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                  <div style="display:block; height: 5px; clear:both;"></div>
-                  {% if opts %}
-                      {% for child in opts %}
-                          {% set counter = loop.index0 %}
-                          {% for name, id in child.items() %}
-                              <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="child_summary{{ counter }}">
-                              {% if counter == 0 %}
-                                  <input type="radio" id="child_summary{{ counter }}" class="mdl-radio__button" name="child" value="{{ id }}" checked>
-                              {% else %}
-                                  <input type="radio" id="child_summary{{ counter }}" class="mdl-radio__button" name="child" value="{{ id }}">
-                              {% endif %}
-                              <span class="mdl-radio__label">{{ name.split(' ')[0] }} {{ name.split(' ')[1] }}</span>
-                              </label>
-                          {% endfor %}
-                          <div style="display:block; height: 5px; clear:both;"></div>
-                      {% endfor %}
-                      <div style="display:block; height: 15px; clear:both;"></div>
-                  {% endif %}
-                  <button type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
-                      <i class="material-icons">arrow_forward</i>
-                      <span class="visuallyhidden">Next</span>
-                      <span class="mdl-button__ripple-container">
-                          <span class="mdl-ripple is-animating" style="width: 160.392px; height: 160.392px; transform: translate(-50%, -50%) translate(14px, 16px);"></span>
-                      </span>
-                  </button>
-                </form>
-              </div>
-            </div>
-          </section>
-          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--4dp">
-            <div class="mdl-card mdl-cell mdl-cell--12-col">
-              <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing" id="summary-out">
-                <h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>
               </div>
             </div>
           </section>

@@ -6,8 +6,6 @@ in Python (see `server.py`). Project also has an Android app (see `android_app` 
 
 ## Features:
 
-👌 Doesn't use Dnevnik.Ru API. Only parsing - only hardcore.
-
 ✨ Offline functionality for browsers supporing Service Worker feature.
 
 ✨ Last requested data is saved using LocalStorage API.

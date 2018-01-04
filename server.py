@@ -1,50 +1,27 @@
 # -*- coding: utf-8 -*-
 
+from os import chdir, environ
+from os.path import dirname, abspath
+from collections import Counter
+from datetime import datetime, timedelta
+from random import choice, randint
+from re import findall
+from json import loads
 from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify, abort
 from flask_sslify import SSLify
-import flask_profiler
-from random import choice, randint
-from re import match, findall
-from bs4 import BeautifulSoup
 from requests import Session
 from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError
-from datetime import datetime, timedelta
 from pytz import utc
-import pandas as pd
-from urllib.parse import urlparse, parse_qs
-from os import chdir
-from json import loads
-from os.path import dirname, abspath
 from flask_wtf.csrf import CSRFProtect
-from os import environ
 from cachecontrol import CacheControl
-from base64 import b64encode, b64decode, b32encode, b32decode
 from whitenoise import WhiteNoise
-
 
 debug = False
 
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = environ.get("SECRET_KEY", "".join(choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for _ in range(50)))
 app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/")
-
-app.config["flask_profiler"] = {
-    "enabled": debug,
-    "storage": {
-        "engine": "sqlite"
-    },
-    "basicAuth":{
-        "enabled": True,
-        "username": "admin",
-        "password": "1234" # lol
-    },
-    "ignore": [
-	    r"^/js/.*",
-        r"^/css/.*"
-	]
-}
-
 
 if not debug:
     app.config['REMEMBER_COOKIE_SECURE'] = True
@@ -59,7 +36,7 @@ Required functionality
 '''
 
 
-def timeDate(typeDate, offset, timeMonth='', timeDay='', lastYear=False):
+def timeDate(typeDate, offset):
     time = None
 
     if (datetime.now(tz=utc) + timedelta(hours=offset)).weekday() == 6:
@@ -86,32 +63,39 @@ def timeDate(typeDate, offset, timeMonth='', timeDay='', lastYear=False):
         return str(time.month)
 
     elif typeDate == 'year':
-        if lastYear:
-            return str(time.year - 1)
-
-        else:
-            return str(time.year)
-
-    elif typeDate == 'weekday':
-        if timeMonth is '' or timeDay is '':
-            return str(time.weekday())
-
-        else:
-            if lastYear:
-                return str((datetime(int(timeDate('year', offset=offset, lastYear=True)), int(timeMonth), int(timeDay), tzinfo=utc) + timedelta(hours=offset)).weekday())
-
-            else:
-                return str((datetime(int(timeDate('year', offset=offset)), int(timeMonth), int(timeDay), tzinfo=utc) + timedelta(hours=offset)).weekday())
+        return '2017'
+        return str(time.year)
 
 
-def schoolId(s):
+def coloring(mood=None):
+    if mood == "Good":
+        return "teal"
 
-    return str(parse_qs(urlparse(s.get("https://schools.dnevnik.ru/school.aspx").url).query)['school'][-1])
+    elif (mood == "Average") or (mood == "О"):
+        return "#FF5722"
+
+    elif (mood == "Bad") or (mood == "Н"):
+        return "red"
+
+    elif (mood == "Б") or (mood == "П"):
+        return "#01579B"
+
+    else:
+        return "#212121"
 
 
-def groupId(s):
-    return str(parse_qs(urlparse(s.get("https://schools.dnevnik.ru/schedules/").url).query)['group'][-1])
+def kaomoji(mood=None):
+    if mood == "Good":
+        return "( ˙꒳​˙ )"
 
+    elif mood == "Average":
+        return "(--_--)"
+
+    elif mood == "Bad":
+        return "(・・ )"
+
+    else:
+        return "ヽ(ー_ー )ノ"
 
 '''
 Template handling
@@ -127,64 +111,48 @@ def index():
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Cache-Control'] = 'no-cache'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000'
-    response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'"
     response.set_cookie('Offset', value='', max_age=0, expires=0)
     return response
 
 
 @app.route("/main", methods=['GET'])
 def main():
-    if 'DnevnikLogin' in request.cookies:
+    if 'AccessToken' in request.cookies:
         s = CacheControl(Session())
         s.mount('http://', HTTPAdapter(max_retries=5))
         s.mount('https://', HTTPAdapter(max_retries=5))
 
-        s.headers.update({'Upgrade-Insecure-Requests': '1',
-                          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-                          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-                          'DNT': '1',
-                          'Accept-Encoding': 'gzip, deflate, br',
-                          'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
-
-        login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
-                         'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
-                         'exceededAttempts': 'False', 'ReturnUrl': ''}
-
         offline = False
 
         try:
-            s.post('https://login.dnevnik.ru/login', login_payload)
+            access_token = request.cookies.get('AccessToken')
+            response = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
+            user_data = loads(response.text)
 
         except ConnectionError:
             offline = True
 
-        data = s.get("https://dnevnik.ru/feed/").text
-        soup = BeautifulSoup(data, "lxml")
-
-        if ('Профилактические работы' in soup.title.string) or ('Ошибка на сервере' in soup.title.string) or offline:
+        if offline:
             user = "товарищ Тестер"
 
         else:
-            user = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__initials'}).text[:-1]
+            user = user_data['firstName']
 
         if request.cookies.get("AccountType") == 'Student':
-                response = make_response(render_template('index_logged_in.html', user=user))
+            response = make_response(render_template('index_logged_in.html', user=user))
 
         elif request.cookies.get("AccountType") == 'Parent':
-                data = s.get("https://children.dnevnik.ru/marks.aspx").text
-                soup = BeautifulSoup(data, "lxml")
+            if offline:
+                opts = [{"Профилактические работы": str(randint(0, 2000))}]
 
-                if soup.title.string == 'Профилактические работы' or 'Ошибка на сервере' in soup.title.string or offline:
-                    opts = [{"Профилактические работы": str(randint(0, 2000))}]
+            else:
+                options = user_data['children']
+                opts = []
 
-                else:
-                    options = soup.find_all('option')
-                    opts = []
+                for option in options:
+                    opts.append({option['firstName']: option['personId']})
 
-                    for option in options:
-                        opts.append({option.text: option.attrs['value']})
-
-                response = make_response(render_template('index_logged_in.html', opts=opts, user=user))
+            response = make_response(render_template('index_logged_in.html', opts=opts, user=user))
 
         else:
             response = make_response(render_template('index_logged_in.html'))
@@ -197,33 +165,23 @@ def main():
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Cache-Control'] = 'no-cache'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000'
-    response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'"
     response.set_cookie('Offset', value='', max_age=0, expires=0)
     return response
 
 
 @app.route("/stats", methods=['POST'])
 def stats():
-    if 'DnevnikLogin' in request.cookies:
+    if 'AccessToken' in request.cookies:
         s = CacheControl(Session())
         s.mount('http://', HTTPAdapter(max_retries=5))
         s.mount('https://', HTTPAdapter(max_retries=5))
 
-        termPeriod = request.form.get('term', '')
-
-        s.headers.update({'Upgrade-Insecure-Requests': '1',
-                          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-                          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-                          'DNT': '1',
-                          'Accept-Encoding': 'gzip, deflate, br',
-                          'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
-
-        login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
-                         'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
-                         'exceededAttempts': 'False', 'ReturnUrl': ''}
+        termPeriod = request.form.get('term', '1')
 
         try:
-            s.post('https://login.dnevnik.ru/login', login_payload)
+            access_token = request.cookies.get('AccessToken')
+            response = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
+            user_data = loads(response.text)
 
         except ConnectionError:
             html_out = ""
@@ -242,23 +200,71 @@ def stats():
             response.set_cookie('Offset', value='', max_age=0, expires=0)
             return response
 
-        json_out = None
-        data = None
-
         try:
             if request.cookies.get('AccountType') == 'Student':
-
-                data = s.get(f"https://schools.dnevnik.ru/marks.aspx?school={schoolId(s)}&index=-1&tab=stats&period={str(int(termPeriod) - 1) if termPeriod is not '' else '-1'}").text
+                response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
 
             elif request.cookies.get('AccountType') == 'Parent':
+                childId = request.form.get('child', '')
+                for child in user_data['children']:
+                    if childId == child['personId']:
+                        response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
 
-                child = request.form.get('child', '')
-                data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=stats").text
+            marks_data = loads(response.text)["AllMarks"]
 
-            tables = pd.read_html(io=data)[-1]
-            json_out = loads(tables.to_json(force_ascii=False))
+            html_out = ""
+            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
 
-        except (ValueError, IndexError):
+            for markData in marks_data:
+                if termPeriod in markData["Period"]["Text"]:
+                    for subjectData in markData["SubjectMarks"]:
+                        subjectId = subjectData["SubjectId"]
+                        markCollection = []
+
+                        html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+                        html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
+                        html_out += '</div>'
+                        html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+                        html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+                        html_out += f'<h5 style="font-weight:600">{subjectData["Name"]}</h5>'
+
+                        for mark in subjectData["Marks"]:
+                            markCollection.append((mark["Values"][0]["Value"], mark["Values"][0]["Mood"]))
+
+                        markCollectionCounted = (*Counter(sorted(markCollection)).items(),)
+
+                        try:
+                            for markTuple in markCollectionCounted:
+                                html_out += f'<h8 style="color:{coloring(markTuple[0][1])};">{markTuple[0][0]}: {markTuple[1]}</h8><br>'
+
+                        except (KeyError, IndexError):
+                            pass
+
+                        try:
+                            html_out += f'<h8 style="color:{coloring(subjectData["FinalMark"]["Values"][0]["Mood"])};">Итоговое значение: {subjectData["FinalMark"]["Values"][0]["Value"]}</h8><br>'
+
+                        except (KeyError, IndexError, TypeError):
+                            pass
+
+                        try:
+                            response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&subjectId={subjectId}&access_token={access_token}")
+
+                            average_mark = loads(response.text)["SubjectMarks"]["Avg"]
+
+                            html_out += f'<h8 style="color:{coloring(average_mark["Mood"])};">Среднее значение: {average_mark["CommonWorksAvg"]["Value"]}</h8><br>'
+                            html_out += f'<h8 style="color:{coloring(average_mark["Mood"])};">Среднее значение (важн.): {average_mark["ImportantWorksAvg"]["Value"]}</h8><br>'
+
+                        except KeyError:
+                            pass
+
+                        html_out += '<div style="display:block; height:5px; clear:both;"></div>'
+                        html_out += '</div>'
+
+            response = make_response(jsonify(html_out))
+            response.set_cookie('Offset', value='', max_age=0, expires=0)
+            return response
+
+        except ConnectionError:
             html_out = ""
             html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
 
@@ -275,371 +281,9 @@ def stats():
             response.set_cookie('Offset', value='', max_age=0, expires=0)
             return response
 
-        html_out = ""
-        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
-
-        for i in range(len(json_out["Предмет"])):
-            threes = False
-            twos = False
-
-            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-            html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
-            html_out += '</div>'
-            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-            html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-            html_out += f'<h5 style="font-weight:600">{str(json_out["Предмет"][str(i)])}</h5>'
-
-            # ...
-            if str(json_out["5"][str(i)]) == 'None':
-                html_out += '<h8 style="color:#212121;">5: 0</h8><br>'
-
-            else:
-                html_out += f'<h8 style="color:green;">5: {str(int(float(json_out["5"][str(i)])))}</h8><br>'
-
-            # ...
-            if str(json_out["4"][str(i)]) == 'None':
-                html_out += '<h8 style="color:#212121;">4: 0</h8><br>'
-
-            else:
-                html_out += f'<h8 style="color:teal;">4: {str(int(float(json_out["4"][str(i)])))}</h8><br>'
-
-            # ...
-            if str(json_out["3"][str(i)]) == 'None':
-                html_out += '<h8 style="color:#212121;">3: 0</h8><br>'
-
-            else:
-                html_out += f'<h8 style="color:#FF5722;">3: {str(int(float(json_out["3"][str(i)])))}</h8><br>'
-                threes = True
-
-            # ...
-            if str(json_out["2"][str(i)]) == 'None':
-                html_out += '<h8 style="color:#212121;">2: 0</h8><br>'
-
-            else:
-                html_out += f'<h8 style="color:red;">2: {str(int(float(json_out["2"][str(i)])))}</h8><br>'
-                twos = True
-
-            # ...
-            if str(json_out["4 и 5"][str(i)]) == 'None':
-                if (threes is False) and (twos is True):
-                    html_out += '<h8 style="color:red;">Процент: 0%</h8><br>'
-
-                elif (twos is False) and (threes is True):
-                    html_out += '<h8 style="color:#FF5722;">Процент: 0%</h8><br>'
-
-                elif (twos is True) and (threes is True):
-                    html_out += '<h8 style="color:red;">Процент: 0%</h8><br>'
-
-                else:
-                    html_out += '<h8 style="color:#212121;">Процент: 0%</h8><br>'
-
-            elif int(json_out["4 и 5"][str(i)][:-1]) in range(80, 101):
-                html_out += f'<h8 style="color:green;">Процент: {str(json_out["4 и 5"][str(i)])}</h8><br>'
-
-            elif int(json_out["4 и 5"][str(i)][:-1]) in range(60, 80):
-                html_out += f'<h8 style="color:teal;">Процент: {str(json_out["4 и 5"][str(i)])}</h8><br>'
-
-            elif int(json_out["4 и 5"][str(i)][:-1]) in range(40, 60):
-                html_out += f'<h8 style="color:#FF5722;">Процент: {str(json_out["4 и 5"][str(i)])}</h8><br>'
-
-            elif int(json_out["4 и 5"][str(i)][:-1]) in range(0, 40):
-                html_out += f'<h8 style="color:red;">Процент: {str(json_out["4 и 5"][str(i)])}</h8><br>'
-
-            html_out += '<div style="display:block; height:5px; clear:both;"></div>'
-            html_out += '</div>'
-
-        response = make_response(jsonify(html_out))
-        response.set_cookie('Offset', value='', max_age=0, expires=0)
-        return response
-
     else:
         html_out = ""
         html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
-
-        html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-        html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-        html_out += '</div>'
-        html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-        html_out += '<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>'
-        html_out += 'Вы явно такого не ожидали, не правда ли?'
-        html_out += '</div>'
-
-        response = make_response(jsonify(html_out))
-        response.set_cookie('Offset', value='', max_age=0, expires=0)
-        return response
-
-
-@app.route("/summary", methods=['POST'])
-def summary():
-    if 'DnevnikLogin' in request.cookies:
-        s = CacheControl(Session())
-        s.mount('http://', HTTPAdapter(max_retries=5))
-        s.mount('https://', HTTPAdapter(max_retries=5))
-
-        s.headers.update({'Upgrade-Insecure-Requests': '1',
-                          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-                          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-                          'DNT': '1',
-                          'Accept-Encoding': 'gzip, deflate, br',
-                          'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
-
-        login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
-                         'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
-                         'exceededAttempts': 'False', 'ReturnUrl': ''}
-
-        try:
-            s.post('https://login.dnevnik.ru/login', login_payload)
-
-        except ConnectionError:
-            html_out = ""
-            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>'
-
-            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-            html_out += '</div>'
-            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-            html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-            html_out += 'Либо данных попросту нет, либо Дневник.Ру в оффлайне :> <br>'
-            html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
-            html_out += '</div>'
-
-            response = make_response(jsonify(html_out))
-            response.set_cookie('Offset', value='', max_age=0, expires=0)
-            return response
-
-        data = None
-
-        try:
-            if request.cookies.get('AccountType') == 'Student':
-                data = s.get(f"https://schools.dnevnik.ru/marks.aspx?school={schoolId(s)}&index=-1&tab=result").text
-
-            elif request.cookies.get('AccountType') == 'Parent':
-
-                child = request.form.get('child', '')
-                data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=result").text
-
-            tables = pd.read_html(io=data)[-1]
-
-            header = tables.iloc[0]
-            tables = tables[1:-5]
-            tables = tables.rename(columns=header)
-
-            json_out = loads(tables.to_json(force_ascii=False))
-
-            html_out = ""
-            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>'
-
-            for i in range(len(json_out['Предметы'])):
-                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
-                html_out += '</div>'
-                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-                html_out += f'<h5 style="font-weight:600">{str(json_out["Предметы"][str(i + 1)])}</h5>'
-
-                # ...
-                try:
-                    # ...
-
-                    if str(json_out["1 сем"][str(i + 1)]) == 'None':
-                        html_out += '<h8 style="color:#212121;">1 cем.: нет.</h8><br>'
-
-                    elif str(json_out["1 сем"][str(i + 1)]) == '5':
-                        html_out += '<h8 style="color:green;">1 cем.: 5</h8><br>'
-
-                    elif str(json_out["1 сем"][str(i + 1)]) == '4':
-                        html_out += '<h8 style="color:teal;">1 cем.: 4</h8><br>'
-
-                    elif str(json_out["1 сем"][str(i + 1)]) == '3':
-                        html_out += '<h8 style="color:#FF5722;">1 cем.: 3</h8><br>'
-
-                    elif str(json_out["1 сем"][str(i + 1)]) == '2':
-                        html_out += '<h8 style="color:red;">1 cем.: 2</h8><br>'
-
-                    elif str(json_out["1 сем"][str(i + 1)]) == '1':
-                        html_out += '<h8 style="color:red;">1 cем.: 1</h8><br>'
-
-                    # ...
-                    if str(json_out["2 сем"][str(i + 1)]) == 'None':
-                        html_out += '<h8 style="color:#212121;">2 cем.: нет.</h8><br>'
-
-                    elif str(json_out["2 сем"][str(i + 1)]) == '5':
-                        html_out += '<h8 style="color:green;">2 cем.: 5</h8><br>'
-
-                    elif str(json_out["2 сем"][str(i + 1)]) == '4':
-                        html_out += '<h8 style="color:teal;">2 cем.: 4</h8><br>'
-
-                    elif str(json_out["2 сем"][str(i + 1)]) == '3':
-                        html_out += '<h8 style="color:#FF5722;">2 cем.: 3</h8><br>'
-
-                    elif str(json_out["2 сем"][str(i + 1)]) == '2':
-                        html_out += '<h8 style="color:red;">2 cем.: 2</h8><br>'
-
-                    elif str(json_out["2 сем"][str(i + 1)]) == '1':
-                        html_out += '<h8 style="color:red;">2 cем.: 1</h8><br>'
-
-                except KeyError:
-                    # ...
-
-                    if str(json_out["1 чтв"][str(i + 1)]) == 'None':
-                        html_out += '<h8 style="color:#212121;">1 чтв.: нет.</h8><br>'
-
-                    elif str(json_out["1 чтв"][str(i + 1)]) == '5':
-                        html_out += '<h8 style="color:green;">1 чтв.: 5</h8><br>'
-
-                    elif str(json_out["1 чтв"][str(i + 1)]) == '4':
-                        html_out += '<h8 style="color:teal;">1 чтв.: 4</h8><br>'
-
-                    elif str(json_out["1 чтв"][str(i + 1)]) == '3':
-                        html_out += '<h8 style="color:#FF5722;">1 чтв.: 3</h8><br>'
-
-                    elif str(json_out["1 чтв"][str(i + 1)]) == '2':
-                        html_out += '<h8 style="color:red;">1 чтв.: 2</h8><br>'
-
-                    elif str(json_out["1 чтв"][str(i + 1)]) == '1':
-                        html_out += '<h8 style="color:red;">1 чтв.: 1</h8><br>'
-
-                    # ...
-                    if str(json_out["2 чтв"][str(i + 1)]) == 'None':
-                        html_out += '<h8 style="color:#212121;">2 чтв.: нет.</h8><br>'
-
-                    elif str(json_out["2 чтв"][str(i + 1)]) == '5':
-                        html_out += '<h8 style="color:green;">2 чтв.: 5</h8><br>'
-
-                    elif str(json_out["2 чтв"][str(i + 1)]) == '4':
-                        html_out += '<h8 style="color:teal;">2 чтв.: 4</h8><br>'
-
-                    elif str(json_out["2 чтв"][str(i + 1)]) == '3':
-                        html_out += '<h8 style="color:#FF5722;">2 чтв.: 3</h8><br>'
-
-                    elif str(json_out["2 чтв"][str(i + 1)]) == '2':
-                        html_out += '<h8 style="color:red;">2 чтв.: 2</h8><br>'
-
-                    elif str(json_out["2 чтв"][str(i + 1)]) == '1':
-                        html_out += '<h8 style="color:red;">2 чтв.: 1</h8><br>'
-
-                    # ...
-                    if str(json_out["3 чтв"][str(i + 1)]) == 'None':
-                        html_out += '<h8 style="color:#212121;">3 чтв.: нет.</h8><br>'
-
-                    elif str(json_out["3 чтв"][str(i + 1)]) == '5':
-                        html_out += '<h8 style="color:green;">3 чтв.: 5</h8><br>'
-
-                    elif str(json_out["3 чтв"][str(i + 1)]) == '4':
-                        html_out += '<h8 style="color:teal;">3 чтв.: 4</h8><br>'
-
-                    elif str(json_out["3 чтв"][str(i + 1)]) == '3':
-                        html_out += '<h8 style="color:#FF5722;">3 чтв.: 3</h8><br>'
-
-                    elif str(json_out["3 чтв"][str(i + 1)]) == '2':
-                        html_out += '<h8 style="color:red;">3 чтв.: 2</h8><br>'
-
-                    elif str(json_out["3 чтв"][str(i + 1)]) == '1':
-                        html_out += '<h8 style="color:red;">3 чтв.: 1</h8><br>'
-
-                    # ...
-                    if str(json_out["4 чтв"][str(i + 1)]) == 'None':
-                        html_out += '<h8 style="color:#212121;">4 чтв.: нет.</h8><br>'
-
-                    elif str(json_out["4 чтв"][str(i + 1)]) == '5':
-                        html_out += '<h8 style="color:green;">4 чтв.: 5</h8><br>'
-
-                    elif str(json_out["4 чтв"][str(i + 1)]) == '4':
-                        html_out += '<h8 style="color:teal;">4 чтв.: 4</h8><br>'
-
-                    elif str(json_out["4 чтв"][str(i + 1)]) == '3':
-                        html_out += '<h8 style="color:#FF5722;">4 чтв.: 3</h8><br>'
-
-                    elif str(json_out["4 чтв"][str(i + 1)]) == '2':
-                        html_out += '<h8 style="color:red;">4 чтв.: 2</h8><br>'
-
-                    elif str(json_out["4 чтв"][str(i + 1)]) == '1':
-                        html_out += '<h8 style="color:red;">4 чтв.: 1</h8><br>'
-
-                # ...
-                if str(json_out["Год"][str(i + 1)]) == 'None':
-                    html_out += '<h8 style="color:#212121;">Год.: нет.</h8><br>'
-
-                elif str(json_out["Год"][str(i + 1)]) == '5':
-                    html_out += '<h8 style="color:green;">Год.: 5</h8><br>'
-
-                elif str(json_out["Год"][str(i + 1)]) == '4':
-                    html_out += '<h8 style="color:teal;">Год.: 4</h8><br>'
-
-                elif str(json_out["Год"][str(i + 1)]) == '3':
-                    html_out += '<h8 style="color:#FF5722;">Год.: 3</h8><br>'
-
-                elif str(json_out["Год"][str(i + 1)]) == '2':
-                    html_out += '<h8 style="color:red;">Год.: 2</h8><br>'
-
-                elif str(json_out["Год"][str(i + 1)]) == '1':
-                    html_out += '<h8 style="color:red;">Год.: 1</h8><br>'
-
-                # ...
-                if str(json_out["Экзамен"][str(i + 1)]) == 'None':
-                    html_out += '<h8 style="color:#212121;">Экзамен: нет.</h8><br>'
-
-                elif str(json_out["Экзамен"][str(i + 1)]) == '5':
-                    html_out += '<h8 style="color:green;">Экзамен: 5</h8><br>'
-
-                elif str(json_out["Экзамен"][str(i + 1)]) == '4':
-                    html_out += '<h8 style="color:teal;">Экзамен: 4</h8><br>'
-
-                elif str(json_out["Экзамен"][str(i + 1)]) == '3':
-                    html_out += '<h8 style="color:#FF5722;">Экзамен: 3</h8><br>'
-
-                elif str(json_out["Экзамен"][str(i + 1)]) == '2':
-                    html_out += '<h8 style="color:red;">Экзамен: 2</h8><br>'
-
-                elif str(json_out["Экзамен"][str(i + 1)]) == '1':
-                    html_out += '<h8 style="color:red;">Экзамен: 1</h8><br>'
-
-                # ...
-                if str(json_out["Итог"][str(i + 1)]) == 'None':
-                    html_out += '<h8 style="color:#212121;">Итог.: нет.</h8><br>'
-
-                elif str(json_out["Итог"][str(i + 1)]) == '5':
-                    html_out += '<h8 style="color:green;">Итог.: 5</h8><br>'
-
-                elif str(json_out["Итог"][str(i + 1)]) == '4':
-                    html_out += '<h8 style="color:teal;">Итог.: 4</h8><br>'
-
-                elif str(json_out["Итог"][str(i + 1)]) == '3':
-                    html_out += '<h8 style="color:#FF5722;">Итог.: 3</h8><br>'
-
-                elif str(json_out["Итог"][str(i + 1)]) == '2':
-                    html_out += '<h8 style="color:red;">Итог.: 2</h8><br>'
-
-                elif str(json_out["Итог"][str(i + 1)]) == '1':
-                    html_out += '<h8 style="color:red;">Итог.: 1</h8><br>'
-
-                html_out += '<div style="display:block; height:5px; clear:both;"></div>'
-                html_out += '</div>'
-
-            response = make_response(jsonify(html_out))
-            response.set_cookie('Offset', value='', max_age=0, expires=0)
-            return response
-
-        except (ValueError, IndexError):
-            html_out = ""
-            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>'
-
-            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-            html_out += '</div>'
-            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-            html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-            html_out += 'Либо данных попросту нет, либо Дневник.Ру в оффлайне :> <br>'
-            html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
-            html_out += '</div>'
-
-            response = make_response(jsonify(html_out))
-            response.set_cookie('Offset', value='', max_age=0, expires=0)
-            return response
-
-    else:
-        html_out = ""
-        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Итоговые</h4>'
 
         html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
         html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
@@ -656,30 +300,132 @@ def summary():
 
 @app.route("/dnevnik", methods=['POST'])
 def dnevnik():
-    if 'DnevnikLogin' in request.cookies:
+    if 'AccessToken' in request.cookies:
         s = CacheControl(Session())
         s.mount('http://', HTTPAdapter(max_retries=5))
         s.mount('https://', HTTPAdapter(max_retries=5))
 
         timeMonth = request.form.get('month', '')
         timeDay = request.form.get('day', '')
-        last_year = request.form.get('last_year', '')
 
         offset = int(request.cookies.get('Offset'))
 
-        s.headers.update({'Upgrade-Insecure-Requests': '1',
-                          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-                          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-                          'DNT': '1',
-                          'Accept-Encoding': 'gzip, deflate, br',
-                          'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
-
-        login_payload = {'login': b64decode(b32decode(request.cookies.get('DnevnikLogin').encode('ascii'))).decode('utf-8'),
-                         'password': b64decode(b32decode(request.cookies.get('DnevnikPass').encode('ascii'))).decode('utf-8'),
-                         'exceededAttempts': 'False', 'ReturnUrl': ''}
-
         try:
-            s.post('https://login.dnevnik.ru/login', login_payload)
+            access_token = request.cookies.get('AccessToken')
+            response = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
+            user_data = loads(response.text)
+
+            if timeDay is '':
+                day = timeDate('day', offset=offset, )
+
+            else:
+                day = timeDay
+
+            if timeMonth is '':
+                month = timeDate('month', offset)
+
+            else:
+                month = timeMonth
+
+            year = timeDate('year', offset)
+
+            if request.cookies.get('AccountType') == 'Student':
+                response = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
+
+            elif request.cookies.get('AccountType') == 'Parent':
+                childId = request.form.get('child', '')
+                for child in user_data['children']:
+                    if childId == child['personId']:
+                        response = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
+
+            try:
+                lesson_data = loads(response.text)['Days'][0]['Schedule']
+
+            except (KeyError, IndexError):
+                html_out = ""
+                html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
+
+                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+                html_out += '</div>'
+                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+                html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
+                html_out += 'Уроков нет :>'
+                html_out += '</div>'
+
+                response = make_response(jsonify(html_out))
+                response.set_cookie('Offset', value='', max_age=0, expires=0)
+                return response
+
+            if lesson_data == []:
+                html_out = ""
+                html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
+
+                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+                html_out += '</div>'
+                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+                html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
+                html_out += 'Уроков нет :>'
+                html_out += '</div>'
+
+                response = make_response(jsonify(html_out))
+                response.set_cookie('Offset', value='', max_age=0, expires=0)
+                return response
+
+            html_out = ""
+            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
+
+            for lesson in lesson_data:
+
+                if lesson['Status'] == 'NotInitialised':
+                    continue
+
+                else:
+                    html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+                    html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
+                    html_out += '</div>'
+                    html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+                    html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+
+                    html_out += f'<h5 style="font-weight:600">{lesson["Subject"]["Name"]}</h5>'
+
+                    for mark in lesson['Marks']:
+                        if mark:
+                            if mark["MarkType"] == 'LogEntry':
+                                html_out += f'<h8 style="color:{coloring(mark["Values"][0]["Value"])};">Присутствие: {mark["MarkTypeText"]}.</h8><br>'
+
+                            elif mark["MarkType"] == "Mark":
+                                if len(mark['Values']) > 1:
+                                    html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+
+                                for markValue in mark['Values']:
+                                    html_out += f'<h8 style="color:{coloring(markValue["Mood"])};">Оценка: {markValue["Value"]} ({mark["MarkTypeText"]}) {kaomoji(markValue["Mood"])}</h8><br>'
+
+                                if len(mark['Values']) > 1:
+                                    html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+
+                    try:
+                        html_out += f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]} ({lesson["ImportantWorks"][0]["WorkType"]})</h8><br>'
+
+                    except (KeyError, IndexError):
+                        try:
+                            html_out += f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]}</h8><br>'
+
+                        except (KeyError, IndexError):
+                            pass
+
+                    if lesson["HomeworksText"] != "":
+                        hw = lesson["HomeworksText"]
+                        links = list(set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)))
+
+                        for link in links:
+                            hw = hw.replace(link, f'<a href="{link}" target="_blank">[ссылка]</a>')
+
+                        html_out += f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>'
+
+                html_out += '<div style="display:block; height:5px; clear:both;"></div>'
+                html_out += '</div>'
 
         except ConnectionError:
             html_out = ""
@@ -690,356 +436,13 @@ def dnevnik():
             html_out += '</div>'
             html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
             html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-            html_out += 'Либо уроков нет, либо Дневник.Ру ушел в оффлайн :> <br>'
+            html_out += 'API Дневник.Ру в оффлайне :> <br>'
             html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
             html_out += '</div>'
 
             response = make_response(jsonify(html_out))
             response.set_cookie('Offset', value='', max_age=0, expires=0)
             return response
-
-        data = None
-
-        if request.cookies.get('AccountType') == 'Student':
-            data = s.get(f"https://schools.dnevnik.ru/marks.aspx?school={schoolId(s)}&index=-1&tab=week&year={timeDate(typeDate='year', offset=offset, lastYear=True) if last_year == '1' else timeDate(typeDate='year', offset=offset)}&month={str(timeMonth) if timeDay is not '' and timeMonth is not '' else timeDate(typeDate='month', offset=offset)}&day={timeDate(typeDate='day', offset=offset) if timeDay is '' else str(timeDay)}").text
-
-        elif request.cookies.get('AccountType') == 'Parent':
-
-            child = request.form.get('child', '')
-            data = s.get(f"https://children.dnevnik.ru/marks.aspx?child={child}&index=-1&tab=week&year={timeDate(typeDate='year', offset=offset, lastYear=True) if last_year == '1' else timeDate(typeDate='year', offset=offset)}&month={str(timeMonth) if timeDay is not '' and timeMonth is not '' else timeDate(typeDate='month', offset=offset)}&day={timeDate(typeDate='day', offset=offset) if timeDay is '' else str(timeDay)}").text
-
-        columns = {0: 'Уроки', 1: 'Присутствие', 2: 'Оценки', 3: 'Замечания', 4: 'ДЗ'}
-        tables = None
-        swapped = False
-
-        try:
-            if timeMonth is '' and timeDay is '':
-                if last_year == '1':
-                    tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=timeDate(typeDate='month', offset=offset), lastYear=True))].rename(columns=columns)
-
-                else:
-                    tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=timeDate(typeDate='month', offset=offset)))].rename(columns=columns)
-
-            elif timeMonth is '':
-                if last_year == '1':
-                    tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=str(timeDay), timeMonth=timeDate(typeDate='month', offset=offset), lastYear=True))].rename(columns=columns)
-
-                else:
-                    tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=str(timeDay), timeMonth=timeDate(typeDate='month', offset=offset)))].rename(columns=columns)
-
-            elif timeDay is '':
-                if last_year == '1':
-                    tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=str(timeMonth), lastYear=True))].rename(columns=columns)
-
-                else:
-                    tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', offset=offset, timeDay=timeDate(typeDate='day', offset=offset), timeMonth=str(timeMonth)))].rename(columns=columns)
-
-            else:
-                if last_year == '1':
-                    if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset, lastYear=True) != '6':
-                        tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset, lastYear=True))].rename(columns=columns)
-
-                    else:
-                        tables = pd.read_html(io=data)[5].rename(columns=columns)
-
-                else:
-                    if timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset) != '6':
-                        tables = pd.read_html(io=data)[int(timeDate(typeDate='weekday', timeMonth=str(timeMonth), timeDay=str(timeDay), offset=offset))].rename(columns=columns)
-
-                    else:
-                        tables = pd.read_html(io=data)[5].rename(columns=columns)
-
-        except (ValueError, IndexError):
-            html_out = ""
-            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
-
-            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-            html_out += '</div>'
-            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-            html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-            html_out += 'Либо уроков нет, либо Дневник.Ру ушел в оффлайн :> <br>'
-            html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
-            html_out += '</div>'
-
-            response = make_response(jsonify(html_out))
-            response.set_cookie('Offset', value='', max_age=0, expires=0)
-            return response
-
-        if not str(tables['Уроки'][0]).startswith("!"):
-            tables.index = range(1, len(tables) + 1)
-            swapped = True
-
-        tables['Уроки'] = tables['Уроки'].apply(lambda x: str(x)[:-6])
-
-        json_out = loads(tables.to_json(force_ascii=False))
-
-        html_out = ""
-
-        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
-        schedule = None
-
-        if request.cookies.get("AccountType") == 'Student':
-            schedule = s.get(f"https://schools.dnevnik.ru/schedules/view.aspx?school={schoolId(s)}&group={groupId(s)}&tab=timetable").text
-
-        elif request.cookies.get("AccountType") == 'Parent':
-            schedule = s.get(f"https://children.dnevnik.ru/timetable.aspx?child={child}&tab=timetable").text
-
-        columns = {0: 'Урок', 1: 'Время'}
-        tables_sch = pd.read_html(io=schedule)[-1].rename(columns=columns)
-
-        timing = loads(tables_sch.to_json(force_ascii=False))
-        alt_grading = False
-
-        for i in range(len(json_out["Оценки"])):
-            try:
-                try:
-                    if str(json_out["Оценки"][str(i)]) != 'None':
-                        if int(float(json_out["Оценки"][str(i)])) in range(6, 11):
-                            alt_grading = True
-                            break
-
-                except ValueError:
-                    continue
-
-            except KeyError:
-                try:
-                    try:
-                        if str(json_out["Оценки"][str(i + 1)]) != 'None':
-                            if int(float(json_out["Оценки"][str(i + 1)])) in range(6, 11):
-                                alt_grading = True
-                                break
-
-                    except ValueError:
-                        continue
-
-                except KeyError:
-                    pass
-
-        for i in range(len(json_out['Уроки'])):
-            if swapped is False:
-                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
-                html_out += '</div>'
-                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-                html_out += f'<h5 style="font-weight:600">{str(json_out["Уроки"][str(i)])}</h5>'
-
-                # ...
-                if str(json_out["Присутствие"][str(i)]) == 'None':
-                    html_out += '<h8 style="color:teal;">Присутствие: без отклонений.</h8><br>'
-
-                elif str(json_out["Присутствие"][str(i)]) == 'Н':
-                    html_out += '<h8 style="color:red;">Присутствие: неявка.</h8><br>'
-
-                elif str(json_out["Присутствие"][str(i)]) == 'О':
-                    html_out += '<h8 style="color:#FF5722;">Присутствие: опоздание.</h8><br>'
-
-                elif str(json_out["Присутствие"][str(i)]) == 'Б':
-                    html_out += '<h8 style="color:#01579B;">Присутствие: пропуск по болезни.</h8><br>'
-
-                elif str(json_out["Присутствие"][str(i)]) == 'П':
-                    html_out += '<h8 style="color:#01579B;">Присутствие: пропуск по ув. причине.</h8><br>'
-
-                # ...
-                if alt_grading is False:
-                    if str(json_out["Оценки"][str(i)]) == 'None':
-                        html_out += '<h8 style="color:#212121;">Оценка: нет.</h8><br>'
-
-                    elif match(r"^[0-5]\ [0-5]$", str(json_out["Оценки"][str(i)])):
-                        if ((int(str(json_out["Оценки"][str(i)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i)]).split(" ")[1])) / 2) in range(0, 3):
-                            html_out += f'<h8 style="color:red;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (ノ_<)</h8><br>'
-
-                        elif ((int(str(json_out["Оценки"][str(i)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i)]).split(" ")[1])) / 2) in range(3, 4):
-                            html_out += f'<h8 style="color:#FF5722;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (--_--)</h8><br>'
-
-                        elif ((int(str(json_out["Оценки"][str(i)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i)]).split(" ")[1])) / 2) in range(4, 5):
-                            html_out += f'<h8 style="color:teal;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (^_~)</h8><br>'
-
-                        elif str(json_out["Оценки"][str(i)]).split(" ")[0] is "5" and str(json_out["Оценки"][str(i)]).split(" ")[1] is "5":
-                            html_out += f'<h8 style="color:green;">Оценка: 5 / 5  ( ˙꒳​˙ )</h8><br>'
-
-                    elif str(int(float(json_out["Оценки"][str(i)]))) == '1':
-                        html_out += '<h8 style="color:red;">Оценка: 1  (ノ_<)</h8><br>'
-
-                    elif str(int(float(json_out["Оценки"][str(i)]))) == '2':
-                        html_out += '<h8 style="color:red;">Оценка: 2  (・・ )</h8><br>'
-
-                    elif str(int(float(json_out["Оценки"][str(i)]))) == '3':
-                        html_out += '<h8 style="color:#FF5722;">Оценка: 3  (--_--)</h8><br>'
-
-                    elif str(int(float(json_out["Оценки"][str(i)]))) == '4':
-                        html_out += '<h8 style="color:teal;">Оценка: 4  (^_~)</h8><br>'
-
-                    elif str(int(float(json_out["Оценки"][str(i)]))) == '5':
-                        html_out += '<h8 style="color:green;">Оценка: 5  ( ˙꒳​˙ )</h8><br>'
-
-                else:
-                    if str(json_out["Оценки"][str(i)]) == 'None':
-                        html_out += '<h8 style="color:#212121;">Оценка: нет.</h8><br>'
-
-                    elif match(r"^([0-9]|1[0])\ ([0-9]|1[0])$", str(json_out["Оценки"][str(i)])):
-                        if ((int(str(json_out["Оценки"][str(i)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i)]).split(" ")[1])) / 2) in range(0, 5):
-                            html_out += f'<h8 style="color:red;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (ノ_<)</h8><br>'
-
-                        elif ((int(str(json_out["Оценки"][str(i)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i)]).split(" ")[1])) / 2) in range(5, 7):
-                            html_out += f'<h8 style="color:#FF5722;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (--_--)</h8><br>'
-
-                        elif ((int(str(json_out["Оценки"][str(i)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i)]).split(" ")[1])) / 2) in range(7, 10):
-                            html_out += f'<h8 style="color:teal;">Оценка: {str(json_out["Оценки"][str(i)]).split(" ")[0]} / {str(json_out["Оценки"][str(i)]).split(" ")[1]}  (^_~)</h8><br>'
-
-                        elif str(json_out["Оценки"][str(i)]).split(" ")[0] is "10" and str(json_out["Оценки"][str(i)]).split(" ")[1] is "10":
-                            html_out += f'<h8 style="color:green;">Оценка: 10 / 10  ( ˙꒳​˙ )</h8><br>'
-
-                    elif int(float(json_out["Оценки"][str(i)])) in range(0, 3):
-                        html_out += f'<h8 style="color:red;">Оценка: {str(int(float(json_out["Оценки"][str(i)])))}  (ノ_<)</h8><br>'
-
-                    elif int(float(json_out["Оценки"][str(i)])) in range(3, 5):
-                        html_out += f'<h8 style="color:red;">Оценка: {str(int(float(json_out["Оценки"][str(i)])))}  (・・ )</h8><br>'
-
-                    elif int(float(json_out["Оценки"][str(i)])) in range(5, 7):
-                        html_out += f'<h8 style="color:#FF5722;">Оценка: {str(int(float(json_out["Оценки"][str(i)])))}  (--_--)</h8><br>'
-
-                    elif int(float(json_out["Оценки"][str(i)])) in range(7, 9):
-                        html_out += f'<h8 style="color:teal;">Оценка: {str(int(float(json_out["Оценки"][str(i)])))}  (^_~)</h8><br>'
-
-                    elif int(float(json_out["Оценки"][str(i)])) in range(9, 11):
-                        html_out += f'<h8 style="color:green;">Оценка: {str(int(float(json_out["Оценки"][str(i)])))}  ( ˙꒳​˙ )</h8><br>'
-
-                # ...
-                if str(json_out["Замечания"][str(i)]) == 'None':
-                    html_out += '<h8 style="color:teal;">Замечания: нет.</h8><br>'
-
-                else:
-                    html_out += f'<h8 style="color:#212121;">Замечания: {str(json_out["Замечания"][str(i)])}</h8><br>'
-
-                # ...
-                if str(json_out["ДЗ"][str(i)]) == 'None':
-                    html_out += '<h8 style="color:#212121;">ДЗ: нет.  ヽ(ー_ー )ノ</h8><br>'
-
-                else:
-                    hw = str(json_out["ДЗ"][str(i)])
-                    links = list(set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)))
-                    for link in links:
-                        hw = hw.replace(link, f'<a href="{link}" target="_blank">[ссылка]</a>')
-
-                    html_out += f'<h8 style="color:#212121;">ДЗ: {hw}</h8><br>'
-
-                html_out += f'<h8 style="color:#212121;">Время: {timing["Время"][str(i)]}</h8><br>'
-                html_out += '<div style="display:block; height:5px; clear:both;"></div>'
-                html_out += '</div>'
-
-            else:
-                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
-                html_out += '</div>'
-                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-                html_out += f'<h5 style="font-weight:600">{str(json_out["Уроки"][str(i + 1)])}</h5>'
-
-                # ...
-                if str(json_out["Присутствие"][str(i + 1)]) == 'None':
-                    html_out += '<h8 style="color:teal;">Присутствие: без отклонений.</h8><br>'
-
-                elif str(json_out["Присутствие"][str(i + 1)]) == 'Н':
-                    html_out += '<h8 style="color:red;">Присутствие: неявка.</h8><br>'
-
-                elif str(json_out["Присутствие"][str(i + 1)]) == 'О':
-                    html_out += '<h8 style="color:#FF5722;">Присутствие: опоздание.</h8><br>'
-
-                elif str(json_out["Присутствие"][str(i + 1)]) == 'Б':
-                    html_out += '<h8 style="color:#01579B;">Присутствие: пропуск по болезни.</h8><br>'
-
-                elif str(json_out["Присутствие"][str(i + 1)]) == 'П':
-                    html_out += '<h8 style="color:#01579B;">Присутствие: пропуск по ув. причине.</h8><br>'
-
-                # ...
-                if alt_grading is False:
-                    if str(json_out["Оценки"][str(i + 1)]) == 'None':
-                        html_out += '<h8 style="color:#212121;">Оценка: нет.</h8><br>'
-
-                    elif match(r"^[0-5]\ [0-5]$", str(json_out["Оценки"][str(i + 1)])):
-                        if ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(0, 3):
-                            html_out += f'<h8 style="color:red;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (ノ_<)</h8><br>'
-
-                        elif ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(3, 4):
-                            html_out += f'<h8 style="color:#FF5722;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (--_--)</h8><br>'
-
-                        elif ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(4, 5):
-                            html_out += f'<h8 style="color:teal;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (^_~)</h8><br>'
-
-                        elif str(json_out["Оценки"][str(i + 1)]).split(" ")[0] is "5" and str(json_out["Оценки"][str(i + 1)]).split(" ")[1] is "5":
-                            html_out += f'<h8 style="color:green;">Оценка: 5 / 5  ( ˙꒳​˙ )</h8><br>'
-
-                    elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '1':
-                        html_out += '<h8 style="color:red;">Оценка: 1  (ノ_<)</h8><br>'
-
-                    elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '2':
-                        html_out += '<h8 style="color:red;">Оценка: 2  (・・ )</h8><br>'
-
-                    elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '3':
-                        html_out += '<h8 style="color:#FF5722;">Оценка: 3  (--_--)</h8><br>'
-
-                    elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '4':
-                        html_out += '<h8 style="color:teal;">Оценка: 4  (^_~)</h8><br>'
-
-                    elif str(int(float(json_out["Оценки"][str(i + 1)]))) == '5':
-                        html_out += '<h8 style="color:green;">Оценка: 5  ( ˙꒳​˙ )</h8><br>'
-
-                else:
-                    if str(json_out["Оценки"][str(i + 1)]) == 'None':
-                        html_out += '<h8 style="color:#212121;">Оценка: нет.</h8><br>'
-
-                    elif match(r"^([0-9]|1[0])\ ([0-9]|1[0])$", str(json_out["Оценки"][str(i + 1)])):
-                        if ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(0, 5):
-                            html_out += f'<h8 style="color:red;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (ノ_<)</h8><br>'
-
-                        elif ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(5, 7):
-                            html_out += f'<h8 style="color:#FF5722;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (--_--)</h8><br>'
-
-                        elif ((int(str(json_out["Оценки"][str(i + 1)]).split(" ")[0]) + int(str(json_out["Оценки"][str(i + 1)]).split(" ")[1])) / 2) in range(7, 10):
-                            html_out += f'<h8 style="color:teal;">Оценка: {str(json_out["Оценки"][str(i + 1)]).split(" ")[0]} / {str(json_out["Оценки"][str(i + 1)]).split(" ")[1]}  (^_~)</h8><br>'
-
-                        elif str(json_out["Оценки"][str(i + 1)]).split(" ")[0] is "10" and str(json_out["Оценки"][str(i + 1)]).split(" ")[1] is "10":
-                            html_out += f'<h8 style="color:green;">Оценка: 10 / 10  ( ˙꒳​˙ )</h8><br>'
-
-                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(0, 3):
-                        html_out += f'<h8 style="color:red;">Оценка: {str(int(float(json_out["Оценки"][str(i + 1)])))}  (ノ_<)</h8><br>'
-
-                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(3, 5):
-                        html_out += f'<h8 style="color:red;">Оценка: {str(int(float(json_out["Оценки"][str(i + 1)])))}  (・・ )</h8><br>'
-
-                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(5, 7):
-                        html_out += f'<h8 style="color:#FF5722;">Оценка: {str(int(float(json_out["Оценки"][str(i + 1)])))}  (--_--)</h8><br>'
-
-                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(7, 9):
-                        html_out += f'<h8 style="color:teal;">Оценка: {str(int(float(json_out["Оценки"][str(i + 1)])))}  (^_~)</h8><br>'
-
-                    elif int(float(json_out["Оценки"][str(i + 1)])) in range(9, 11):
-                        html_out += f'<h8 style="color:green;">Оценка: {str(int(float(json_out["Оценки"][str(i + 1)])))}  ( ˙꒳​˙ )</h8><br>'
-
-                # ...
-                if str(json_out["Замечания"][str(i + 1)]) == 'None':
-                    html_out += '<h8 style="color:teal;">Замечания: нет.</h8><br>'
-
-                else:
-                    html_out += f'<h8 style="color:#212121;">Замечания: {str(json_out["Замечания"][str(i + 1)])}</h8><br>'
-
-                # ...
-                if str(json_out["ДЗ"][str(i + 1)]) == 'None':
-                    html_out += '<h8 style="color:#212121;">ДЗ: нет.  ヽ(ー_ー )ノ</h8><br>'
-
-                else:
-                    hw = str(json_out["ДЗ"][str(i + 1)])
-                    links = list(set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)))
-                    for link in links:
-                        hw = hw.replace(link, f'<a href="{link}" target="_blank">[ссылка]</a>')
-
-                    html_out += f'<h8 style="color:#212121;">ДЗ: {hw}</h8><br>'
-
-                html_out += f'<h8 style="color:#212121;">Время: {timing["Время"][str(i + 1)]}</h8><br>'
-                html_out += '<div style="display:block; height:5px; clear:both;"></div>'
-                html_out += '</div>'
 
         response = make_response(jsonify(html_out))
         response.set_cookie('Offset', value='', max_age=0, expires=0)
@@ -1062,91 +465,56 @@ def dnevnik():
         return response
 
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route("/login", methods=['GET'])
 def log_in():
-    if request.method == 'POST':
-        login = request.form.get('username', '')
-        password = request.form.get('password', '')
-        accounttype = None
+    accounttype = None
 
-        if login is not '' and password is not '':
-            s = CacheControl(Session())
-            s.mount('http://', HTTPAdapter(max_retries=5))
-            s.mount('https://', HTTPAdapter(max_retries=5))
+    s = CacheControl(Session())
+    s.mount('http://', HTTPAdapter(max_retries=5))
+    s.mount('https://', HTTPAdapter(max_retries=5))
 
-            s.headers.update({'Upgrade-Insecure-Requests': '1',
-                              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-                              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-                              'DNT': '1',
-                              'Accept-Encoding': 'gzip, deflate, br',
-                              'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
+    try:
+        access_token = request.cookies.get('AccessToken_Temp')
 
-            login_payload = {'login': login, 'password': password,
-                             'exceededAttempts': 'False', 'ReturnUrl': ''}
+        response = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
 
-            try:
-                s.post('https://login.dnevnik.ru/login', login_payload)
+        try:
+            s.cookies.get_dict()['dnevnik_sst']
 
-            except ConnectionError:
-                html_out = ""
-
-                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-                html_out += '<p style="text-align:center; color:red;">Системы Дневник.Ру оффлайн. ¯\_(ツ)_/¯</p>'
-
-                return jsonify(html_out)
-
-            try:
-                s.cookies.get_dict()['DnevnikAuth_a']
-
-            except KeyError:
-                html_out = ""
-
-                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-                html_out += '<p style="text-align:center; color:red;">Данные неверны. Если это ошибка, попробуйте зайти через офф. сайт и вернуться. ¯\_(ツ)_/¯</p>'
-
-                return jsonify(html_out)
-
-            data = s.get("https://dnevnik.ru/feed/").text
-            soup = BeautifulSoup(data, "lxml")
-
-            type_block = soup.find('p', {'class': 'user-profile-box__info_row-content user-profile-box__category'}).text
-
-            if "Ученик" in type_block:
-                accounttype = "Student"
-
-            elif "Родитель" in type_block:
-                accounttype = "Parent"
-
-            else:
-                html_out = ""
-                html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-                html_out += '<p style="text-align:center; color:red;">Вы - преподаватель. ¯\_(ツ)_/¯</p>'
-
-                return jsonify(html_out)
-
-            html_out = ""
-            html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-            html_out += '<p style="text-align:center; color:green;">Аутентификация завершена.</p>'
-
-            response = make_response(jsonify(html_out))
-
-            response.set_cookie('DnevnikLogin', value=b32encode(b64encode(login.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
-            response.set_cookie('DnevnikPass', value=b32encode(b64encode(password.encode('ascii'))).decode('utf-8'), max_age=2592000, expires=2592000)
-            response.set_cookie('AccountType', value=str(accounttype), max_age=2592000, expires=2592000)
-
+        except KeyError:
+            response = make_response(redirect("/"))
+            response.set_cookie('AccessToken_Temp', value='', max_age=0, expires=0)
             return response
 
-        else:
-            html_out = ""
+        user_data = loads(response.text)
 
-            html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-            html_out += '<p style="text-align:center; color:red;">Данные отсутствуют ¯\_(ツ)_/¯</p>'
+    except ConnectionError:
+        response = make_response(redirect("/"))
+        response.set_cookie('AccessToken_Temp', value='', max_age=0, expires=0)
+        return response
 
-            return jsonify(html_out)
+    try:
+        type_block = user_data['roles']
+
+    except KeyError:
+        response = make_response(redirect("/"))
+        response.set_cookie('AccessToken_Temp', value='', max_age=0, expires=0)
+        return response
+
+    if "EduStudent" in type_block:
+        accounttype = "Student"
+
+    elif "EduParent" in type_block:
+        accounttype = "Parent"
 
     else:
-        response = make_response(redirect("/"))
-        return response
+        return jsonify("Пора задуматься о том, куда катится ваша жизнь.")
+
+    response = make_response(redirect("/"))
+    response.set_cookie('AccessToken_Temp', value='', max_age=0, expires=0)
+    response.set_cookie('AccountType', value=accounttype, max_age=2592000, expires=2592000)
+    response.set_cookie('AccessToken', value=access_token, max_age=2592000, expires=2592000)
+    return response
 
 
 @app.route("/apply", methods=['POST'])
@@ -1185,18 +553,16 @@ def log_out():
 
     response = make_response(redirect('/'))
 
-    if 'DnevnikLogin' in request.cookies and not offline:
-            response.set_cookie('DnevnikLogin', value='', max_age=0, expires=0)
-            response.set_cookie('DnevnikPass', value='', max_age=0, expires=0)
-            response.set_cookie('AccountType', value='', max_age=0, expires=0)
-            response.set_cookie('Offset', value='', max_age=0, expires=0)
+    if 'AccessToken' in request.cookies and not offline:
+        response.set_cookie('AccessToken', value='', max_age=0, expires=0)
+        response.set_cookie('AccountType', value='', max_age=0, expires=0)
+        response.set_cookie('Offset', value='', max_age=0, expires=0)
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Cache-Control'] = 'no-cache'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000'
-    response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'"
     return response
 
 
@@ -1214,7 +580,6 @@ def serve_sw(path):
         abort(404)
 
 
-flask_profiler.init_app(app)
 if __name__ == "__main__":
     chdir(dirname(abspath(__file__)))
     app.run(debug=debug, use_reloader=True)
