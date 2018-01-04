@@ -149,7 +149,7 @@ def main():
                 opts = []
 
                 for option in options:
-                    opts.append({option['firstName']: option['personId']})
+                    opts.append({f"{option['firstName']} {option['lastName']}": option['personId']})
 
             response = make_response(render_template('index_logged_in.html', opts=opts, user=user))
 
