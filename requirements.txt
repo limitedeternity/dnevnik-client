@@ -4,6 +4,7 @@ flask-sslify
 Flask-Cache
 CacheControl
 gunicorn
+Werkzeug
 eventlet
 requests
 requests[security]
