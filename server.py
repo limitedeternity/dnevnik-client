@@ -9,7 +9,7 @@ from re import findall
 from json import loads
 from pytz import utc
 from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify, abort
-from flask_cache import Cache # Caching
+from flask.ext.cache import Cache # Caching
 from flask_sslify import SSLify # Ensure HTTPS
 from flask_wtf.csrf import CSRFProtect # CSRF
 from whitenoise import WhiteNoise # Easy static serve
