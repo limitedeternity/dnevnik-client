@@ -246,7 +246,13 @@ def stats():
                             print(";")
 
                         try:
-                            response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&subjectId={subjectId}&access_token={access_token}")
+                            if request.cookies.get('AccountType') == 'Student':
+                                response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&subjectId={subjectId}&access_token={access_token}")
+
+                            elif request.cookies.get('AccountType') == 'Parent':
+                                for child in user_data['children']:
+                                    if childId == child['personId']:
+                                        response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={childId}&groupId={child['groupIds'][0]}&subjectId={subjectId}&access_token={access_token}")
 
                             average_mark = loads(response.text)["SubjectMarks"]["Avg"]
 
