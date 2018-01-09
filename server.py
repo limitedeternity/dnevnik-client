@@ -243,7 +243,7 @@ def stats():
                                 pass
 
                         try:
-                            html_out += f'<h8 style="color:{coloring()};">Среднее значение: {markSum / markTotal}</h8><br>'
+                            html_out += f'<h8 style="color:{coloring()};">Среднее значение: {round(markSum / markTotal, 2)}</h8><br>'
 
                         except ZeroDivisionError:
                             html_out += f'<h8 style="color:{coloring()};">Среднее значение: n/a</h8><br>'
