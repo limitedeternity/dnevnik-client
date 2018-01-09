@@ -231,35 +231,23 @@ def stats():
                             markCollection.append((mark["Values"][0]["Value"], mark["Values"][0]["Mood"]))
 
                         markCollectionCounted = (*Counter(sorted(markCollection)).items(),)
+                        markSum = 0
+                        markTotal = len(markCollection)
 
-                        try:
-                            for markTuple in markCollectionCounted:
+                        for markTuple in markCollectionCounted:
+                            try:
                                 html_out += f'<h8 style="color:{coloring(markTuple[0][1])};">{markTuple[0][0]}: {markTuple[1]}</h8><br>'
+                                markSum += int(markTuple[0][0]) * int(markTuple[1])
 
-                        except (KeyError, IndexError):
-                            pass
+                            except (KeyError, IndexError):
+                                pass
+
+                        html_out += f'<h8 style="color:{coloring()};">Среднее значение: {markSum / markTotal}</h8><br>'
 
                         try:
                             html_out += f'<h8 style="color:{coloring(subjectData["FinalMark"]["Values"][0]["Mood"])};">Итоговое значение: {subjectData["FinalMark"]["Values"][0]["Value"]}</h8><br>'
 
                         except (KeyError, IndexError, TypeError):
-                            pass
-
-                        try:
-                            if request.cookies.get('AccountType') == 'Student':
-                                response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&subjectId={subjectId}&access_token={access_token}")
-
-                            elif request.cookies.get('AccountType') == 'Parent':
-                                for child in user_data['children']:
-                                    if childId == child['personId']:
-                                        response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={childId}&groupId={child['groupIds'][0]}&subjectId={subjectId}&access_token={access_token}")
-
-                            average_mark = loads(response.text)["SubjectMarks"]["Avg"]
-
-                            html_out += f'<h8 style="color:{coloring(average_mark["Mood"])};">Среднее значение: {average_mark["CommonWorksAvg"]["Value"]}</h8><br>'
-                            html_out += f'<h8 style="color:{coloring(average_mark["Mood"])};">Среднее значение (важн.): {average_mark["ImportantWorksAvg"]["Value"]}</h8><br>'
-
-                        except (KeyError, ConnectionError):
                             pass
 
                         html_out += '<div style="display:block; height:5px; clear:both;"></div>'
