@@ -242,7 +242,11 @@ def stats():
                             except (KeyError, IndexError):
                                 pass
 
-                        html_out += f'<h8 style="color:{coloring()};">Среднее значение: {markSum / markTotal}</h8><br>'
+                        try:
+                            html_out += f'<h8 style="color:{coloring()};">Среднее значение: {markSum / markTotal}</h8><br>'
+
+                        except ZeroDivisionError:
+                            html_out += f'<h8 style="color:{coloring()};">Среднее значение: n/a</h8><br>'
 
                         try:
                             html_out += f'<h8 style="color:{coloring(subjectData["FinalMark"]["Values"][0]["Mood"])};">Итоговое значение: {subjectData["FinalMark"]["Values"][0]["Value"]}</h8><br>'
