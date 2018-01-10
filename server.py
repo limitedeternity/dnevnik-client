@@ -29,8 +29,9 @@ if not debug:
     app.config['SESSION_COOKIE_SECURE'] = True
 
     cache = Cache(app, config={'CACHE_TYPE': 'redis', 'CACHE_REDIS_URL': environ.get("REDIS_URL")})
-    csrf = CSRFProtect(app)
     sslify = SSLify(app)
+
+csrf = CSRFProtect(app)
 
 
 '''
@@ -376,9 +377,12 @@ def dnevnik():
             html_out = ""
             html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
 
+            not_initialised = []
+
             for lesson in lesson_data:
 
                 if lesson['Status'] == 'NotInitialised':
+                    not_initialised.append(1)
                     continue
 
                 else:
@@ -405,30 +409,38 @@ def dnevnik():
                                 if len(mark['Values']) > 1:
                                     html_out += '<div style="display:block; height:2px; clear:both;"></div>'
 
-                    try:
-                        html_out += f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]} ({lesson["ImportantWorks"][0]["WorkType"]})</h8><br>'
-
-                    except (KeyError, IndexError):
+                    if lesson["Theme"] is not '':
                         try:
-                            html_out += f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]}</h8><br>'
+                            html_out += f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]} ({lesson["ImportantWorks"][0]["WorkType"]})</h8><br>'
 
                         except (KeyError, IndexError):
-                            pass
+                            html_out += f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]}</h8><br>'
 
-                    try:
-                        if lesson["HomeworksText"] != "":
-                            hw = lesson["HomeworksText"]
-                            links = list(set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)))
+                    else:
+                        html_out += f'<h8 style="color:{coloring()};">Урок: тема не указана {kaomoji()}</h8><br>'
 
-                            for link in links:
-                                hw = hw.replace(link, f'<a href="{link}" target="_blank">[ссылка]</a>')
-                                html_out += f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>'
+                    if lesson["HomeworksText"] is not "":
+                        hw = lesson["HomeworksText"]
+                        links = list(set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)))
 
-                    except (KeyError, IndexError):
+                        for link in links:
+                            hw = hw.replace(link, f'<a href="{link}" target="_blank">[ссылка]</a>')
+                            html_out += f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>'
+
+                    else:
                         html_out += f'<h8 style="color:{coloring()};">ДЗ: нет {kaomoji()}</h8><br>'
 
                     html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                     html_out += '</div>'
+
+            if len(lesson_data) == len(not_initialised):
+                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
+                html_out += '</div>'
+                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+                html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
+                html_out += 'Ни один урок не отмечен, как инициализированный :>'
+                html_out += '</div>'
 
         except ConnectionError:
             html_out = ""
