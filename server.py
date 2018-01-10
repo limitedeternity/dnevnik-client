@@ -127,8 +127,8 @@ def main():
 
         try:
             access_token = request.cookies.get('AccessToken')
-            response = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
-            user_data = loads(response.text)
+            res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
+            user_data = loads(res_userdata.text)
 
         except ConnectionError:
             offline = True
@@ -476,7 +476,7 @@ def log_in():
     try:
         access_token = request.cookies.get('AccessToken_Temp')
 
-        response = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
+        res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
 
         try:
             s.cookies.get_dict()['dnevnik_sst']
@@ -486,7 +486,7 @@ def log_in():
             response.set_cookie('AccessToken_Temp', value='', max_age=0, expires=0)
             return response
 
-        user_data = loads(response.text)
+        user_data = loads(res_userdata.text)
 
     except ConnectionError:
         response = make_response(redirect("/"))
