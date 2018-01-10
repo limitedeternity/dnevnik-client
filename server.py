@@ -427,8 +427,8 @@ def dnevnik():
                     except (KeyError, IndexError):
                         html_out += f'<h8 style="color:{coloring()};">ДЗ: нет {kaomoji()}</h8><br>'
 
-                html_out += '<div style="display:block; height:5px; clear:both;"></div>'
-                html_out += '</div>'
+                    html_out += '<div style="display:block; height:5px; clear:both;"></div>'
+                    html_out += '</div>'
 
         except ConnectionError:
             html_out = ""
