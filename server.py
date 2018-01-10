@@ -208,7 +208,7 @@ def stats():
 
             elif request.cookies.get('AccountType') == 'Parent':
                 for child in user_data['children']:
-                    if childId == child['personId']:
+                    if childId == str(child['personId']):
                         res_marks = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
 
             marks_data = loads(res_marks.text)["AllMarks"]
@@ -338,7 +338,7 @@ def dnevnik():
 
             elif request.cookies.get('AccountType') == 'Parent':
                 for child in user_data['children']:
-                    if childId == child['personId']:
+                    if childId == str(child['personId']):
                         res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
 
             lesson_data = loads(res_lessons.text)['Days'][0]['Schedule']
