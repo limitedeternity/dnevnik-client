@@ -402,7 +402,7 @@ def dnevnik():
                             html_out += f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]}</h8><br>'
 
                     else:
-                        html_out += f'<h8 style="color:{coloring()};">Урок: тема не указана {kaomoji()}</h8><br>'
+                        pass
 
                     if lesson["HomeworksText"] is not "":
                         hw = lesson["HomeworksText"]
