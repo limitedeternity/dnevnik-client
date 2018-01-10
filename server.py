@@ -410,7 +410,8 @@ def dnevnik():
 
                         for link in links:
                             hw = hw.replace(link, f'<a href="{link}" target="_blank">[ссылка]</a>')
-                            html_out += f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>'
+                            
+                        html_out += f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>'
 
                     else:
                         html_out += f'<h8 style="color:{coloring()};">ДЗ: нет {kaomoji()}</h8><br>'
