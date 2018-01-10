@@ -5,7 +5,7 @@ from os.path import dirname, abspath
 from collections import Counter
 from datetime import datetime, timedelta
 from random import choice, randint
-from re import findall
+from re import findall, match
 from json import loads
 from pytz import utc
 from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify, abort
@@ -313,18 +313,21 @@ def dnevnik():
             user_data = loads(response.text)
 
             if timeDay is '':
-                day = timeDate('day', offset=offset, )
+                day = str(timeDate('day', offset=offset))
 
             else:
                 day = timeDay
 
             if timeMonth is '':
-                month = timeDate('month', offset)
+                month = str(timeDate('month', offset=offset))
 
             else:
                 month = timeMonth
 
-            year = timeDate('year', offset)
+            year = str(timeDate('year', offset=offset))
+
+            day = "0" + day if match(r"^\d{1}$", day) else day
+            month = "0" + month if match(r"^\d{1}$", month) else month
 
             if request.cookies.get('AccountType') == 'Student':
                 response = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
