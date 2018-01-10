@@ -181,8 +181,8 @@ def stats():
 
         try:
             access_token = request.cookies.get('AccessToken')
-            response = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
-            user_data = loads(response.text)
+            res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
+            user_data = loads(res_userdata.text)
 
         except ConnectionError:
             html_out = ""
@@ -202,15 +202,16 @@ def stats():
             return response
 
         try:
+            res_marks = None
             if request.cookies.get('AccountType') == 'Student':
-                response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
+                res_marks = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
 
             elif request.cookies.get('AccountType') == 'Parent':
                 for child in user_data['children']:
                     if childId == child['personId']:
-                        response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
+                        res_marks = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
 
-            marks_data = loads(response.text)["AllMarks"]
+            marks_data = loads(res_marks.text)["AllMarks"]
 
             html_out = ""
             html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
@@ -311,8 +312,8 @@ def dnevnik():
 
         try:
             access_token = request.cookies.get('AccessToken')
-            response = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
-            user_data = loads(response.text)
+            res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
+            user_data = loads(res_userdata.text)
 
             if timeDay is '':
                 day = str(timeDate('day', offset=offset))
@@ -331,15 +332,16 @@ def dnevnik():
             day = "0" + day if match(r"^\d{1}$", day) else day
             month = "0" + month if match(r"^\d{1}$", month) else month
 
+            res_lessons = None
             if request.cookies.get('AccountType') == 'Student':
-                response = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
+                res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
 
             elif request.cookies.get('AccountType') == 'Parent':
                 for child in user_data['children']:
                     if childId == child['personId']:
-                        response = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
+                        res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
 
-            lesson_data = loads(response.text)['Days'][0]['Schedule']
+            lesson_data = loads(res_lessons.text)['Days'][0]['Schedule']
 
             if lesson_data == []:
                 html_out = ""
