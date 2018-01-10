@@ -177,6 +177,7 @@ def stats():
         s.mount('https://', HTTPAdapter(max_retries=5))
 
         termPeriod = request.form.get('term', '1')
+        childId = request.form.get('child', '')
 
         try:
             access_token = request.cookies.get('AccessToken')
@@ -205,7 +206,6 @@ def stats():
                 response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
 
             elif request.cookies.get('AccountType') == 'Parent':
-                childId = request.form.get('child', '')
                 for child in user_data['children']:
                     if childId == child['personId']:
                         response = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
@@ -305,6 +305,7 @@ def dnevnik():
 
         timeMonth = request.form.get('month', '')
         timeDay = request.form.get('day', '')
+        childId = request.form.get('child', '')
 
         offset = int(request.cookies.get('Offset'))
 
@@ -334,29 +335,11 @@ def dnevnik():
                 response = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
 
             elif request.cookies.get('AccountType') == 'Parent':
-                childId = request.form.get('child', '')
                 for child in user_data['children']:
                     if childId == child['personId']:
                         response = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
 
-            try:
-                lesson_data = loads(response.text)['Days'][0]['Schedule']
-
-            except (KeyError, IndexError):
-                html_out = ""
-                html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
-
-                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                html_out += '</div>'
-                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-                html_out += 'Уроков нет :>'
-                html_out += '</div>'
-
-                response = make_response(jsonify(html_out))
-                response.set_cookie('Offset', value='', max_age=0, expires=0)
-                return response
+            lesson_data = loads(response.text)['Days'][0]['Schedule']
 
             if lesson_data == []:
                 html_out = ""
