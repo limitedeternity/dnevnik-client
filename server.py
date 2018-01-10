@@ -415,14 +415,17 @@ def dnevnik():
                         except (KeyError, IndexError):
                             pass
 
-                    if lesson["HomeworksText"] != "":
-                        hw = lesson["HomeworksText"]
-                        links = list(set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)))
+                    try:
+                        if lesson["HomeworksText"] != "":
+                            hw = lesson["HomeworksText"]
+                            links = list(set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)))
 
-                        for link in links:
-                            hw = hw.replace(link, f'<a href="{link}" target="_blank">[ссылка]</a>')
+                            for link in links:
+                                hw = hw.replace(link, f'<a href="{link}" target="_blank">[ссылка]</a>')
+                                html_out += f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>'
 
-                        html_out += f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>'
+                    except (KeyError, IndexError):
+                        html_out += f'<h8 style="color:{coloring()};">ДЗ: нет {kaomoji()}</h8><br>'
 
                 html_out += '<div style="display:block; height:5px; clear:both;"></div>'
                 html_out += '</div>'
