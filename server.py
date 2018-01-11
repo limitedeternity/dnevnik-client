@@ -97,7 +97,7 @@ def kaomoji(mood=None):
         return "<br>(・・ )"
 
     else:
-        return "<br>ヽ(ー_ー )ノ"
+        return "ヽ(ー_ー )ノ"
 
 '''
 Template handling
