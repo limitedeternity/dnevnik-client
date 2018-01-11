@@ -176,7 +176,6 @@ def stats():
         s.mount('http://', HTTPAdapter(max_retries=5))
         s.mount('https://', HTTPAdapter(max_retries=5))
 
-        termPeriod = request.form.get('term', '1')
         childId = request.form.get('child', '')
 
         try:
@@ -217,47 +216,46 @@ def stats():
             html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
 
             for markData in marks_data:
-                if termPeriod in markData["Period"]["Text"]:
-                    for subjectData in markData["SubjectMarks"]:
-                        subjectId = subjectData["SubjectId"]
-                        markCollection = []
+                for subjectData in markData["SubjectMarks"]:
+                    subjectId = subjectData["SubjectId"]
+                    markCollection = []
 
-                        html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                        html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
-                        html_out += '</div>'
-                        html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                        html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-                        html_out += f'<h5 style="font-weight:600">{subjectData["Name"]}</h5>'
+                    html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
+                    html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
+                    html_out += '</div>'
+                    html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
+                    html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+                    html_out += f'<h5 style="font-weight:600">{subjectData["Name"]}</h5>'
 
-                        for mark in subjectData["Marks"]:
-                            markCollection.append((mark["Values"][0]["Value"], mark["Values"][0]["Mood"]))
+                    for mark in subjectData["Marks"]:
+                        markCollection.append((mark["Values"][0]["Value"], mark["Values"][0]["Mood"]))
 
-                        markCollectionCounted = (*Counter(sorted(markCollection)).items(),)
-                        markSum = 0
-                        markTotal = len(markCollection)
+                    markCollectionCounted = (*Counter(sorted(markCollection)).items(),)
+                    markSum = 0
+                    markTotal = len(markCollection)
 
-                        for markTuple in markCollectionCounted:
-                            try:
-                                html_out += f'<h8 style="color:{coloring(markTuple[0][1])};">{markTuple[0][0]}: {markTuple[1]}</h8><br>'
-                                markSum += int(markTuple[0][0]) * int(markTuple[1])
-
-                            except (KeyError, IndexError):
-                                pass
-
+                    for markTuple in markCollectionCounted:
                         try:
-                            html_out += f'<h8 style="color:{coloring()};">Среднее значение: {round(markSum / markTotal, 2)}</h8><br>'
+                            html_out += f'<h8 style="color:{coloring(markTuple[0][1])};">{markTuple[0][0]}: {markTuple[1]}</h8><br>'
+                            markSum += int(markTuple[0][0]) * int(markTuple[1])
 
-                        except ZeroDivisionError:
-                            html_out += f'<h8 style="color:{coloring()};">Среднее значение: n/a</h8><br>'
-
-                        try:
-                            html_out += f'<h8 style="color:{coloring(subjectData["FinalMark"]["Values"][0]["Mood"])};">Итоговое значение: {subjectData["FinalMark"]["Values"][0]["Value"]}</h8><br>'
-
-                        except (KeyError, IndexError, TypeError):
+                        except (KeyError, IndexError):
                             pass
 
-                        html_out += '<div style="display:block; height:5px; clear:both;"></div>'
-                        html_out += '</div>'
+                    try:
+                        html_out += f'<h8 style="color:{coloring()};">Среднее значение: {round(markSum / markTotal, 2)}</h8><br>'
+
+                    except ZeroDivisionError:
+                        html_out += f'<h8 style="color:{coloring()};">Среднее значение: n/a</h8><br>'
+
+                    try:
+                        html_out += f'<h8 style="color:{coloring(subjectData["FinalMark"]["Values"][0]["Mood"])};">Итоговое значение: {subjectData["FinalMark"]["Values"][0]["Value"]}</h8><br>'
+
+                    except (KeyError, IndexError, TypeError):
+                        pass
+
+                    html_out += '<div style="display:block; height:5px; clear:both;"></div>'
+                    html_out += '</div>'
 
             response = make_response(jsonify(html_out))
             response.set_cookie('Offset', value='', max_age=0, expires=0)
@@ -410,7 +408,7 @@ def dnevnik():
 
                         for link in links:
                             hw = hw.replace(link, f'<a href="{link}" target="_blank">[ссылка]</a>')
-                            
+
                         html_out += f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>'
 
                     else:
