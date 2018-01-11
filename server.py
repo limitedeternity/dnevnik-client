@@ -88,16 +88,16 @@ def coloring(mood=None):
 
 def kaomoji(mood=None):
     if mood == "Good":
-        return "( ˙꒳​˙ )"
+        return "<br>( ˙꒳​˙ )"
 
     elif mood == "Average":
-        return "(--_--)"
+        return "<br>(--_--)"
 
     elif mood == "Bad":
-        return "(・・ )"
+        return "<br>(・・ )"
 
     else:
-        return "ヽ(ー_ー )ノ"
+        return "<br>ヽ(ー_ー )ノ"
 
 '''
 Template handling
