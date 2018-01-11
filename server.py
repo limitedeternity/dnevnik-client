@@ -217,7 +217,6 @@ def stats():
 
             for markData in marks_data:
                 for subjectData in markData["SubjectMarks"]:
-                    subjectId = subjectData["SubjectId"]
                     markCollection = []
 
                     html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
