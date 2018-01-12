@@ -56,7 +56,6 @@ def set_headers(response):
 
         if request.path.endswith(".js.br"):
             response.headers['Content-Encoding'] = 'br'
-            response.headers['Cache-Control'] = 'must-revalidate, max-age=300'
             response.headers['Vary'] = 'Accept-Encoding'
             response.headers['Content-Type'] = 'application/javascript'
             response.headers['Server'] = 'Unicorn'
@@ -65,7 +64,6 @@ def set_headers(response):
 
         elif request.path.endswith(".css.br"):
             response.headers['Content-Encoding'] = 'br'
-            response.headers['Cache-Control'] = 'must-revalidate, max-age=300'
             response.headers['Vary'] = 'Accept-Encoding'
             response.headers['Content-Type'] = 'text/css'
             response.headers['Server'] = 'Unicorn'
@@ -78,7 +76,6 @@ def set_headers(response):
 
         else:
             response.headers['X-Content-Type-Options'] = 'nosniff'
-            response.headers['Cache-Control'] = 'must-revalidate, max-age=300'
             response.headers['X-Frame-Options'] = 'DENY'
             response.headers['X-XSS-Protection'] = '1; mode=block'
             response.headers['Server'] = 'Unicorn'
