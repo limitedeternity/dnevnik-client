@@ -40,6 +40,10 @@ self.addEventListener('fetch', function(evt) {
   if (evt.request.url === self.location.origin + "/" || evt.request.url === self.location.origin + "/main") {
     evt.respondWith(fromServer(evt.request).catch(fromCache(evt.request)));
     evt.waitUntil(update(evt.request));
+
+  } else if (evt.request.url === self.location.origin + "/dnevnik" || evt.request.url === self.location.origin + "/stats") {
+    evt.respondWith(fromServer(evt.request).catch(fromCache(evt.request)));
+
   } else {
     evt.respondWith(fromCache(evt.request).catch(fromServer(evt.request)));
     evt.waitUntil(update(evt.request));
@@ -73,7 +77,7 @@ function update(request) {
   //file to use the next time we show view
   return caches.open(CACHE).then(function (cache) {
     return fetch(request).then(function (response) {
-      return cache.put(request, response);
+      return cache.put(request, response).catch(response);
     });
   });
 }
