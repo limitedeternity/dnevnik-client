@@ -129,7 +129,6 @@
               <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
                 <h4 class="mdl-cell mdl-cell--12-col">Дата</h4>
                 <form action="/dnevnik" method="post" id="dnevnik-date">
-                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                   <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                       <input class="mdl-textfield__input" type="text" name="day" id="day" pattern="^([1-9]|1[0-9]|2[0-9]|3[01])$" value="" autocomplete="off" />
                       <label class="mdl-textfield__label" for="day">День (1-31)</label>
@@ -184,7 +183,6 @@
               <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
                 <h4 class="mdl-cell mdl-cell--12-col">Запрос</h4>
                 <form action="/stats" method="post" id="dnevnik-stats">
-                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                   <div style="display:block; height: 5px; clear:both;"></div>
                   {% if opts %}
                       {% for child in opts %}
@@ -228,7 +226,6 @@
               <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
                 <h4 class="mdl-cell mdl-cell--12-col">Цвет</h4>
                 <form action="/apply" method="post" id="dnevnik-settings">
-                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                   <div style="display:block; height: 15px; clear:both;"></div>
                   {% if request.cookies.get('Theme') == "Teal" %}
                     <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="deep_orange">

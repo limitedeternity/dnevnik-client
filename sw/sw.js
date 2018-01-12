@@ -1,74 +1,87 @@
 importScripts('/js/cache-polyfill.js');
 
-self.addEventListener('install', function(event) {
-  event.waitUntil(preLoad());
+var CACHE = 'dnevnik-sw';
+var precacheFiles = [
+            '/',
+            '/main',
+            '/css/material.deep_orange-blue.min.css.br',
+            '/css/styles-deep_orange.css.br',
+            '/css/material.deep_purple-blue.min.css.br',
+            '/css/styles-deep_purple.css.br',
+            '/css/material.teal-blue.min.css.br',
+            '/css/styles-teal.css.br',
+            '/css/material.pink-blue.min.css.br',
+            '/css/styles-pink.css.br',
+            '/css/md_icons.css.br',
+            '/css/Roboto.css.br',
+            '/js/compressed.js.br',
+            '/js/material.min.js.br',
+            '/config/browserconfig.xml',
+            '/config/manifest.json',
+            '/fonts/md_icons.woff2',
+            '/fonts/Medium/Roboto-Medium.woff2',
+            '/fonts/Regular/Roboto-Regular.woff2'
+  ];
+
+//Install stage sets up the cache-array to configure pre-cache content
+self.addEventListener('install', function(evt) {
+  evt.waitUntil(precache().then(function() {
+      return self.skipWaiting();
+  }));
 });
 
-var preLoad = function(){
-  return caches.open('dnevnik-sw').then(function(cache) {
 
-  return cache.addAll([
-              '/',
-              '/main',
-              '/css/material.deep_orange-blue.min.css.br',
-              '/css/styles-deep_orange.css.br',
-              '/css/material.deep_purple-blue.min.css.br',
-              '/css/styles-deep_purple.css.br',
-              '/css/material.teal-blue.min.css.br',
-              '/css/styles-teal.css.br',
-              '/css/material.pink-blue.min.css.br',
-              '/css/styles-pink.css.br',
-              '/css/md_icons.css.br',
-              '/css/Roboto.css.br',
-              '/js/compressed.js.br',
-              '/js/material.min.js.br',
-              '/config/browserconfig.xml',
-              '/config/manifest.json',
-              '/fonts/md_icons.woff2',
-              '/fonts/Medium/Roboto-Medium.woff2',
-              '/fonts/Regular/Roboto-Regular.woff2'
-    ]);
+//allow sw to control of current page
+self.addEventListener('activate', function(event) {
+  return self.clients.claim();
+});
+
+self.addEventListener('fetch', function(evt) {
+  if (evt.request.url === self.location.origin + "/" || evt.request.url === self.location.origin + "/main") {
+    evt.respondWith(fromServer(evt.request).catch(fromCache(evt.request)));
+    evt.waitUntil(update(evt.request));
+  } else {
+    evt.respondWith(fromCache(evt.request).catch(fromServer(evt.request)));
+    evt.waitUntil(update(evt.request));
+  }
+});
+
+
+function precache() {
+  return caches.open(CACHE).then(function (cache) {
+    return cache.addAll(precacheFiles);
   });
-};
+}
 
-self.addEventListener('fetch', function(event) {
-  event.respondWith(checkResponse(event.request).catch(function() {
-    return returnFromCache(event.request);}
-  ));
-  event.waitUntil(addToCache(event.request));
-});
 
-var checkResponse = function(request){
-  return new Promise(function(fulfill, reject) {
-    fetch(request).then(function(response){
-      if(response.status !== 404) {
-        fulfill(response);
+function fromCache(request) {
+  //we pull files from the cache first thing so we can show them fast
+  return caches.open(CACHE).then(function (cache) {
+    return cache.match(request).then(function (matching) {
+      if(!matching || matching.status == 404) {
+        return cache.match('/main');
       } else {
-        reject();
+        return matching;
       }
-    }, reject);
+    });
   });
-};
+}
 
-var addToCache = function(request){
-  return caches.open('dnevnik-sw').then(function (cache) {
+
+function update(request) {
+  //this is where we call the server to get the newest version of the
+  //file to use the next time we show view
+  return caches.open(CACHE).then(function (cache) {
     return fetch(request).then(function (response) {
       return cache.put(request, response);
     });
   });
-};
+}
 
-var returnFromCache = function(request){
-  return caches.open('dnevnik-sw').then(function (cache) {
-    return cache.match(request).then(function (matching) {
-     if(!matching || matching.status == 404) {
-       return cache.match('/main');
-     } else {
-       return matching;
-     }
-    });
-  });
-};
+function fromServer(request){
+  //this is the fallback if it is not in the cache to go to the server and get it
+  return fetch(request).then(function (response){return response});
+}
 
 self.addEventListener('activate', function(event) {
   var cacheWhitelist = [];

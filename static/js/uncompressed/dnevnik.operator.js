@@ -118,16 +118,6 @@ $(document).ready(function () {
         } else {
             Cookies.set("Offset", -new Date().getTimezoneOffset() / 60);
 
-            var csrf_token = "{{ csrf_token() }}";
-
-            $.ajaxSetup({
-                beforeSend: function beforeSend(xhr, settings) {
-                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
-                    }
-                }
-            });
-
             $.ajax({
                 url: "/dnevnik",
                 type: "POST",
@@ -193,15 +183,6 @@ $(document).ready(function () {
                 return location.reload();
             }
         } else {
-            var csrf_token = "{{ csrf_token() }}";
-
-            $.ajaxSetup({
-                beforeSend: function beforeSend(xhr, settings) {
-                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
-                    }
-                }
-            });
 
             $.ajax({
                 url: "/stats",
@@ -275,6 +256,7 @@ $(document).ready(function () {
             Object.keys(localStorage).forEach(function (key) {
                 return localStorage.removeItem(key);
             });
+            location.reload();
         }
     });
 

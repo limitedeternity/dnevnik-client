@@ -11,7 +11,6 @@ from pytz import utc
 from flask import Flask, render_template, make_response, request, redirect, jsonify, abort, send_from_directory
 from flask_cache import Cache # Caching
 from flask_sslify import SSLify # Ensure HTTPS
-from flask_wtf.csrf import CSRFProtect # CSRF
 from flask_compress import Compress # Compression
 from requests import Session
 from requests.adapters import HTTPAdapter
@@ -33,7 +32,6 @@ if not debug:
     sslify = SSLify(app)
 
 compress.init_app(app)
-csrf = CSRFProtect(app)
 
 
 '''
@@ -441,7 +439,7 @@ def dnevnik():
 
                     if lesson["HomeworksText"] is not "":
                         hw = lesson["HomeworksText"]
-                        links = list(set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)))
+                        links = (*set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)),)
 
                         for link in links:
                             hw = hw.replace(link, f'<a href="{link}" target="_blank" rel="noopener">[ссылка]</a>')

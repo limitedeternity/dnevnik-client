@@ -1,5 +1,4 @@
 Flask
-Flask-WTF
 flask-sslify
 Flask-Cache
 flask-compress
