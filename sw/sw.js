@@ -41,7 +41,7 @@ self.addEventListener('fetch', function(evt) {
     evt.respondWith(fromServer(evt.request).catch(fromCache(evt.request)));
     evt.waitUntil(update(evt.request));
 
-  } else if (evt.request.url === self.location.origin + "/dnevnik" || evt.request.url === self.location.origin + "/stats") {
+  } else if (evt.request.url === self.location.origin + "/dnevnik" || evt.request.url === self.location.origin + "/stats" || evt.request.url === self.location.origin + "/apply") {
     evt.respondWith(fromServer(evt.request).catch(fromCache(evt.request)));
 
   } else {
