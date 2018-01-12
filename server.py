@@ -339,7 +339,7 @@ def dnevnik():
         timeDay = request.form.get('day', '')
         childId = request.form.get('child', '')
 
-        offset = int(request.cookies.get('Offset'))
+        offset = int(request.cookies.get('Offset', '3'))
 
         try:
             access_token = request.cookies.get('AccessToken')
