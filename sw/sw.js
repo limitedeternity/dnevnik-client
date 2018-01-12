@@ -10,38 +10,23 @@ var preLoad = function(){
   return cache.addAll([
               '/',
               '/main',
-              '/css/material.deep_orange-blue.min.css',
-              '/css/styles-deep_orange.css',
-              '/css/material.deep_purple-blue.min.css',
-              '/css/styles-deep_purple.css',
-              '/css/material.teal-blue.min.css',
-              '/css/styles-teal.css',
-              '/css/material.pink-blue.min.css',
-              '/css/styles-pink.css',
-              '/css/md_icons.css',
-              '/css/Roboto.css',
-              '/js/dnevnik.operator.js',
-              '/js/js.cookie.min.js',
-              '/js/jquery.min.js',
-              '/js/material.min.js',
-              '/js/jquery.longpress.js',
+              '/css/material.deep_orange-blue.min.css.br',
+              '/css/styles-deep_orange.css.br',
+              '/css/material.deep_purple-blue.min.css.br',
+              '/css/styles-deep_purple.css.br',
+              '/css/material.teal-blue.min.css.br',
+              '/css/styles-teal.css.br',
+              '/css/material.pink-blue.min.css.br',
+              '/css/styles-pink.css.br',
+              '/css/md_icons.css.br',
+              '/css/Roboto.css.br',
+              '/js/compressed.js.br',
+              '/js/material.min.js.br',
               '/config/browserconfig.xml',
               '/config/manifest.json',
               '/fonts/md_icons.woff2',
-              '/fonts/Black/Roboto-Black.woff',
-              '/fonts/Black/Roboto-Black.woff2',
-              '/fonts/Bold/Roboto-Bold.woff',
-              '/fonts/Bold/Roboto-Bold.woff2',
-              '/fonts/BoldItalic/Roboto-BoldItalic.woff',
-              '/fonts/BoldItalic/Roboto-BoldItalic.woff2',
-              '/fonts/Light/Roboto-Light.woff',
-              '/fonts/Light/Roboto-Light.woff2',
-              '/fonts/Medium/Roboto-Medium.woff',
               '/fonts/Medium/Roboto-Medium.woff2',
-              '/fonts/Regular/Roboto-Regular.woff',
-              '/fonts/Regular/Roboto-Regular.woff2',
-              '/fonts/Thin/Roboto-Thin.woff',
-              '/fonts/Thin/Roboto-Thin.woff2'
+              '/fonts/Regular/Roboto-Regular.woff2'
     ]);
   });
 };
@@ -99,4 +84,3 @@ self.addEventListener('activate', function(event) {
     })
   );
 });
-

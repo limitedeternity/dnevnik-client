@@ -8,35 +8,78 @@ from random import choice, randint
 from re import findall, match
 from json import loads
 from pytz import utc
-from flask import Flask, render_template, make_response, send_from_directory, request, redirect, jsonify, abort
+from flask import Flask, render_template, make_response, request, redirect, jsonify, abort, send_from_directory
 from flask_cache import Cache # Caching
 from flask_sslify import SSLify # Ensure HTTPS
 from flask_wtf.csrf import CSRFProtect # CSRF
-from whitenoise import WhiteNoise # Easy static serve
+from flask_compress import Compress # Compression
 from requests import Session
 from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError
 from cachecontrol import CacheControl
 
 debug = False
+compress = Compress()
 
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = environ.get("SECRET_KEY", "".join(choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for _ in range(50)))
-app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/")
+app.config['COMPRESS_MIMETYPES'] = ['text/html', 'application/json']
+app.config['COMPRESS_MIN_SIZE'] = 0
 
 if not debug:
     app.config['REMEMBER_COOKIE_SECURE'] = True
     app.config['SESSION_COOKIE_SECURE'] = True
-
     cache = Cache(app, config={'CACHE_TYPE': 'redis', 'CACHE_REDIS_URL': environ.get("REDIS_URL")})
     sslify = SSLify(app)
 
+compress.init_app(app)
 csrf = CSRFProtect(app)
 
 
 '''
 Required functionality
 '''
+
+@app.after_request
+def set_headers(response):
+    if request.method == "GET":
+
+        accept_encoding = request.headers.get('Accept-Encoding', '')
+
+        if 'br' not in accept_encoding.lower():
+            return response
+
+        if (response.status_code < 200 or response.status_code >= 300 or 'Content-Encoding' in response.headers):
+            return response
+
+        response.direct_passthrough = False
+
+        if request.path.endswith(".js.br"):
+            response.headers['Content-Encoding'] = 'br'
+            response.headers['Vary'] = 'Accept-Encoding'
+            response.headers['Content-Type'] = 'application/javascript'
+            response.headers['Server'] = 'Unicorn'
+            response.headers['Content-Length'] = len(response.data)
+            return response
+
+        elif request.path.endswith(".css.br"):
+            response.headers['Content-Encoding'] = 'br'
+            response.headers['Vary'] = 'Accept-Encoding'
+            response.headers['Content-Type'] = 'text/css'
+            response.headers['Server'] = 'Unicorn'
+            response.headers['Content-Length'] = len(response.data)
+            return response
+
+        else:
+            response.headers['X-Content-Type-Options'] = 'nosniff'
+            response.headers['X-Frame-Options'] = 'DENY'
+            response.headers['X-XSS-Protection'] = '1; mode=block'
+            response.headers['Server'] = 'Unicorn'
+            response.headers['Strict-Transport-Security'] = 'max-age=31536000'
+            return response
+
+    else:
+        return response
 
 
 def timeDate(typeDate, offset):
@@ -107,11 +150,6 @@ Template handling
 @app.route("/", methods=['GET'])
 def index():
     response = make_response(render_template('index.html'))
-
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-XSS-Protection'] = '1; mode=block'
-    response.headers['Strict-Transport-Security'] = 'max-age=31536000'
     response.set_cookie('Offset', value='', max_age=0, expires=0)
     return response
 
@@ -161,10 +199,6 @@ def main():
     else:
         response = make_response(redirect("/"))
 
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-XSS-Protection'] = '1; mode=block'
-    response.headers['Strict-Transport-Security'] = 'max-age=31536000'
     response.set_cookie('Offset', value='', max_age=0, expires=0)
     return response
 
@@ -406,7 +440,7 @@ def dnevnik():
                         links = list(set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)))
 
                         for link in links:
-                            hw = hw.replace(link, f'<a href="{link}" target="_blank">[ссылка]</a>')
+                            hw = hw.replace(link, f'<a href="{link}" target="_blank" rel="noopener">[ссылка]</a>')
 
                         html_out += f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>'
 
@@ -556,11 +590,32 @@ def log_out():
         response.set_cookie('AccountType', value='', max_age=0, expires=0)
         response.set_cookie('Offset', value='', max_age=0, expires=0)
 
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-XSS-Protection'] = '1; mode=block'
-    response.headers['Strict-Transport-Security'] = 'max-age=31536000'
     return response
+
+
+@app.route('/js/<path:path>', methods=['GET'])
+def serve_js(path):
+    return send_from_directory('static/js', path)
+
+
+@app.route('/css/<path:path>', methods=['GET'])
+def serve_css(path):
+    return send_from_directory('static/css', path)
+
+
+@app.route('/images/<path:path>', methods=['GET'])
+def serve_images(path):
+    return send_from_directory('static/images', path)
+
+
+@app.route('/fonts/<path:path>', methods=['GET'])
+def serve_fonts(path):
+    return send_from_directory('static/fonts', path)
+
+
+@app.route('/config/<path:path>', methods=['GET'])
+def serve_config(path):
+    return send_from_directory('static/config', path)
 
 
 @app.route('/sw.js', methods=['GET'])

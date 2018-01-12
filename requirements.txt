@@ -2,6 +2,7 @@ Flask
 Flask-WTF
 flask-sslify
 Flask-Cache
+flask-compress
 CacheControl
 gunicorn
 redis
@@ -9,4 +10,3 @@ eventlet
 requests
 requests[security]
 pytz
-whitenoise
