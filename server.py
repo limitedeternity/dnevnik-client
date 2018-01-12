@@ -624,7 +624,7 @@ def serve_config(path):
 
 @app.route('/sw.js', methods=['GET'])
 def serviceworker():
-    return send_from_directory('sw', 'sw.js'))
+    return send_from_directory('sw', 'sw.js')
 
 
 @app.route('/sw/<path:path>', methods=['GET'])
