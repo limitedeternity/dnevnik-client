@@ -30,10 +30,10 @@ var preLoad = function(){
 };
 
 self.addEventListener('fetch', function(event) {
-  if (evt.request.url === self.location.origin + "/" || evt.request.url === self.location.origin + "/main" || evt.request.method == 'POST') {
+  if (event.request.url === self.location.origin + "/" || event.request.url === self.location.origin + "/main" || event.request.method == 'POST') {
     event.respondWith(checkResponse(event.request).catch(function() {
-      return returnFromCache(event.request);}
-    ));
+      return returnFromCache(event.request);
+    }));
   } else {
     event.respondWith(returnFromCache(event.request).catch(function() {
       return;
