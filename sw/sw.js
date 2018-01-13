@@ -38,14 +38,14 @@ self.addEventListener('activate', function(event) {
 
 self.addEventListener('fetch', function(evt) {
   if (evt.request.url === self.location.origin + "/" || evt.request.url === self.location.origin + "/main") {
-    evt.respondWith(fromServer(evt.request).catch(fromCache(evt.request)));
+    evt.respondWith(fromServer(evt.request).catch(fromCache(evt.request))).catch();
     evt.waitUntil(update(evt.request).catch());
 
   } else if (evt.request.method == 'POST') {
     evt.respondWith(fromServer(evt.request));
 
   } else {
-    evt.respondWith(fromCache(evt.request).catch(fromServer(evt.request)));
+    evt.respondWith(fromCache(evt.request).catch(fromServer(evt.request))).catch();
     evt.waitUntil(update(evt.request).catch());
   }
 });
