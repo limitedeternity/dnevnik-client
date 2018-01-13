@@ -38,15 +38,13 @@ self.addEventListener('activate', function(event) {
 
 self.addEventListener('fetch', function(evt) {
   if (evt.request.url === self.location.origin + "/" || evt.request.url === self.location.origin + "/main") {
-    evt.respondWith(fromServer(evt.request).catch(fromCache(evt.request)));
-    evt.waitUntil(update(evt.request));
+    return evt.respondWith(fromServer(evt.request).catch(fromCache(evt.request)));
 
-  } else if (evt.request.url === self.location.origin + "/dnevnik" || evt.request.url === self.location.origin + "/stats" || evt.request.url === self.location.origin + "/apply") {
-    evt.respondWith(fromServer(evt.request).catch(fromCache(evt.request)));
+  } else if (evt.request.method == 'POST') {
+    return evt.respondWith(fromServer(evt.request));
 
   } else {
-    evt.respondWith(fromCache(evt.request).catch(fromServer(evt.request)));
-    evt.waitUntil(update(evt.request));
+    return evt.respondWith(fromCache(evt.request).catch(fromServer(evt.request)));
   }
 });
 
@@ -67,17 +65,6 @@ function fromCache(request) {
       } else {
         return matching;
       }
-    });
-  });
-}
-
-
-function update(request) {
-  //this is where we call the server to get the newest version of the
-  //file to use the next time we show view
-  return caches.open(CACHE).then(function (cache) {
-    return fetch(request).then(function (response) {
-      return cache.put(request, response).catch(response);
     });
   });
 }

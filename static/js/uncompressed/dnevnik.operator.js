@@ -260,6 +260,15 @@ $(document).ready(function () {
         }
     });
 
+    $("#reset-sw").on("click", function () {
+        if (navigator.onLine) {
+          if ('serviceWorker'in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(t){t.forEach(function(t){t.update()})});
+            location.reload();
+          }
+        }
+    });
+
     $('form').each(function () {
         $(this).find('input').keypress(function (e) {
             if (e.which == 10 || e.which == 13) {
