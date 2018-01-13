@@ -1,5 +1,3 @@
-importScripts('/js/cache-polyfill.js');
-
 var CACHE = 'dnevnik-sw';
 var precacheFiles = [
             '/',
