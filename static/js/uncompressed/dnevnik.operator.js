@@ -263,8 +263,8 @@ $(document).ready(function () {
     $("#reset-sw").on("click", function () {
         if (navigator.onLine) {
           if ('serviceWorker'in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(t){t.forEach(function(t){t.update()})});
-            location.reload();
+            navigator.serviceWorker.getRegistrations().then(function(t){t.forEach(function(t){t.unregister()})});
+            $("#logout").click();
           }
         }
     });
