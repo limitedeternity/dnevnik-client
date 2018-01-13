@@ -12,6 +12,7 @@ from flask import Flask, render_template, make_response, request, redirect, json
 from flask_cache import Cache # Caching
 from flask_sslify import SSLify # Ensure HTTPS
 from flask_compress import Compress # Compression
+from flask_cors import CORS # Request origin Control
 from requests import Session
 from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError
@@ -30,6 +31,7 @@ if not debug:
     app.config['SESSION_COOKIE_SECURE'] = True
     cache = Cache(app, config={'CACHE_TYPE': 'redis', 'CACHE_REDIS_URL': environ.get("REDIS_URL")})
     sslify = SSLify(app)
+    CORS(app, origins="https://dnevnik-client.herokuapp.com")
 
 compress.init_app(app)
 
