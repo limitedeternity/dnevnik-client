@@ -4,7 +4,7 @@ from os import chdir, environ
 from os.path import dirname, abspath
 from collections import Counter
 from datetime import datetime, timedelta
-from random import choice, randint
+from random import choice
 from re import findall, match
 from json import loads
 from pytz import utc
@@ -184,7 +184,7 @@ def main():
 
         elif request.cookies.get("AccountType") == 'Parent':
             if offline:
-                opts = [{"Профилактические работы": str(randint(0, 2000))}]
+                opts = [{"Профилактические работы": "1337"}]
 
             else:
                 options = user_data['children']
@@ -220,17 +220,7 @@ def stats():
             user_data = loads(res_userdata.text)
 
         except ConnectionError:
-            html_out = ""
-            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
-
-            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-            html_out += '</div>'
-            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-            html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-            html_out += 'Кажется, Дневник.Ру ушел в оффлайн :> <br>'
-            html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
-            html_out += '</div>'
+            html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.</div>'
 
             response = make_response(jsonify(html_out))
             response.set_cookie('Offset', value='', max_age=0, expires=0)
@@ -248,19 +238,14 @@ def stats():
 
             marks_data = loads(res_marks.text)["AllMarks"]
 
-            html_out = ""
-            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
+            html_out = ['<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>']
 
             for markData in marks_data:
                 for subjectData in markData["SubjectMarks"]:
                     markCollection = []
 
-                    html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                    html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
-                    html_out += '</div>'
-                    html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                    html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-                    html_out += f'<h5 style="font-weight:600">{subjectData["Name"]}</h5>'
+                    html_out.append('<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><div style="display:block; height:2px; clear:both;"></div>')
+                    html_out.append(f'<h5 style="font-weight:600">{subjectData["Name"]}</h5>')
 
                     for mark in subjectData["Marks"]:
                         markCollection.append((mark["Values"][0]["Value"], mark["Values"][0]["Mood"]))
@@ -271,59 +256,39 @@ def stats():
 
                     for markTuple in markCollectionCounted:
                         try:
-                            html_out += f'<h8 style="color:{coloring(markTuple[0][1])};">{markTuple[0][0]}: {markTuple[1]}</h8><br>'
+                            html_out.append(f'<h8 style="color:{coloring(markTuple[0][1])};">{markTuple[0][0]}: {markTuple[1]}</h8><br>')
                             markSum += int(markTuple[0][0]) * int(markTuple[1])
 
                         except (KeyError, IndexError):
                             pass
 
                     try:
-                        html_out += f'<h8 style="color:{coloring()};">Среднее значение: {round(markSum / markTotal, 2)}</h8><br>'
+                        html_out.append(f'<h8 style="color:{coloring()};">Среднее значение: {round(markSum / markTotal, 2)}</h8><br>')
 
                     except ZeroDivisionError:
-                        html_out += f'<h8 style="color:{coloring()};">Среднее значение: n/a</h8><br>'
+                        html_out.append(f'<h8 style="color:{coloring()};">Среднее значение: n/a</h8><br>')
 
                     try:
-                        html_out += f'<h8 style="color:{coloring(subjectData["FinalMark"]["Values"][0]["Mood"])};">Итоговое значение: {subjectData["FinalMark"]["Values"][0]["Value"]}</h8><br>'
+                        html_out.append(f'<h8 style="color:{coloring(subjectData["FinalMark"]["Values"][0]["Mood"])};">Итоговое значение: {subjectData["FinalMark"]["Values"][0]["Value"]}</h8><br>')
 
                     except (KeyError, IndexError, TypeError):
                         pass
 
-                    html_out += '<div style="display:block; height:5px; clear:both;"></div>'
-                    html_out += '</div>'
+                    html_out.append('<div style="display:block; height:5px; clear:both;"></div></div>')
 
-            response = make_response(jsonify(html_out))
+            response = make_response(jsonify(''.join(html_out)))
             response.set_cookie('Offset', value='', max_age=0, expires=0)
             return response
 
         except ConnectionError:
-            html_out = ""
-            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
-
-            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-            html_out += '</div>'
-            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-            html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-            html_out += 'Кажется, Дневник.Ру ушел в оффлайн :> <br>'
-            html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
-            html_out += '</div>'
+            html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.</div>'
 
             response = make_response(jsonify(html_out))
             response.set_cookie('Offset', value='', max_age=0, expires=0)
             return response
 
     else:
-        html_out = ""
-        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>'
-
-        html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-        html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-        html_out += '</div>'
-        html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-        html_out += '<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>'
-        html_out += 'Вы явно такого не ожидали, не правда ли?'
-        html_out += '</div>'
+        html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Залогиньтесь ¯\_(ツ)_/¯</h5>Вы явно такого не ожидали, не правда ли?</div>'
 
         response = make_response(jsonify(html_out))
         response.set_cookie('Offset', value='', max_age=0, expires=0)
@@ -377,23 +342,13 @@ def dnevnik():
             lesson_data = loads(res_lessons.text)['Days'][0]['Schedule']
 
             if lesson_data == []:
-                html_out = ""
-                html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
-
-                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                html_out += '</div>'
-                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-                html_out += 'Уроков нет :>'
-                html_out += '</div>'
+                html_out = '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Уроков нет :></div>'
 
                 response = make_response(jsonify(html_out))
                 response.set_cookie('Offset', value='', max_age=0, expires=0)
                 return response
 
-            html_out = ""
-            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
+            html_out = ['<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>']
 
             not_initialised = []
 
@@ -404,35 +359,30 @@ def dnevnik():
                     continue
 
                 else:
-                    html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                    html_out += '<div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i>'
-                    html_out += '</div>'
-                    html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                    html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-
-                    html_out += f'<h5 style="font-weight:600">{lesson["Subject"]["Name"]}</h5>'
+                    html_out.append('<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><div style="display:block; height:2px; clear:both;"></div>')
+                    html_out.append(f'<h5 style="font-weight:600">{lesson["Subject"]["Name"]}</h5>')
 
                     for mark in lesson['Marks']:
                         if mark:
                             if mark["MarkType"] == 'LogEntry':
-                                html_out += f'<h8 style="color:{coloring(mark["Values"][0]["Value"])};">Присутствие: {mark["MarkTypeText"]}.</h8><br>'
+                                html_out.append(f'<h8 style="color:{coloring(mark["Values"][0]["Value"])};">Присутствие: {mark["MarkTypeText"]}.</h8><br>')
 
                             elif mark["MarkType"] == "Mark":
                                 if len(mark['Values']) > 1:
-                                    html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+                                    html_out.append('<div style="display:block; height:2px; clear:both;"></div>')
 
                                 for markValue in mark['Values']:
-                                    html_out += f'<h8 style="color:{coloring(markValue["Mood"])};">Оценка: {markValue["Value"]} ({mark["MarkTypeText"]}) {kaomoji(markValue["Mood"])}</h8><br>'
+                                    html_out.append(f'<h8 style="color:{coloring(markValue["Mood"])};">Оценка: {markValue["Value"]} ({mark["MarkTypeText"]}) {kaomoji(markValue["Mood"])}</h8><br>')
 
                                 if len(mark['Values']) > 1:
-                                    html_out += '<div style="display:block; height:2px; clear:both;"></div>'
+                                    html_out.append('<div style="display:block; height:2px; clear:both;"></div>')
 
                     if lesson["Theme"] is not '':
                         try:
-                            html_out += f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]} ({lesson["ImportantWorks"][0]["WorkType"]})</h8><br>'
+                            html_out.append(f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]} ({lesson["ImportantWorks"][0]["WorkType"]})</h8><br>')
 
                         except (KeyError, IndexError):
-                            html_out += f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]}</h8><br>'
+                            html_out.append(f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]}</h8><br>')
 
                     else:
                         pass
@@ -444,55 +394,29 @@ def dnevnik():
                         for link in links:
                             hw = hw.replace(link, f'<a href="{link}" target="_blank" rel="noopener">[ссылка]</a>')
 
-                        html_out += f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>'
+                        html_out.append(f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>')
 
                     else:
-                        html_out += f'<h8 style="color:{coloring()};">ДЗ: нет {kaomoji()}</h8><br>'
+                        html_out.append(f'<h8 style="color:{coloring()};">ДЗ: нет {kaomoji()}</h8><br>')
 
-                    html_out += '<div style="display:block; height:5px; clear:both;"></div>'
-                    html_out += '</div>'
+                    html_out.append('<div style="display:block; height:5px; clear:both;"></div></div>')
 
             if len(lesson_data) == len(not_initialised):
-                html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-                html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-                html_out += '</div>'
-                html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-                html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-                html_out += 'Ни один урок не отмечен, как инициализированный :>'
-                html_out += '</div>'
+                html_out.append('<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Ни один урок не отмечен, как инициализированный :></div>')
 
         except ConnectionError:
-            html_out = ""
-            html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
-
-            html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-            html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-            html_out += '</div>'
-            html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-            html_out += '<h5>Данные не получены ¯\_(ツ)_/¯</h5>'
-            html_out += 'API Дневник.Ру в оффлайне :> <br>'
-            html_out += 'Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.'
-            html_out += '</div>'
+            html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.</div>'
 
             response = make_response(jsonify(html_out))
             response.set_cookie('Offset', value='', max_age=0, expires=0)
             return response
 
-        response = make_response(jsonify(html_out))
+        response = make_response(jsonify(''.join(html_out)))
         response.set_cookie('Offset', value='', max_age=0, expires=0)
         return response
 
     else:
-        html_out = ""
-        html_out += '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>'
-
-        html_out += '<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">'
-        html_out += '<i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i>'
-        html_out += '</div>'
-        html_out += '<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">'
-        html_out += '<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>'
-        html_out += 'Вы явно такого не ожидали, не правда ли?'
-        html_out += '</div>'
+        html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Залогиньтесь ¯\_(ツ)_/¯</h5>Вы явно такого не ожидали, не правда ли?</div>'
 
         response = make_response(jsonify(html_out))
         response.set_cookie('Offset', value='', max_age=0, expires=0)
@@ -555,9 +479,7 @@ def log_in():
 def apply():
     color = request.form.get('color', '')
 
-    html_out = ""
-    html_out += '<div style="display:block; height:2px; clear:both;"></div>'
-    html_out += '<p style="text-align:center; color:green;">Смена цветовой схемы успешна ^^</p>'
+    html_out = '<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:green;">Смена цветовой схемы успешна ^^</p>'
 
     response = make_response(jsonify(html_out))
     response.set_cookie('Theme', value=color, max_age=2592000, expires=2592000)
@@ -569,13 +491,6 @@ def log_out():
     s = CacheControl(Session())
     s.mount('http://', HTTPAdapter(max_retries=5))
     s.mount('https://', HTTPAdapter(max_retries=5))
-
-    s.headers.update({'Upgrade-Insecure-Requests': '1',
-                      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-                      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-                      'DNT': '1',
-                      'Accept-Encoding': 'gzip, deflate, br',
-                      'Accept-Language': 'ru-RU,en-US;q=0.8,ru;q=0.6,en;q=0.4'})
 
     offline = False
 
