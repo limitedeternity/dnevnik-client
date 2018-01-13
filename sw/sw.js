@@ -38,13 +38,15 @@ self.addEventListener('activate', function(event) {
 
 self.addEventListener('fetch', function(evt) {
   if (evt.request.url === self.location.origin + "/" || evt.request.url === self.location.origin + "/main") {
-    return evt.respondWith(fromServer(evt.request).catch(fromCache(evt.request)));
+    evt.respondWith(fromServer(evt.request).catch(fromCache(evt.request)));
+    evt.waitUntil(update(evt.request).catch());
 
   } else if (evt.request.method == 'POST') {
-    return evt.respondWith(fromServer(evt.request));
+    evt.respondWith(fromServer(evt.request));
 
   } else {
-    return evt.respondWith(fromCache(evt.request).catch(fromServer(evt.request)));
+    evt.respondWith(fromCache(evt.request).catch(fromServer(evt.request)));
+    evt.waitUntil(update(evt.request).catch());
   }
 });
 
@@ -55,6 +57,15 @@ function precache() {
   });
 }
 
+function update(request) {
+  //this is where we call the server to get the newest version of the
+  //file to use the next time we show view
+  return caches.open(CACHE).then(function (cache) {
+    return fetch(request).then(function (response) {
+      return cache.put(request, response);
+    });
+  });
+}
 
 function fromCache(request) {
   //we pull files from the cache first thing so we can show them fast
