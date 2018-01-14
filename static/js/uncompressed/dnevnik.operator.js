@@ -43,6 +43,7 @@ $(document).ready(function () {
                 $('.mdl-layout__content').animate({
                     scrollTop: $("#dnevnik-out").offset().top + 'px'
                 }, 'fast');
+
             } else {
                 $("#dnevnik-out").html("<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>");
                 $("#dnevnik-date").submit();
@@ -61,6 +62,7 @@ $(document).ready(function () {
                 $('.mdl-layout__content').animate({
                     scrollTop: $("#stats-out").offset().top + 'px'
                 }, 'fast');
+
             } else {
                 $("#dnevnik-stats").submit();
             }
@@ -112,9 +114,11 @@ $(document).ready(function () {
                 return $('.mdl-layout__content').animate({
                     scrollTop: $("#dnevnik-out").offset().top + 'px'
                 }, 'fast');
+
             } else {
                 return location.reload();
             }
+
         } else {
             Cookies.set("Offset", -new Date().getTimezoneOffset() / 60);
 
@@ -124,27 +128,22 @@ $(document).ready(function () {
                 dataType: "json",
                 data: $("#dnevnik-date").serialize(),
                 timeout: 30000
+
             }).done(function (data) {
                 $("#dnevnik-out").html(data);
 
-                if (localStorage.getItem('dnevnik') !== null) {
-                    if (data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1 && data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) {
-                        if (data !== localStorage.getItem('dnevnik')) {
-                            notify();
-                        }
+                if (data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1 && data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) {
+                    if (data !== localStorage.getItem('dnevnik')) {
+                        notify();
+                    }
 
-                        localStorage.removeItem('dnevnik');
-                        localStorage.setItem('dnevnik', data);
-                    }
-                } else {
-                    if (data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1 && data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) {
-                        localStorage.setItem('dnevnik', data);
-                    }
+                    localStorage.setItem('dnevnik', data);
                 }
 
                 $('.mdl-layout__content').animate({
                     scrollTop: $("#dnevnik-out").offset().top + 'px'
                 }, 'fast');
+
             }).fail(function () {
                 if (localStorage.getItem('dnevnik') !== null) {
                     $("#dnevnik-out").html(localStorage.getItem('dnevnik').replace('<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
@@ -152,9 +151,11 @@ $(document).ready(function () {
                     $('.mdl-layout__content').animate({
                         scrollTop: $("#dnevnik-out").offset().top + 'px'
                     }, 'fast');
+
                 } else {
                     location.reload();
                 }
+
             }).always(function () {
                 setTimeout(function () {
                     $("#dnevnik-date").submit();
@@ -179,34 +180,30 @@ $(document).ready(function () {
                 return $('.mdl-layout__content').animate({
                     scrollTop: $("#stats-out").offset().top + 'px'
                 }, 'fast');
+
             } else {
                 return location.reload();
             }
-        } else {
 
+        } else {
             $.ajax({
                 url: "/stats",
                 type: "POST",
                 dataType: "json",
                 data: $("#dnevnik-stats").serialize(),
                 timeout: 30000
+
             }).done(function (data) {
                 $("#stats-out").html(data);
 
-                if (localStorage.getItem('stats') !== null) {
-                    if (data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1 && data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) {
-                        localStorage.removeItem('stats');
-                        localStorage.setItem('stats', data);
-                    }
-                } else {
-                    if (data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1 && data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) {
-                        localStorage.setItem('stats', data);
-                    }
+                if (data.indexOf("<h5>Данные не получены ¯\_(ツ)_/¯</h5>") === -1 && data.indexOf("<h5>Залогиньтесь ¯\_(ツ)_/¯</h5>") === -1) {
+                    localStorage.setItem('stats', data);
                 }
 
                 $('.mdl-layout__content').animate({
                     scrollTop: $("#stats-out").offset().top + 'px'
                 }, 'fast');
+
             }).fail(function () {
                 if (localStorage.getItem('stats') !== null) {
                     $("#stats-out").html(localStorage.getItem('stats').replace('<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>', '<h4 class="mdl-cell mdl-cell--12-col">Последние данные</h4>'));
@@ -214,6 +211,7 @@ $(document).ready(function () {
                     $('.mdl-layout__content').animate({
                         scrollTop: $("#stats-out").offset().top + 'px'
                     }, 'fast');
+
                 } else {
                     location.reload();
                 }
@@ -230,10 +228,13 @@ $(document).ready(function () {
                 type: 'POST',
                 dataType: 'json',
                 data: $("#dnevnik-settings").serialize()
+
             }).done(function (data) {
                 $("#error").html(data);
+
             }).fail(function () {
                 $("#error").html('<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:red;">Кто-то против смены темы c:</p>');
+
             }).always(function () {
                 setTimeout(function () {
                     location.replace("/");
