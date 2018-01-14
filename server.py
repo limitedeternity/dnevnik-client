@@ -175,10 +175,10 @@ def main():
         except ConnectionError:
             offline = True
 
-        if offline or 'ApiServerError' in user_data.values():
+        if offline or 'apiServerError' in user_data.values():
             user = "товарищ Тестер"
 
-        elif 'ApiRequestLimit' in user_data.values() or 'AuthorizationInvalidToken' in user_data.values():
+        elif 'apiRequestLimit' in user_data.values() or 'authorizationInvalidToken' in user_data.values():
             response = make_response(redirect("/logout"))
             return response
 
@@ -189,7 +189,7 @@ def main():
             response = make_response(render_template('index_logged_in.html', user=user))
 
         elif request.cookies.get("AccountType") == 'Parent':
-            if offline or 'ApiServerError' in user_data.values():
+            if offline or 'apiServerError' in user_data.values():
                 opts = [{"Профилактические работы": "1337"}]
 
             else:
@@ -225,10 +225,10 @@ def stats():
             res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
             user_data = loads(res_userdata.text)
 
-            if 'ApiServerError' in user_data.values():
+            if 'apiServerError' in user_data.values():
                 raise ConnectionError
 
-            elif 'ApiRequestLimit' in user_data.values() or 'AuthorizationInvalidToken' in user_data.values():
+            elif 'apiRequestLimit' in user_data.values() or 'authorizationInvalidToken' in user_data.values():
                 response = make_response(redirect("/logout"))
                 response.set_cookie('Offset', value='', max_age=0, expires=0)
                 return response
@@ -319,10 +319,10 @@ def dnevnik():
             res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
             user_data = loads(res_userdata.text)
 
-            if 'ApiServerError' in user_data.values():
+            if 'apiServerError' in user_data.values():
                 raise ConnectionError
 
-            elif 'ApiRequestLimit' in user_data.values() or 'AuthorizationInvalidToken' in user_data.values():
+            elif 'apiRequestLimit' in user_data.values() or 'authorizationInvalidToken' in user_data.values():
                 response = make_response(redirect("/logout"))
                 response.set_cookie('Offset', value='', max_age=0, expires=0)
                 return response
@@ -446,21 +446,11 @@ def log_in():
     s.mount('https://', HTTPAdapter(max_retries=5))
 
     try:
-        access_token = request.cookies.get('AccessToken_Temp')
-
+        access_token = request.cookies.get('AccessToken_Temp', '')
         res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
-
-        try:
-            s.cookies.get_dict()['dnevnik_sst']
-
-        except KeyError:
-            response = make_response(redirect("/"))
-            response.set_cookie('AccessToken_Temp', value='', max_age=0, expires=0)
-            return response
-
         user_data = loads(res_userdata.text)
 
-        if 'ApiServerError' in user_data.values():
+        if 'apiServerError' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
             raise ConnectionError
 
     except ConnectionError:
@@ -512,10 +502,11 @@ def log_out():
     offline = False
 
     try:
+        access_token = request.cookies.get('AccessToken', '')
         res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
         user_data = loads(res_userdata.text)
 
-        if 'ApiServerError' in user_data.values():
+        if 'apiServerError' in user_data.values() or 'parameterInvalid' in user_data.values():
             raise ConnectionError
 
     except ConnectionError:
@@ -567,7 +558,7 @@ def serve_sw(path):
         return send_from_directory('sw', path)
 
     else:
-        abort(404)
+        return abort(404)
 
 
 if __name__ == "__main__":
