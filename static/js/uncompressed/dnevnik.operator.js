@@ -38,6 +38,17 @@
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
+    const serialize = (formElement) => {
+      let object = {};
+      let formdata = new FormData(formElement);
+
+      formdata.forEach((value, key) => {
+          object[key] = value;
+      });
+
+      return JSON.stringify(object);
+    }
+
     if (navigator.onLine) {
 
       promiseChain.push(
@@ -156,7 +167,7 @@
       document.querySelector("#dnevnik-settings").addEventListener("submit", (event) => {
           event.preventDefault();
           let form = event.target;
-          let formdata = serialize(form)
+          let formdata = serialize(form);
 
           if (!navigator.onLine) {return;}
           fetch("/apply", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: formdata, credentials: 'same-origin'}).then((response) => {
