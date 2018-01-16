@@ -1,7 +1,8 @@
+"use strict";
+
 /*jshint esversion: 6 */
 
 (() => {
-  "use strict";
 
   if (location.pathname == "/") {
       if (Cookies.get('AccessToken') !== undefined) {
