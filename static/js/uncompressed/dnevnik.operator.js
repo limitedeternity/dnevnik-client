@@ -152,7 +152,7 @@
           fetch("/apply", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
               return response.json();
             }).then((json) => {
-            document.querySelector("#error").innerHTML(json);
+            document.querySelector("#error").innerHTML = json;
             setTimeout(() => {location.replace("/")}, 500);
           });
      });
