@@ -477,8 +477,8 @@ def log_in():
 
     response = make_response(redirect("/"))
     response.set_cookie('AccessToken_Temp', value='', max_age=0, expires=0)
-    response.set_cookie('AccountType', value=accounttype, max_age=2592000, expires=2592000)
-    response.set_cookie('AccessToken', value=access_token, max_age=2592000, expires=2592000)
+    response.set_cookie('AccountType', value=accounttype, max_age=2592000, expires=2592000, secure=True)
+    response.set_cookie('AccessToken', value=access_token, max_age=2592000, expires=2592000, secure=True)
     return response
 
 
@@ -492,7 +492,7 @@ def apply():
 
     html_out = '<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:green;">Смена цветовой схемы успешна ^^</p>'
     response = make_response(jsonify(html_out))
-    response.set_cookie('Theme', value=color, max_age=2592000, expires=2592000)
+    response.set_cookie('Theme', value=color, max_age=2592000, expires=2592000, secure=True)
     return response
 
 
