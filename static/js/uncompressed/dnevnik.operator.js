@@ -33,8 +33,10 @@
 
       promiseChain.push(
         new Promise((resolve) => (Cookies.set("Offset", -new Date().getTimezoneOffset() / 60) && resolve())).then(() => {
-          fetch("/dnevnik", {method: 'POST', headers: {'Content-Type': 'application/json'}}).then((data) => {
-            localforage.setItem('dnevnik', data).then(() => {
+          fetch("/dnevnik", {method: 'POST', headers: {'Content-Type': 'application/json'}}).then((response) => {
+              return response.json();
+            }).then((json) => {
+            localforage.setItem('dnevnik', json).then(() => {
               whenDomReady().then(() => {
                 localforage.getItem('dnevnik').then((data) => {
                   document.querySelector("#dnevnik-out").innerHTML = data;
@@ -46,8 +48,10 @@
       );
 
       promiseChain.push(
-        fetch("/stats", {method: 'POST', headers: {'Content-Type': 'application/json'}}).then((data) => {
-          localforage.setItem('stats', data).then(() => {
+        fetch("/stats", {method: 'POST', headers: {'Content-Type': 'application/json'}}).then((response) => {
+            return response.json();
+          }).then((json) => {
+          localforage.setItem('stats', json).then(() => {
             whenDomReady().then(() => {
               localforage.getItem('stats').then((data) => {
                 document.querySelector("#stats-out").innerHTML = data;
@@ -109,8 +113,10 @@
           document.querySelector("#dnevnik-out").innerHTML = "<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>";
 
           new Promise((resolve) => (Cookies.set("Offset", -new Date().getTimezoneOffset() / 60) && resolve())).then(() => {
-            fetch("/dnevnik", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form)}).then((data) => {
-              localforage.setItem('dnevnik', data).then(() => {
+            fetch("/dnevnik", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form)}).then((response) => {
+                return response.json();
+              }).then((json) => {
+              localforage.setItem('dnevnik', json).then(() => {
                 localforage.getItem('dnevnik').then((data) => {
                     document.querySelector("#dnevnik-out").innerHTML = data;
                     setTimeout(() => {form.submit()}, 1000 * 60 * 4);
@@ -127,8 +133,10 @@
           if (!navigator.onLine) {return;}
           document.querySelector("#stats-out").innerHTML = "<h4 class='mdl-cell mdl-cell--12-col'>Статистика</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>";
 
-          fetch("/stats", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form)}).then((data) => {
-            localforage.setItem('stats', data).then(() => {
+          fetch("/stats", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form)}).then((response) => {
+              return response.json();
+            }).then((json) => {
+            localforage.setItem('stats', json).then(() => {
               localforage.getItem('stats').then((data) => {
                 document.querySelector("#stats-out").innerHTML = data;
               });
@@ -141,8 +149,10 @@
           let form = event.target;
 
           if (!navigator.onLine) {return;}
-          fetch("/apply", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form)}).then((data) => {
-            document.querySelector("#error").innerHTML(data);
+          fetch("/apply", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form)}).then((response) => {
+              return response.json();
+            }).then((json) => {
+            document.querySelector("#error").innerHTML(json);
             setTimeout(() => {location.replace("/")}, 500);
           });
      });
