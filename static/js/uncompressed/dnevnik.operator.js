@@ -181,7 +181,7 @@
               return;
             }
 
-            Cookies.set("Theme", formdata.split("=")[1], { expires: 2592000, secure: true });
+            Cookies.set("Theme", JSON.parse(formdata).color, { expires: 2592000, secure: true });
             setTimeout(() => {location.replace("/")}, 500);
           });
      });

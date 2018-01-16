@@ -218,7 +218,7 @@ def stats():
         s.mount('http://', HTTPAdapter(max_retries=5))
         s.mount('https://', HTTPAdapter(max_retries=5))
 
-        childId = request.get_json().get('child', '')
+        childId = request.get_json(force=True).get('child', '')
 
         try:
             access_token = request.cookies.get('AccessToken')
@@ -308,9 +308,9 @@ def dnevnik():
         s.mount('http://', HTTPAdapter(max_retries=5))
         s.mount('https://', HTTPAdapter(max_retries=5))
 
-        timeMonth = request.get_json().get('month', '')
-        timeDay = request.get_json().get('day', '')
-        childId = request.get_json().get('child', '')
+        timeMonth = request.get_json(force=True).get('month', '')
+        timeDay = request.get_json(force=True).get('day', '')
+        childId = request.get_json(force=True).get('child', '')
 
         offset = int(request.cookies.get('Offset', '3'))
 
@@ -484,16 +484,15 @@ def log_in():
 
 @app.route("/apply", methods=['POST'])
 def apply():
-    color = request.get_json().get('color', '')
+    color = request.get_json(force=True).get('color', '')
 
     if color not in ("Teal", "Deep Orange", "Deep Purple", "Pink"):
         html_out = '<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:red;">Кто-то против смены темы c:</p>'
-        return make_response(jsonify(html_out))
 
-    html_out = '<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:green;">Смена цветовой схемы успешна ^^</p>'
+    else:
+        html_out = '<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:green;">Смена цветовой схемы успешна ^^</p>'
 
     response = make_response(jsonify(html_out))
-    response.set_cookie('Theme', value=color, max_age=2592000, expires=2592000)
     return response
 
 
