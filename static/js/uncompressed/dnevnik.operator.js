@@ -17,9 +17,6 @@
           document.querySelector("#button-login").addEventListener("click", (event) => {
               event.preventDefault();
 
-              document.querySelector("#error").style.display = "block";
-              document.querySelector("#error").innerHTML = "<div class='loader'>Loading...</div>";
-
               if (navigator.onLine) {
                   location.href = "https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo&redirect_uri=https://dnevnik-client.herokuapp.com/";
 
