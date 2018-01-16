@@ -5,10 +5,14 @@
 
   if (location.pathname == "/") {
       if (Cookies.get('AccessToken') !== undefined) {
+        whenDomReady().then(() => {
+          document.querySelector("#nav").innerHTML = '<a href="#overview" class="mdl-layout__tab is-active">Загрузка...</a>';
+          document.querySelector("#text").innerHTML = "<div class='loader'>Loading...</div>";
           location.replace("/main");
+        });
 
       } else if (location.href.includes("#access_token=")) {
-        Cookies.set('AccessToken_Temp', location.href.split("/")[location.href.split("/").length - 1].split("=")[location.href.split("/")[location.href.split("/").length - 1].split("=").length - 2].replace("&state", ""),  { expires: 2592000, secure: true });
+        Cookies.set('AccessToken_Temp', location.href.split("/")[location.href.split("/").length - 1].split("=")[location.href.split("/")[location.href.split("/").length - 1].split("=").length - 2].replace("&state", ""), { expires: 2592000, secure: true });
         location.replace("/login");
 
       } else {
@@ -29,6 +33,11 @@
 
   } else if (location.pathname == "/main") {
     let promiseChain = [];
+
+    const sleep = (ms) => {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
     if (navigator.onLine) {
 
       promiseChain.push(
@@ -147,12 +156,21 @@
       document.querySelector("#dnevnik-settings").addEventListener("submit", (event) => {
           event.preventDefault();
           let form = event.target;
+          let formdata = serialize(form)
 
           if (!navigator.onLine) {return;}
-          fetch("/apply", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
+          fetch("/apply", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: formdata, credentials: 'same-origin'}).then((response) => {
               return response.json();
-            }).then((json) => {
+            }).then(async (json) => {
             document.querySelector("#error").innerHTML = json;
+
+            if (json.includes("color:red;")) {
+              await sleep(3000);
+              document.querySelector("#error").innerHTML = '';
+              return;
+            }
+
+            Cookies.set("Theme", formdata.split("=")[1], { expires: 2592000, secure: true });
             setTimeout(() => {location.replace("/")}, 500);
           });
      });

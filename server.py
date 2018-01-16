@@ -486,6 +486,10 @@ def log_in():
 def apply():
     color = request.form.get('color', '')
 
+    if color not in ("Teal", "Deep Orange", "Deep Purple", "Pink"):
+        html_out = '<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:red;">Кто-то против смены темы c:</p>'
+        return make_response(jsonify(html_out))
+
     html_out = '<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:green;">Смена цветовой схемы успешна ^^</p>'
 
     response = make_response(jsonify(html_out))
