@@ -52,33 +52,59 @@
 
     if (navigator.onLine) {
 
+      var dnevnikError = false;
       promiseChain.push(
         new Promise((resolve) => (Cookies.set("Offset", -new Date().getTimezoneOffset() / 60) && resolve())).then(() => {
           fetch("/dnevnik", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
               return response.json();
             }).then((json) => {
-              localforage.setItem('dnevnik', json).then(() => {
-                whenDomReady.resume();
-              }).then(() => {
+              if (json.includes("¯\_(ツ)_/¯")) {
+                localforage.setItem('dnevnikError', json)
+                dnevnikError = true;
+              } else {
+                localforage.setItem('dnevnik', json)
+              }
+            }).then(() => {
+              whenDomReady.resume();
+            }).then(() => {
+              if (dnevnikError) {
+                localforage.getItem('dnevnikError').then((data) => {
+                  document.getElementById("dnevnik-out").innerHTML = data;
+                })
+                localforage.removeItem('dnevnikError')
+              } else {
                 localforage.getItem('dnevnik').then((data) => {
                   document.getElementById("dnevnik-out").innerHTML = data;
-                });
-              });
-            });
+                })
+              }
+            })
         })
       );
 
+      var statsError = false;
       promiseChain.push(
         fetch("/stats", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
             return response.json();
           }).then((json) => {
-            localforage.setItem('stats', json).then(() => {
-              whenDomReady.resume();
-            }).then(() => {
+            if (json.includes("¯\_(ツ)_/¯")) {
+              localforage.setItem('statsError', json)
+              statsError = true;
+            } else {
+              localforage.setItem('stats', json)
+            }
+          }).then(() => {
+            whenDomReady.resume();
+          }).then(() => {
+            if (statsError) {
+              localforage.getItem('statsError').then((data) => {
+                document.getElementById("stats-out").innerHTML = data;
+              })
+              localforage.removeItem('statsError')
+            } else {
               localforage.getItem('stats').then((data) => {
                 document.getElementById("stats-out").innerHTML = data;
-              });
-            });
+              })
+            }
           })
       );
 
@@ -137,7 +163,7 @@
             fetch("/dnevnik", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
                 return response.json();
               }).then((json) => {
-                document.getElementById("dnevnik-out").innerHTML = data;
+                document.getElementById("dnevnik-out").innerHTML = json;
               });
           });
       });
@@ -152,7 +178,7 @@
           fetch("/stats", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
               return response.json();
             }).then((json) => {
-              document.getElementById("stats-out").innerHTML = data;
+              document.getElementById("stats-out").innerHTML = json;
             });
       });
 

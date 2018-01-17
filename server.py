@@ -249,6 +249,9 @@ def stats():
                 if childId == str(child['personId']):
                     res_marks = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
 
+            if res_marks == None:
+                res_marks = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['children'][0]['personId']}&groupId={user_data['children'][0]['groupIds'][0]}&access_token={access_token}")
+
         marks_data = loads(res_marks.text)["AllMarks"]
 
         html_out = ['<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>']
@@ -360,10 +363,13 @@ def dnevnik():
                 if childId == str(child['personId']):
                     res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
 
+            if res_lessons == None:
+                res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={user_data['children'][0]['personId']}&groupId={user_data['children'][0]['groupIds'][0]}&access_token={access_token}")
+
         lesson_data = loads(res_lessons.text)['Days'][0]['Schedule']
 
         if lesson_data == []:
-            html_out = '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Уроков нет :></div>'
+            html_out = '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Упс...</h5>Уроков нет. Вот незадача :></div>'
 
             response = make_response(jsonify(html_out))
             response.set_cookie('Offset', value='', max_age=0, expires=0)
@@ -423,7 +429,7 @@ def dnevnik():
                 html_out.append('<div style="display:block; height:5px; clear:both;"></div></div>')
 
         if len(lesson_data) == len(not_initialised):
-            html_out.append('<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Ни один урок не отмечен, как инициализированный :></div>')
+            html_out.append('<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Упс...</h5>Ни один урок не отмечен, как инициализированный :></div>')
 
         response = make_response(jsonify(''.join(html_out)))
         response.set_cookie('Offset', value='', max_age=0, expires=0)
