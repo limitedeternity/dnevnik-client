@@ -207,6 +207,9 @@
 
          if (navigator.onLine) {
              localforage.clear();
+             if ('serviceWorker' in navigator) {
+               navigator.serviceWorker.getRegistrations().then(function(t){t.forEach(function(t){t.unregister()})});
+             }
              location.replace("/logout");
          }
      });
@@ -217,18 +220,6 @@
          if (navigator.onLine) {
              localforage.clear();
              location.reload();
-         }
-     });
-
-     document.getElementById("reset-sw").addEventListener("click", (event) => {
-         event.preventDefault();
-
-         if (navigator.onLine) {
-           if ('serviceWorker' in navigator) {
-             navigator.serviceWorker.getRegistrations().then(function(t){t.forEach(function(t){t.unregister()})});
-             localforage.clear();
-             location.replace("/logout");
-           }
          }
      });
    });
