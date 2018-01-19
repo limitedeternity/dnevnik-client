@@ -123,10 +123,10 @@
       );
 
       promiseChain.push(
-        fetch("/feed", {method: 'POST', redirect: 'follow', credentials: 'same-origin'}).then((response) => {
+        fetch("/feed", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, credentials: 'same-origin', body: JSON.stringify({".": "1"})}).then((response) => {
             return response.json();
           }).then((json) => {
-            localforage.setItem('feed')
+            localforage.setItem('feed', json)
           }).then(() => {
             whenDomReady.resume();
           }).then(() => {
