@@ -171,6 +171,56 @@ def main():
         offline = False
 
         try:
+            access_token = request.cookies.get('AccessToken', '')
+            res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
+            user_data = loads(res_userdata.text)
+
+        except ConnectionError:
+            offline = True
+
+        if 'apiRequestLimit' in user_data.values() or 'authorizationInvalidToken' in user_data.values():
+            response = make_response(redirect("/logout"))
+            return response
+
+        elif 'parameterInvalid' in user_data.values():
+            response = make_response(redirect("/"))
+            return response
+
+        if request.cookies.get("AccountType") == 'Student':
+            response = make_response(render_template('index_logged_in.html'))
+
+        elif request.cookies.get("AccountType") == 'Parent':
+            if offline or 'apiServerError' in user_data.values():
+                opts = ({"Профилактические работы": "1337"})
+
+            else:
+                options = user_data['children']
+                opts = []
+
+                for option in options:
+                    opts.append({f"{option['firstName']} {option['lastName']}": option['personId']})
+
+            response = make_response(render_template('index_logged_in.html', opts=opts))
+
+        else:
+            response = make_response(render_template('index_logged_in.html'))
+
+    else:
+        response = make_response(redirect("/"))
+
+    return response
+
+
+@app.route("/feed", methods=['POST'])
+def feed():
+    if 'AccessToken' in request.cookies:
+        s = CacheControl(Session())
+        s.mount('http://', HTTPAdapter(max_retries=5))
+        s.mount('https://', HTTPAdapter(max_retries=5))
+
+        offline = False
+
+        try:
             access_token = request.cookies.get('AccessToken')
             res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
             user_data = loads(res_userdata.text)
@@ -180,19 +230,11 @@ def main():
 
         if offline or 'apiServerError' in user_data.values():
             user = "товарищ Тестер"
-
-        elif 'apiRequestLimit' in user_data.values() or 'authorizationInvalidToken' in user_data.values():
-            response = make_response(redirect("/logout"))
-            return response
+            feed = (("Упс...", coloring(), "Дневник.ру - оффлайн", ""))
 
         else:
             user = user_data['firstName']
-
-        if request.cookies.get("AccountType") == 'Student':
-            if offline or 'apiServerError' in user_data.values():
-                feed = (("Упс...", coloring(), "Дневник.ру - оффлайн", ""))
-
-            else:
+            if request.cookies.get("AccountType") == 'Student':
                 offset = int(request.cookies.get('Offset', '3'))
 
                 day = str(timeDate('day', offset=offset, feed=True))
@@ -212,28 +254,26 @@ def main():
                     for value in card['Values']:
                         feed.append((value['Value'], coloring(value['Mood']), card["Subject"]["Name"], card["WorkType"]["Kind"]))
 
-            response = make_response(render_template('index_logged_in.html', feed=feed, user=user))
+        if request.cookies.get("AccountType") == 'Student':
+            html_out = [f'<h4>Здравствуйте, {user}!</h4><ul class="mdl-list" style="width: 300px;">']
+
+            for item in feed:
+                html_out.append(f'<li class="mdl-list__item mdl-list__item--two-line"><span class="mdl-list__item-primary-content"><i class="material-icons mdl-list__item-avatar">info</i><span style="color:{item[1]}">{item[0]}</span><span class="mdl-list__item-sub-title">{item[2]} - {item[3]}</span></span><span class="mdl-list__item-secondary-content"><a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">label</i></a></span></li>')
+
+            html_out.append("</ul>")
+            return make_response(jsonify(''.join(html_out)))
 
         elif request.cookies.get("AccountType") == 'Parent':
-            if offline or 'apiServerError' in user_data.values():
-                opts = ({"Профилактические работы": "1337"})
-
-            else:
-                options = user_data['children']
-                opts = []
-
-                for option in options:
-                    opts.append({f"{option['firstName']} {option['lastName']}": option['personId']})
-
-            response = make_response(render_template('index_logged_in.html', opts=opts, user=user))
+            html_out = f'<h4>Здравствуйте, {user}! Спасибо, что решили протестировать beta-версию DnevnikClient. Я очень это ценю. <br>Обо всех ошибках просьба сообщать, открывая Issue в <a href="https://github.com/limitedeternity/dnevnik-client/" target="_blank" rel="noopener">репозитории на GitHub</a>. <br>Надеюсь, вам нравится клиент, и вы довольны его функционалом и проделанной мной работой. <br>Напоминаю, что проект - Open Source, так что вы в любой момент можете помочь разработке. <br>By <a href="https://github.com/limitedeternity/" target="_blank" rel="noopener">@limitedeternity</a>'
+            return make_response(jsonify(html_out))
 
         else:
-            response = make_response(render_template('index_logged_in.html'))
+            html_out = '<h4>О проекте</h4>DnevnikClient - облегченная версия Дневник.Ру, расчитанная на просмотр данных, помещенная в рамки Material Design. Клиент предоставляет функционал ровно в такой мере, которая требуется ученикам. Без тяжелого обвеса вроде ReactJS, избыточных элементов интерфейса и функционала "соцсети". <br> Ничего лишнего. <br>Исходный код доступен в моем <a href="https://github.com/limitedeternity/dnevnik-client/" target="_blank" rel="noopener">репозитории GitHub</a>. <br>By <a href="https://github.com/limitedeternity/" target="_blank" rel="noopener">@limitedeternity</a>'
+            return make_response(jsonify(html_out))
 
     else:
         response = make_response(redirect("/"))
-
-    return response
+        return response
 
 
 @app.route("/stats", methods=['POST'])
@@ -252,10 +292,6 @@ def stats():
 
             if 'apiServerError' in user_data.values():
                 raise ConnectionError
-
-            elif 'apiRequestLimit' in user_data.values() or 'authorizationInvalidToken' in user_data.values():
-                response = make_response(redirect("/logout"))
-                return response
 
         except ConnectionError:
             html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.</div>'
@@ -319,9 +355,7 @@ def stats():
         return response
 
     else:
-        html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Залогиньтесь ¯\_(ツ)_/¯</h5>Вы явно такого не ожидали, не правда ли?</div>'
-
-        response = make_response(jsonify(html_out))
+        response = make_response(redirect("/"))
         return response
 
 
@@ -345,10 +379,6 @@ def dnevnik():
 
             if 'apiServerError' in user_data.values():
                 raise ConnectionError
-
-            elif 'apiRequestLimit' in user_data.values() or 'authorizationInvalidToken' in user_data.values():
-                response = make_response(redirect("/logout"))
-                return response
 
         except ConnectionError:
             html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.</div>'
@@ -453,9 +483,7 @@ def dnevnik():
         return response
 
     else:
-        html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Залогиньтесь ¯\_(ツ)_/¯</h5>Вы явно такого не ожидали, не правда ли?</div>'
-
-        response = make_response(jsonify(html_out))
+        response = make_response(redirect("/"))
         return response
 
 
@@ -575,15 +603,6 @@ def serve_config(path):
 @app.route('/sw.js', methods=['GET'])
 def serviceworker():
     return send_from_directory('sw', 'sw.js')
-
-
-@app.route('/sw/<path:path>', methods=['GET'])
-def serve_sw(path):
-    if path != 'sw.js':
-        return send_from_directory('sw', path)
-
-    else:
-        return abort(404)
 
 
 if __name__ == "__main__":

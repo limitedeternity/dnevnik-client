@@ -38,6 +38,17 @@
       }
 
   } else if (location.pathname == "/main") {
+
+    if (navigator.serviceWorker.controller) {
+      console.log('SW already registered.');
+    } else {
+      navigator.serviceWorker.register('/sw.js', {
+        scope: './'
+      }).then(() => {
+        console.log('SW has been registered.');
+      });
+    }
+
     let promiseChain = [];
 
     const sleep = (ms) => {
@@ -59,7 +70,7 @@
 
       var dnevnikError = false;
       promiseChain.push(
-        fetch("/dnevnik", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
+        fetch("/dnevnik", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
               return response.json();
             }).then((json) => {
               if (json.includes("¯\_(ツ)_/¯")) {
@@ -86,7 +97,7 @@
 
       var statsError = false;
       promiseChain.push(
-        fetch("/stats", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
+        fetch("/stats", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
             return response.json();
           }).then((json) => {
             if (json.includes("¯\_(ツ)_/¯")) {
@@ -111,45 +122,62 @@
           })
       );
 
+      promiseChain.push(
+        fetch("/feed", {method: 'POST', redirect: 'follow', credentials: 'same-origin'}).then((response) => {
+            return response.json();
+          }).then((json) => {
+            localforage.setItem('feed')
+          }).then(() => {
+            whenDomReady.resume();
+          }).then(() => {
+            localforage.getItem('feed').then((data) => {
+              document.getElementById("feedData").innerHTML = data;
+            })
+          })
+      );
+
     } else {
-      localforage.getItem('stats').then((data) => {
-        if (data === null) {
-          promiseChain.push(
+      promiseChain.push(
+        localforage.getItem('stats').then((data) => {
+          if (data === null) {
             whenDomReady().then(() => {
               document.getElementById("stats-out").innerHTML = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Вы в оффлайне :> </div>';
             })
-          );
-
-        } else {
-          promiseChain.push(
+          } else {
             whenDomReady().then(() => {
-              localforage.getItem('stats').then((data) => {
-                document.getElementById("stats-out").innerHTML = data;
-              });
+              document.getElementById("stats-out").innerHTML = data;
             })
-          );
+          }
+        })
+      );
 
-        }
-      });
-
-      localforage.getItem('dnevnik').then((data) => {
-        if (data === null) {
-          promiseChain.push(
+      promiseChain.push(
+        localforage.getItem('dnevnik').then((data) => {
+          if (data === null) {
+              whenDomReady().then(() => {
+                document.getElementById("dnevnik-out").innerHTML = '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Вы в оффлайне :> </div>';
+              })
+          } else {
             whenDomReady().then(() => {
-              document.getElementById("dnevnik-out").innerHTML = '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Вы в оффлайне :> </div>';
+              document.getElementById("dnevnik-out").innerHTML = data;
             })
-          );
+          }
+        })
+      );
 
-        } else {
-          promiseChain.push(
+      promiseChain.push(
+        localforage.getItem('feed').then((data) => {
+          if (data === null) {
+              whenDomReady().then(() => {
+                document.getElementById("feedData").innerHTML = '<h4>О проекте</h4>DnevnikClient - облегченная версия Дневник.Ру, расчитанная на просмотр данных, помещенная в рамки Material Design. Клиент предоставляет функционал ровно в такой мере, которая требуется ученикам. Без тяжелого обвеса вроде ReactJS, избыточных элементов интерфейса и функционала "соцсети". <br> Ничего лишнего. <br>Исходный код доступен в моем <a href="https://github.com/limitedeternity/dnevnik-client/" target="_blank" rel="noopener">репозитории GitHub</a>. <br>By <a href="https://github.com/limitedeternity/" target="_blank" rel="noopener">@limitedeternity</a>';
+              })
+          } else {
             whenDomReady().then(() => {
-              localforage.getItem('dnevnik').then((data) => {
-                document.getElementById("dnevnik-out").innerHTML = data;
-              });
+              document.getElementById("feedData").innerHTML = data;
             })
-          );
-        }
-      });
+          }
+        })
+      );
     }
 
     Promise.all(promiseChain).catch((error) => {console.log(error)});
@@ -162,7 +190,7 @@
           if (!navigator.onLine) {return;}
           document.getElementById("dnevnik-out").innerHTML = "<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>";
 
-          fetch("/dnevnik", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
+          fetch("/dnevnik", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
                 return response.json();
               }).then((json) => {
                 document.getElementById("dnevnik-out").innerHTML = json;
@@ -176,7 +204,7 @@
           if (!navigator.onLine) {return;}
           document.getElementById("stats-out").innerHTML = "<h4 class='mdl-cell mdl-cell--12-col'>Статистика</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>";
 
-          fetch("/stats", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
+          fetch("/stats", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
               return response.json();
             }).then((json) => {
               document.getElementById("stats-out").innerHTML = json;
@@ -205,7 +233,6 @@
 
      document.getElementById("logout").addEventListener("click", (event) => {
          event.preventDefault();
-
          if (navigator.onLine) {
              localforage.clear();
              if ('serviceWorker' in navigator) {
@@ -217,7 +244,6 @@
 
      document.getElementById("reset-storage").addEventListener("click", (event) => {
          event.preventDefault();
-
          if (navigator.onLine) {
              localforage.clear();
              location.reload();
