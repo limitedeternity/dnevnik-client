@@ -5,6 +5,10 @@
 (() => {
 
   if (location.pathname == "/") {
+      if (Cookies.get('Offset') === undefined) {
+        Cookies.set("Offset", -new Date().getTimezoneOffset() / 60, { expires: 2592000, secure: true });
+      }
+
       if (Cookies.get('AccessToken') !== undefined) {
         whenDomReady().then(() => {
           document.getElementById("nav").innerHTML = '<a href="#overview" class="mdl-layout__tab is-active">Загрузка...</a>';
@@ -23,7 +27,7 @@
               event.preventDefault();
 
               if (navigator.onLine) {
-                  alert("Если после того, как залогинились, ничего не произошло, просто несколько раз обновите страницу.");
+                  alert("Если после того, как залогинились, ничего не произошло, просто несколько раз обновите страницу. Обновление страницы также поможет, если вдруг столкнетесь с чем-то непредвиденным.");
                   location.href = "https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo&redirect_uri=https://dnevnik-client.herokuapp.com/";
 
               } else {
@@ -55,8 +59,7 @@
 
       var dnevnikError = false;
       promiseChain.push(
-        new Promise((resolve) => (Cookies.set("Offset", -new Date().getTimezoneOffset() / 60) && resolve())).then(() => {
-          fetch("/dnevnik", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
+        fetch("/dnevnik", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
               return response.json();
             }).then((json) => {
               if (json.includes("¯\_(ツ)_/¯")) {
@@ -79,7 +82,6 @@
                 })
               }
             })
-        })
       );
 
       var statsError = false;
@@ -160,13 +162,11 @@
           if (!navigator.onLine) {return;}
           document.getElementById("dnevnik-out").innerHTML = "<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>";
 
-          new Promise((resolve) => (Cookies.set("Offset", -new Date().getTimezoneOffset() / 60) && resolve())).then(() => {
-            fetch("/dnevnik", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
+          fetch("/dnevnik", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
                 return response.json();
               }).then((json) => {
                 document.getElementById("dnevnik-out").innerHTML = json;
-              });
-          });
+              })
       });
 
       document.getElementById("dnevnik-stats").addEventListener("submit", (event) => {

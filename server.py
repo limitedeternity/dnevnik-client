@@ -86,25 +86,29 @@ def set_headers(response):
         return response
 
 
-def timeDate(typeDate, offset):
+def timeDate(typeDate, offset, feed=False):
     time = None
 
-    if (datetime.now(tz=utc) + timedelta(hours=offset)).weekday() == 6:
-        time = datetime.now(tz=utc) + timedelta(hours=offset, days=1)
+    if not feed:
+        if (datetime.now(tz=utc) + timedelta(hours=offset)).weekday() == 6:
+            time = datetime.now(tz=utc) + timedelta(hours=offset, days=1)
 
-    elif (datetime.now(tz=utc) + timedelta(hours=offset)).weekday() + 1 == 6:
-        if (datetime.now(tz=utc) + timedelta(hours=offset)).hour < 15:
-            time = datetime.now(tz=utc) + timedelta(hours=offset)
+        elif (datetime.now(tz=utc) + timedelta(hours=offset)).weekday() + 1 == 6:
+            if (datetime.now(tz=utc) + timedelta(hours=offset)).hour < 15:
+                time = datetime.now(tz=utc) + timedelta(hours=offset)
+
+            else:
+                time = datetime.now(tz=utc) + timedelta(hours=offset, days=2)
 
         else:
-            time = datetime.now(tz=utc) + timedelta(hours=offset, days=2)
+            if (datetime.now(tz=utc) + timedelta(hours=offset)).hour < 15:
+                time = datetime.now(tz=utc) + timedelta(hours=offset)
+
+            else:
+                time = datetime.now(tz=utc) + timedelta(hours=offset, days=1)
 
     else:
-        if (datetime.now(tz=utc) + timedelta(hours=offset)).hour < 15:
-            time = datetime.now(tz=utc) + timedelta(hours=offset)
-
-        else:
-            time = datetime.now(tz=utc) + timedelta(hours=offset, days=1)
+        time = datetime.now(tz=utc) + timedelta(hours=offset)
 
     if typeDate == 'day':
         return str(time.day)
@@ -154,7 +158,6 @@ Template handling
 @app.route("/", methods=['GET'])
 def index():
     response = make_response(render_template('index.html'))
-    response.set_cookie('Offset', value='', max_age=0, expires=0)
     return response
 
 
@@ -186,11 +189,34 @@ def main():
             user = user_data['firstName']
 
         if request.cookies.get("AccountType") == 'Student':
-            response = make_response(render_template('index_logged_in.html', user=user))
+            if offline or 'apiServerError' in user_data.values():
+                feed = (("Упс...", coloring(), "Дневник.ру - оффлайн", ""))
+
+            else:
+                offset = int(request.cookies.get('Offset', '3'))
+
+                day = str(timeDate('day', offset=offset, feed=True))
+                month = str(timeDate('month', offset=offset, feed=True))
+                year = str(timeDate('year', offset=offset, feed=True))
+
+                day = "0" + day if match(r"^\d{1}$", day) else day
+                month = "0" + month if match(r"^\d{1}$", month) else month
+
+                feed = []
+
+                res_userfeed = s.get(f"https://api.dnevnik.ru/mobile/v2/feed/?date={year}-{month}-{day}&limit=1&personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
+
+                recent_data = loads(res_userfeed.text)['Feed']['Days'][0]['MarkCards']
+
+                for card in recent_data:
+                    for value in card['Values']:
+                        feed.append((value['Value'], coloring(value['Mood']), card["Subject"]["Name"], card["WorkType"]["Kind"]))
+
+            response = make_response(render_template('index_logged_in.html', feed=feed, user=user))
 
         elif request.cookies.get("AccountType") == 'Parent':
             if offline or 'apiServerError' in user_data.values():
-                opts = [{"Профилактические работы": "1337"}]
+                opts = ({"Профилактические работы": "1337"})
 
             else:
                 options = user_data['children']
@@ -207,7 +233,6 @@ def main():
     else:
         response = make_response(redirect("/"))
 
-    response.set_cookie('Offset', value='', max_age=0, expires=0)
     return response
 
 
@@ -230,14 +255,12 @@ def stats():
 
             elif 'apiRequestLimit' in user_data.values() or 'authorizationInvalidToken' in user_data.values():
                 response = make_response(redirect("/logout"))
-                response.set_cookie('Offset', value='', max_age=0, expires=0)
                 return response
 
         except ConnectionError:
             html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.</div>'
 
             response = make_response(jsonify(html_out))
-            response.set_cookie('Offset', value='', max_age=0, expires=0)
             return response
 
         res_marks = None
@@ -293,14 +316,12 @@ def stats():
                 html_out.append('<div style="display:block; height:5px; clear:both;"></div></div>')
 
         response = make_response(jsonify(''.join(html_out)))
-        response.set_cookie('Offset', value='', max_age=0, expires=0)
         return response
 
     else:
         html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Залогиньтесь ¯\_(ツ)_/¯</h5>Вы явно такого не ожидали, не правда ли?</div>'
 
         response = make_response(jsonify(html_out))
-        response.set_cookie('Offset', value='', max_age=0, expires=0)
         return response
 
 
@@ -327,14 +348,12 @@ def dnevnik():
 
             elif 'apiRequestLimit' in user_data.values() or 'authorizationInvalidToken' in user_data.values():
                 response = make_response(redirect("/logout"))
-                response.set_cookie('Offset', value='', max_age=0, expires=0)
                 return response
 
         except ConnectionError:
             html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.</div>'
 
             response = make_response(jsonify(html_out))
-            response.set_cookie('Offset', value='', max_age=0, expires=0)
             return response
 
         if timeDay is '':
@@ -372,7 +391,6 @@ def dnevnik():
             html_out = '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Упс...</h5>Уроков нет. Вот незадача :></div>'
 
             response = make_response(jsonify(html_out))
-            response.set_cookie('Offset', value='', max_age=0, expires=0)
             return response
 
         html_out = ['<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>']
@@ -432,14 +450,12 @@ def dnevnik():
             html_out.append('<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Упс...</h5>Ни один урок не отмечен, как инициализированный :></div>')
 
         response = make_response(jsonify(''.join(html_out)))
-        response.set_cookie('Offset', value='', max_age=0, expires=0)
         return response
 
     else:
         html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Залогиньтесь ¯\_(ツ)_/¯</h5>Вы явно такого не ожидали, не правда ли?</div>'
 
         response = make_response(jsonify(html_out))
-        response.set_cookie('Offset', value='', max_age=0, expires=0)
         return response
 
 
