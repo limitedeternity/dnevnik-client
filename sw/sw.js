@@ -34,6 +34,10 @@ self.addEventListener('fetch', function(event) {
     event.respondWith(checkResponse(event.request).catch(function() {
       return returnFromCache(event.request);
     }));
+  } else if (event.request.url === self.location.origin + "/login" || event.request.url === self.location.origin + "/sw.js") {
+    event.respondWith(checkResponse(event.request)).catch(function() {
+      return;
+    }));
   } else {
     event.respondWith(returnFromCache(event.request).catch(function() {
       return;
