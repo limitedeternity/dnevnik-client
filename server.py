@@ -94,7 +94,7 @@ def timeDate(typeDate, offset, feed=False):
             time = datetime.now(tz=utc) + timedelta(hours=offset, days=1)
 
         elif (datetime.now(tz=utc) + timedelta(hours=offset)).weekday() + 1 == 6:
-            if (datetime.now(tz=utc) + timedelta(hours=offset)).hour < 15:
+            if (datetime.now(tz=utc) + timedelta(hours=offset)).hour < 14:
                 time = datetime.now(tz=utc) + timedelta(hours=offset)
 
             else:
