@@ -8,11 +8,9 @@ in Python (see `server.py`). Project also has an Android app (see `android_app` 
 
 ✨ Offline functionality for browsers supporing Service Worker feature.
 
-✨ Last requested data is saved using LocalStorage API.
+✨ Last requested data is saved to offline.
 
 ✨ Theming engine.
-
-✨ Data is being auto-updated while window is opened.
 
 ✨ Faster than official client.
 
@@ -20,7 +18,7 @@ in Python (see `server.py`). Project also has an Android app (see `android_app` 
 
 💪 Support for "Parent" and "Pupil" account type.
 
-🌚 Diary, statistics and final grades.
+🌚 Diary and statistics with final marks.
 
 ✨ No heavy UI elements.
 
