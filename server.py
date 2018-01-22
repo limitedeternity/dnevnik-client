@@ -429,60 +429,54 @@ def dnevnik():
             return response
 
         html_out = ['<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>']
-
-        not_initialised = []
-
         for lesson in lesson_data:
+            try:
+                lesson_name = lesson["Subject"]["Name"]
 
-            if lesson['Status'] == 'NotInitialised':
-                not_initialised.append(1)
+            except KeyError:
                 continue
 
+            html_out.append('<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><div style="display:block; height:2px; clear:both;"></div>')
+            html_out.append(f'<h5 style="font-weight:600">{lesson_name}</h5>')
+
+            for mark in lesson['Marks']:
+                if mark:
+                    if mark["MarkType"] == 'LogEntry':
+                        html_out.append(f'<h8 style="color:{coloring(mark["Values"][0]["Value"])};">Присутствие: {mark["MarkTypeText"]}.</h8><br>')
+
+                    elif mark["MarkType"] == "Mark":
+                        if len(mark['Values']) > 1:
+                            html_out.append('<div style="display:block; height:2px; clear:both;"></div>')
+
+                        for markValue in mark['Values']:
+                            html_out.append(f'<h8 style="color:{coloring(markValue["Mood"])};">Оценка: {markValue["Value"]} ({mark["MarkTypeText"]}) {kaomoji(markValue["Mood"])}</h8><br>')
+
+                        if len(mark['Values']) > 1:
+                            html_out.append('<div style="display:block; height:2px; clear:both;"></div>')
+
+            if lesson["Theme"] is not '':
+                try:
+                    html_out.append(f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]} ({lesson["ImportantWorks"][0]["WorkType"]})</h8><br>')
+
+                except (KeyError, IndexError):
+                    html_out.append(f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]}</h8><br>')
+
             else:
-                html_out.append('<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><div style="display:block; height:2px; clear:both;"></div>')
-                html_out.append(f'<h5 style="font-weight:600">{lesson["Subject"]["Name"]}</h5>')
+                pass
 
-                for mark in lesson['Marks']:
-                    if mark:
-                        if mark["MarkType"] == 'LogEntry':
-                            html_out.append(f'<h8 style="color:{coloring(mark["Values"][0]["Value"])};">Присутствие: {mark["MarkTypeText"]}.</h8><br>')
+            if lesson["HomeworksText"] is not "":
+                hw = lesson["HomeworksText"]
+                links = (*set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)),)
 
-                        elif mark["MarkType"] == "Mark":
-                            if len(mark['Values']) > 1:
-                                html_out.append('<div style="display:block; height:2px; clear:both;"></div>')
+                for link in links:
+                    hw = hw.replace(link, f'<a href="{link}" target="_blank" rel="noopener">[ссылка]</a>')
 
-                            for markValue in mark['Values']:
-                                html_out.append(f'<h8 style="color:{coloring(markValue["Mood"])};">Оценка: {markValue["Value"]} ({mark["MarkTypeText"]}) {kaomoji(markValue["Mood"])}</h8><br>')
+                html_out.append(f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>')
 
-                            if len(mark['Values']) > 1:
-                                html_out.append('<div style="display:block; height:2px; clear:both;"></div>')
+            else:
+                html_out.append(f'<h8 style="color:{coloring()};">ДЗ: нет {kaomoji()}</h8><br>')
 
-                if lesson["Theme"] is not '':
-                    try:
-                        html_out.append(f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]} ({lesson["ImportantWorks"][0]["WorkType"]})</h8><br>')
-
-                    except (KeyError, IndexError):
-                        html_out.append(f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]}</h8><br>')
-
-                else:
-                    pass
-
-                if lesson["HomeworksText"] is not "":
-                    hw = lesson["HomeworksText"]
-                    links = (*set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)),)
-
-                    for link in links:
-                        hw = hw.replace(link, f'<a href="{link}" target="_blank" rel="noopener">[ссылка]</a>')
-
-                    html_out.append(f'<h8 style="color:{coloring()};">ДЗ: {hw}</h8><br>')
-
-                else:
-                    html_out.append(f'<h8 style="color:{coloring()};">ДЗ: нет {kaomoji()}</h8><br>')
-
-                html_out.append('<div style="display:block; height:5px; clear:both;"></div></div>')
-
-        if len(lesson_data) == len(not_initialised):
-            html_out.append('<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Упс...</h5>Ни один урок не отмечен, как инициализированный :></div>')
+            html_out.append('<div style="display:block; height:5px; clear:both;"></div></div>')
 
         response = make_response(jsonify(''.join(html_out)))
         return response
