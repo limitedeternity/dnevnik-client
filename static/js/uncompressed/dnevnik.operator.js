@@ -17,7 +17,7 @@
         });
 
       } else if (location.href.includes("#access_token=")) {
-        Cookies.set('AccessToken_Temp', location.href.split("/")[location.href.split("/").length - 1].split("=")[location.href.split("/")[location.href.split("/").length - 1].split("=").length - 2].replace("&state", ""), { expires: 2592000, secure: true });
+        Cookies.set('AccessToken_Temp', location.href.match(new RegExp("#access_token=(.*)&state="))[1], { expires: 2592000, secure: true });
         location.replace("/login");
 
       } else {
@@ -50,10 +50,6 @@
     }
 
     let promiseChain = [];
-
-    const sleep = (ms) => {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    }
 
     const serialize = (formElement) => {
       let object = {};
@@ -218,12 +214,11 @@
           if (!navigator.onLine) {return;}
           fetch("/apply", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
               return response.json();
-            }).then(async (json) => {
+            }).then((json) => {
             document.getElementById("error").innerHTML = json;
 
             if (json.includes("color:red;")) {
-              await sleep(3000);
-              document.getElementById("error").innerHTML = '';
+              setTimeout(() => {document.getElementById("error").innerHTML = ''}, 3000);
               return;
             }
 
