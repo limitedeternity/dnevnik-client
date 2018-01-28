@@ -241,8 +241,8 @@ def feed():
                 month = str(timeDate('month', offset=offset, feed=True))
                 year = str(timeDate('year', offset=offset, feed=True))
 
-                day = "0" + day if match(r"^\d{1}$", day) else day
-                month = "0" + month if match(r"^\d{1}$", month) else month
+                day = f"0{day}" if match(r"^\d{1}$", day) else day
+                month = f"0{month}" if match(r"^\d{1}$", month) else month
 
                 feed = []
 
@@ -413,8 +413,8 @@ def dnevnik():
 
         year = str(timeDate('year', offset=offset))
 
-        day = "0" + day if match(r"^\d{1}$", day) else day
-        month = "0" + month if match(r"^\d{1}$", month) else month
+        day = f"0{day}" if match(r"^\d{1}$", day) else day
+        month = f"0{month}" if match(r"^\d{1}$", month) else month
 
         res_lessons = None
         if request.cookies.get('AccountType') == 'Student':
