@@ -178,12 +178,8 @@ def main():
         except ConnectionError:
             offline = True
 
-        if 'apiRequestLimit' in user_data.values() or 'authorizationInvalidToken' in user_data.values():
+        if 'apiRequestLimit' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
             response = make_response(redirect("/logout"))
-            return response
-
-        elif 'parameterInvalid' in user_data.values():
-            response = make_response(redirect("/"))
             return response
 
         if request.cookies.get("AccountType") == 'Student':
@@ -231,6 +227,10 @@ def feed():
         if offline or 'apiServerError' in user_data.values():
             user = "товарищ Тестер"
             feed = (("Упс...", coloring(), "Дневник.ру оффлайн", "=)"))
+
+        elif 'apiRequestLimit' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
+            response = make_response(redirect("/logout"))
+            return response
 
         else:
             user = user_data['firstName']
@@ -297,6 +297,10 @@ def stats():
 
             if 'apiServerError' in user_data.values():
                 raise ConnectionError
+
+            elif 'apiRequestLimit' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
+                response = make_response(redirect("/logout"))
+                return response
 
         except ConnectionError:
             html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.</div>'
@@ -384,6 +388,10 @@ def dnevnik():
 
             if 'apiServerError' in user_data.values():
                 raise ConnectionError
+
+            elif 'apiRequestLimit' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
+                response = make_response(redirect("/logout"))
+                return response
 
         except ConnectionError:
             html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.</div>'
@@ -558,7 +566,7 @@ def log_out():
         res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
         user_data = loads(res_userdata.text)
 
-        if 'apiServerError' in user_data.values() or 'parameterInvalid' in user_data.values():
+        if 'apiServerError' in user_data.values():
             raise ConnectionError
 
     except ConnectionError:
