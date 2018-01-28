@@ -288,7 +288,7 @@ def stats():
         s.mount('http://', HTTPAdapter(max_retries=5))
         s.mount('https://', HTTPAdapter(max_retries=5))
 
-        childId = request.get_json(force=True).get('child', '')
+        childId = request.get_json().get('child', '')
 
         try:
             access_token = request.cookies.get('AccessToken')
@@ -375,9 +375,9 @@ def dnevnik():
         s.mount('http://', HTTPAdapter(max_retries=5))
         s.mount('https://', HTTPAdapter(max_retries=5))
 
-        timeMonth = request.get_json(force=True).get('month', '')
-        timeDay = request.get_json(force=True).get('day', '')
-        childId = request.get_json(force=True).get('child', '')
+        timeMonth = request.get_json().get('month', '')
+        timeDay = request.get_json().get('day', '')
+        childId = request.get_json().get('child', '')
 
         offset = int(request.cookies.get('Offset', '3'))
 
@@ -541,7 +541,7 @@ def log_in():
 
 @app.route("/apply", methods=['POST'])
 def apply():
-    color = request.get_json(force=True).get('color', '')
+    color = request.get_json().get('color', '')
 
     if color not in ("Teal", "Deep Orange", "Deep Purple", "Pink"):
         html_out = '<div style="display:block; height:2px; clear:both;"></div><p style="text-align:center; color:red;">Кто-то против смены темы c:</p>'
