@@ -83,6 +83,7 @@
                   document.getElementById("dnevnik-out").innerHTML = data;
                 })
                 localforage.removeItem('dnevnikError')
+                dnevnikError = false;
               } else {
                 localforage.getItem('dnevnik').then((data) => {
                   document.getElementById("dnevnik-out").innerHTML = data;
@@ -110,6 +111,7 @@
                 document.getElementById("stats-out").innerHTML = data;
               })
               localforage.removeItem('statsError')
+              statsError = false;
             } else {
               localforage.getItem('stats').then((data) => {
                 document.getElementById("stats-out").innerHTML = data;
