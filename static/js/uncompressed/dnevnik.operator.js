@@ -21,7 +21,8 @@
         location.replace("/login");
 
       } else {
-        fetch("/up").then(() => {
+        fetch("/up").then((response) => {
+          console.log(response.json());
           whenDomReady.resume();
         }).then(() => {
           document.getElementById("button-login").addEventListener("click", (event) => {
@@ -64,6 +65,9 @@
     }
 
     if (navigator.onLine) {
+      fetch("/up").then((response) => {
+        console.log(response.json());
+      })
 
       var dnevnikError = false;
       promiseChain.push(

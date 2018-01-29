@@ -157,7 +157,7 @@ Template handling
 
 @app.route("/up", methods=['GET'])
 def up():
-    return jsonify("<h1>I'm here, master.</h1>")
+    return jsonify("I'm here, master.")
 
 
 @app.route("/", methods=['GET'])
