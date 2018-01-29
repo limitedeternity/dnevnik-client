@@ -1,10 +1,9 @@
-self.addEventListener('install', function(event) {
+self.addEventListener('install', (event) => {
   event.waitUntil(preLoad());
 });
 
-var preLoad = function(){
-  return caches.open('dnevnik-sw').then(function(cache) {
-
+const preLoad = () => {
+  return caches.open('dnevnik-sw').then((cache) => {
   return cache.addAll([
               '/',
               '/main',
@@ -29,27 +28,23 @@ var preLoad = function(){
   });
 };
 
-self.addEventListener('fetch', function(event) {
-  if (event.request.url === self.location.origin + "/" || event.request.url === self.location.origin + "/main" || event.request.method == 'POST') {
-    event.respondWith(checkResponse(event.request).catch(function() {
+self.addEventListener('fetch', (event) => {
+  if (event.request.method == 'POST') {
+    event.respondWith(checkResponse(event.request).catch(() => {
       return returnFromCache(event.request);
     }));
-  } else if (event.request.url === self.location.origin + "/login" || event.request.url === self.location.origin + "/sw.js") {
-    event.respondWith(checkResponse(event.request).catch(function() {
-      return;
-    }));
   } else {
-    event.respondWith(returnFromCache(event.request).catch(function() {
-      return;
+    event.respondWith(returnFromCache(event.request).catch(() => {
+      return checkResponse(event.request);
     }));
   }
 
   event.waitUntil(addToCache(event.request));
 });
 
-var checkResponse = function(request){
-  return new Promise(function(fulfill, reject) {
-    fetch(request).then(function(response){
+const checkResponse = (request) => {
+  return new Promise((fulfill, reject) => {
+    fetch(request).then((response) => {
       if(response.status !== 404) {
         fulfill(response);
       } else {
@@ -59,17 +54,17 @@ var checkResponse = function(request){
   });
 };
 
-var addToCache = function(request){
-  return caches.open('dnevnik-sw').then(function (cache) {
-    return fetch(request).then(function (response) {
+var addToCache = (request) => {
+  return caches.open('dnevnik-sw').then((cache) => {
+    return fetch(request).then((response) => {
       return cache.put(request, response);
     });
   });
 };
 
-var returnFromCache = function(request){
-  return caches.open('dnevnik-sw').then(function (cache) {
-    return cache.match(request).then(function (matching) {
+var returnFromCache = (request) => {
+  return caches.open('dnevnik-sw').then((cache) => {
+    return cache.match(request).then((matching) => {
      if(!matching || matching.status == 404) {
        return cache.match('/main');
      } else {
@@ -79,12 +74,12 @@ var returnFromCache = function(request){
   });
 };
 
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', (event) => {
   var cacheWhitelist = [];
   event.waitUntil(
-    caches.keys().then(function(cacheNames) {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map(function(cacheName) {
+        cacheNames.map((cacheName) => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
             return caches.delete(cacheName);
           }
