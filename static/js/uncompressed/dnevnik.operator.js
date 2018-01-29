@@ -21,8 +21,9 @@
         location.replace("/login");
 
       } else {
-
-        whenDomReady().then(() => {
+        fetch("/up").then(() => {
+          whenDomReady.resume();
+        }).then(() => {
           document.getElementById("button-login").addEventListener("click", (event) => {
               event.preventDefault();
 

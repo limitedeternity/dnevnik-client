@@ -155,6 +155,11 @@ Template handling
 '''
 
 
+@app.route("/up", methods=['GET'])
+def up():
+    return jsonify("<h1>I'm here, master.</h1>")
+
+
 @app.route("/", methods=['GET'])
 def index():
     response = make_response(render_template('index.html'))
