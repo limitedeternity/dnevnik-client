@@ -250,7 +250,6 @@ def feed():
 
         if offline or 'apiServerError' in user_data.values():
             user = "товарищ Тестер"
-            feed = (("Упс...", coloring(), "Дневник.ру оффлайн", "=)"))
 
         elif 'apiRequestLimit' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
             response = make_response(redirect("/logout"))
@@ -268,15 +267,19 @@ def feed():
                 day = f"0{day}" if match(r"^\d{1}$", day) else day
                 month = f"0{month}" if match(r"^\d{1}$", month) else month
 
-                feed = []
+                if offline or 'apiServerError' in user_data.values():
+                    feed = (("Упс...", coloring(), "Дневник.ру оффлайн", "=)"))
 
-                res_userfeed = s.get(f"https://api.dnevnik.ru/mobile/v2/feed/?date={year}-{month}-{day}&limit=1&personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
+                else:
+                    feed = []
 
-                recent_data = loads(res_userfeed.text)['Feed']['Days'][0]['MarkCards']
+                    res_userfeed = s.get(f"https://api.dnevnik.ru/mobile/v2/feed/?date={year}-{month}-{day}&limit=1&personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
 
-                for card in recent_data:
-                    for value in card['Values']:
-                        feed.append((value['Value'], coloring(value['Mood']), card["Subject"]["Name"], card["WorkType"]["Kind"]))
+                    recent_data = loads(res_userfeed.text)['Feed']['Days'][0]['MarkCards']
+
+                    for card in recent_data:
+                        for value in card['Values']:
+                            feed.append((value['Value'], coloring(value['Mood']), card["Subject"]["Name"], card["WorkType"]["Kind"]))
 
         if request.cookies.get("AccountType") == 'Student':
             html_out = [f'<h4>Здравствуйте, {user}!</h4>']
