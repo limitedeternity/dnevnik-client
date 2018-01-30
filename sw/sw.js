@@ -29,7 +29,7 @@ const preLoad = () => {
 };
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.method == 'POST') {
+  if (event.request.url === self.location.origin + "/up" || event.request.url === self.location.origin + "/login" || event.request.method == 'POST') {
     event.respondWith(checkResponse(event.request).catch(() => {
       return returnFromCache(event.request);
     }));
