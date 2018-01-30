@@ -65,79 +65,80 @@
     }
 
     if (navigator.onLine) {
+      var dnevnikError = false;
+      var statsError = false;
+
       fetch("/up").then((response) => {
         console.log(response.json());
-      })
+      }).then(() => {
+        promiseChain.push(
+          fetch("/dnevnik", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
+                return response.json();
+              }).then((json) => {
+                if (json.includes("¯\_(ツ)_/¯")) {
+                  localforage.setItem('dnevnikError', json)
+                  dnevnikError = true;
+                } else {
+                  localforage.setItem('dnevnik', json)
+                }
+              }).then(() => {
+                whenDomReady.resume();
+              }).then(() => {
+                if (dnevnikError) {
+                  localforage.getItem('dnevnikError').then((data) => {
+                    document.getElementById("dnevnik-out").innerHTML = data;
+                  })
+                  localforage.removeItem('dnevnikError')
+                  dnevnikError = false;
+                } else {
+                  localforage.getItem('dnevnik').then((data) => {
+                    document.getElementById("dnevnik-out").innerHTML = data;
+                  })
+                }
+              })
+        );
 
-      var dnevnikError = false;
-      promiseChain.push(
-        fetch("/dnevnik", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
+        promiseChain.push(
+          fetch("/stats", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
               return response.json();
             }).then((json) => {
               if (json.includes("¯\_(ツ)_/¯")) {
-                localforage.setItem('dnevnikError', json)
-                dnevnikError = true;
+                localforage.setItem('statsError', json)
+                statsError = true;
               } else {
-                localforage.setItem('dnevnik', json)
+                localforage.setItem('stats', json)
               }
             }).then(() => {
               whenDomReady.resume();
             }).then(() => {
-              if (dnevnikError) {
-                localforage.getItem('dnevnikError').then((data) => {
-                  document.getElementById("dnevnik-out").innerHTML = data;
+              if (statsError) {
+                localforage.getItem('statsError').then((data) => {
+                  document.getElementById("stats-out").innerHTML = data;
                 })
-                localforage.removeItem('dnevnikError')
-                dnevnikError = false;
+                localforage.removeItem('statsError')
+                statsError = false;
               } else {
-                localforage.getItem('dnevnik').then((data) => {
-                  document.getElementById("dnevnik-out").innerHTML = data;
+                localforage.getItem('stats').then((data) => {
+                  document.getElementById("stats-out").innerHTML = data;
                 })
               }
             })
-      );
+        );
 
-      var statsError = false;
-      promiseChain.push(
-        fetch("/stats", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
-            return response.json();
-          }).then((json) => {
-            if (json.includes("¯\_(ツ)_/¯")) {
-              localforage.setItem('statsError', json)
-              statsError = true;
-            } else {
-              localforage.setItem('stats', json)
-            }
-          }).then(() => {
-            whenDomReady.resume();
-          }).then(() => {
-            if (statsError) {
-              localforage.getItem('statsError').then((data) => {
-                document.getElementById("stats-out").innerHTML = data;
+        promiseChain.push(
+          fetch("/feed", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, credentials: 'same-origin', body: JSON.stringify({".": "1"})}).then((response) => {
+              return response.json();
+            }).then((json) => {
+              localforage.setItem('feed', json)
+            }).then(() => {
+              whenDomReady.resume();
+            }).then(() => {
+              localforage.getItem('feed').then((data) => {
+                document.getElementById("feedData").innerHTML = data;
               })
-              localforage.removeItem('statsError')
-              statsError = false;
-            } else {
-              localforage.getItem('stats').then((data) => {
-                document.getElementById("stats-out").innerHTML = data;
-              })
-            }
-          })
-      );
-
-      promiseChain.push(
-        fetch("/feed", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, credentials: 'same-origin', body: JSON.stringify({".": "1"})}).then((response) => {
-            return response.json();
-          }).then((json) => {
-            localforage.setItem('feed', json)
-          }).then(() => {
-            whenDomReady.resume();
-          }).then(() => {
-            localforage.getItem('feed').then((data) => {
-              document.getElementById("feedData").innerHTML = data;
             })
-          })
-      );
+        );
+      })
 
     } else {
       promiseChain.push(
