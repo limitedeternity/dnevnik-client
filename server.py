@@ -178,7 +178,12 @@ def main():
         try:
             access_token = request.cookies.get('AccessToken', '')
             res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
-            user_data = loads(res_userdata.text)
+            if res_userdata.status_code != 200:
+                user_data = {}
+                raise ConnectionError
+
+            else:
+                user_data = loads(res_userdata.text)
 
         except ConnectionError:
             offline = True
@@ -224,7 +229,12 @@ def feed():
         try:
             access_token = request.cookies.get('AccessToken')
             res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
-            user_data = loads(res_userdata.text)
+            if res_userdata.status_code != 200:
+                user_data = {}
+                raise ConnectionError
+
+            else:
+                user_data = loads(res_userdata.text)
 
         except ConnectionError:
             offline = True
@@ -298,7 +308,12 @@ def stats():
         try:
             access_token = request.cookies.get('AccessToken')
             res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
-            user_data = loads(res_userdata.text)
+            if res_userdata.status_code != 200:
+                user_data = {}
+                raise ConnectionError
+
+            else:
+                user_data = loads(res_userdata.text)
 
             if 'apiServerError' in user_data.values():
                 raise ConnectionError
@@ -308,7 +323,7 @@ def stats():
                 return response
 
         except ConnectionError:
-            html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.</div>'
+            html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то отключитесь от сети.</div>'
 
             response = make_response(jsonify(html_out))
             return response
@@ -389,9 +404,14 @@ def dnevnik():
         try:
             access_token = request.cookies.get('AccessToken')
             res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
-            user_data = loads(res_userdata.text)
+            if res_userdata.status_code != 200:
+                user_data = {}
+                raise ConnectionError
 
-            if 'apiServerError' in user_data.values():
+            else:
+                user_data = loads(res_userdata.text)
+
+            if 'apiServerError' in user_data.values() or res_userdata.status_code != 200:
                 raise ConnectionError
 
             elif 'apiRequestLimit' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
@@ -399,7 +419,7 @@ def dnevnik():
                 return response
 
         except ConnectionError:
-            html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то сделайте длинное нажатие по кнопке запроса.</div>'
+            html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то отключитесь от сети.</div>'
 
             response = make_response(jsonify(html_out))
             return response
@@ -510,7 +530,12 @@ def log_in():
     try:
         access_token = request.cookies.get('AccessToken_Temp', '')
         res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
-        user_data = loads(res_userdata.text)
+        if res_userdata.status_code != 200:
+            user_data = {}
+            raise ConnectionError
+
+        else:
+            user_data = loads(res_userdata.text)
 
         if 'apiServerError' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
             raise ConnectionError
@@ -569,7 +594,12 @@ def log_out():
     try:
         access_token = request.cookies.get('AccessToken', '')
         res_userdata = s.get(f"https://api.dnevnik.ru/v1/users/me/context?access_token={access_token}")
-        user_data = loads(res_userdata.text)
+        if res_userdata.status_code != 200:
+            user_data = {}
+            raise ConnectionError
+
+        else:
+            user_data = loads(res_userdata.text)
 
         if 'apiServerError' in user_data.values():
             raise ConnectionError
