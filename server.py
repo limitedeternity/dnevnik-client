@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from random import choice
 from re import findall, match
 from json import loads
+from json.decoder import JSONDecodeError
 from pytz import utc
 from flask import Flask, render_template, make_response, request, redirect, jsonify, abort, send_from_directory
 from flask_cache import Cache # Caching
@@ -183,7 +184,11 @@ def main():
                 raise ConnectionError
 
             else:
-                user_data = loads(res_userdata.text)
+                try:
+                    user_data = loads(res_userdata.text)
+
+                except JSONDecodeError:
+                    raise ConnectionError
 
         except ConnectionError:
             offline = True
@@ -234,7 +239,11 @@ def feed():
                 raise ConnectionError
 
             else:
-                user_data = loads(res_userdata.text)
+                try:
+                    user_data = loads(res_userdata.text)
+
+                except JSONDecodeError:
+                    raise ConnectionError
 
         except ConnectionError:
             offline = True
@@ -313,7 +322,11 @@ def stats():
                 raise ConnectionError
 
             else:
-                user_data = loads(res_userdata.text)
+                try:
+                    user_data = loads(res_userdata.text)
+
+                except JSONDecodeError:
+                    raise ConnectionError
 
             if 'apiServerError' in user_data.values():
                 raise ConnectionError
@@ -409,7 +422,11 @@ def dnevnik():
                 raise ConnectionError
 
             else:
-                user_data = loads(res_userdata.text)
+                try:
+                    user_data = loads(res_userdata.text)
+
+                except JSONDecodeError:
+                    raise ConnectionError
 
             if 'apiServerError' in user_data.values() or res_userdata.status_code != 200:
                 raise ConnectionError
@@ -535,7 +552,11 @@ def log_in():
             raise ConnectionError
 
         else:
-            user_data = loads(res_userdata.text)
+            try:
+                user_data = loads(res_userdata.text)
+
+            except JSONDecodeError:
+                raise ConnectionError
 
         if 'apiServerError' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
             raise ConnectionError
@@ -599,7 +620,11 @@ def log_out():
             raise ConnectionError
 
         else:
-            user_data = loads(res_userdata.text)
+            try:
+                user_data = loads(res_userdata.text)
+
+            except JSONDecodeError:
+                raise ConnectionError
 
         if 'apiServerError' in user_data.values():
             raise ConnectionError
