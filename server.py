@@ -6,8 +6,6 @@ from collections import Counter
 from datetime import datetime, timedelta
 from random import choice
 from re import findall, match
-from json import loads
-from json.decoder import JSONDecodeError
 from pytz import utc
 from flask import Flask, render_template, make_response, request, redirect, jsonify, abort, send_from_directory
 from flask_cache import Cache # Caching
@@ -185,9 +183,9 @@ def main():
 
             else:
                 try:
-                    user_data = loads(res_userdata.text)
+                    user_data = res_userdata.json()
 
-                except JSONDecodeError:
+                except ValueError:
                     raise ConnectionError
 
         except ConnectionError:
@@ -240,9 +238,9 @@ def feed():
 
             else:
                 try:
-                    user_data = loads(res_userdata.text)
+                    user_data = res_userdata.json()
 
-                except JSONDecodeError:
+                except ValueError:
                     raise ConnectionError
 
         except ConnectionError:
@@ -275,7 +273,7 @@ def feed():
             if not feed:
                 res_userfeed = s.get(f"https://api.dnevnik.ru/mobile/v2/feed/?date={year}-{month}-{day}&limit=1&personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
 
-                recent_data = loads(res_userfeed.text)['Feed']['Days'][0]['MarkCards']
+                recent_data = res_userfeed.json()['Feed']['Days'][0]['MarkCards']
 
                 for card in recent_data:
                     for value in card['Values']:
@@ -320,9 +318,9 @@ def stats():
 
             else:
                 try:
-                    user_data = loads(res_userdata.text)
+                    user_data = res_userdata.json()
 
-                except JSONDecodeError:
+                except ValueError:
                     raise ConnectionError
 
             if 'apiServerError' in user_data.values():
@@ -350,7 +348,7 @@ def stats():
             if res_marks == None:
                 res_marks = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['children'][0]['personId']}&groupId={user_data['children'][0]['groupIds'][0]}&access_token={access_token}")
 
-        marks_data = loads(res_marks.text)["AllMarks"]
+        marks_data = res_marks.json()["AllMarks"]
 
         html_out = ['<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4>']
 
@@ -420,9 +418,9 @@ def dnevnik():
 
             else:
                 try:
-                    user_data = loads(res_userdata.text)
+                    user_data = res_userdata.json()
 
-                except JSONDecodeError:
+                except ValueError:
                     raise ConnectionError
 
             if 'apiServerError' in user_data.values():
@@ -470,7 +468,7 @@ def dnevnik():
                 school = user_data['children'][0]['schools'][0]['id']
                 res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={user_data['children'][0]['personId']}&groupId={user_data['children'][0]['groupIds'][0]}&access_token={access_token}")
 
-        lesson_data = loads(res_lessons.text)['Days'][0]['Schedule']
+        lesson_data = res_lessons.json()['Days'][0]['Schedule']
 
         if not lesson_data:
             html_out = '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Упс...</h5>Уроков нет. Вот незадача :></div>'
@@ -559,9 +557,9 @@ def log_in():
 
         else:
             try:
-                user_data = loads(res_userdata.text)
+                user_data = res_userdata.json()
 
-            except JSONDecodeError:
+            except ValueError:
                 raise ConnectionError
 
         if 'apiServerError' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
@@ -627,9 +625,9 @@ def log_out():
 
         else:
             try:
-                user_data = loads(res_userdata.text)
+                user_data = res_userdata.json()
 
-            except JSONDecodeError:
+            except ValueError:
                 raise ConnectionError
 
         if 'apiServerError' in user_data.values():
