@@ -250,7 +250,7 @@ def feed():
 
         if offline or 'apiServerError' in user_data.values():
             user = "товарищ Тестер"
-            feed = (("Упс...", coloring(), "Дневник.ру оффлайн", "¯\_(ツ)_/¯"))
+            feed = (("Упс...", coloring(), "Дневник.ру оффлайн", "¯\_(ツ)_/¯", "1337"))
 
         elif 'apiRequestLimit' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
             response = make_response(redirect("/logout"))
@@ -262,6 +262,7 @@ def feed():
 
         if request.cookies.get("AccountType") == 'Student':
             html_out = [f'<h4>Здравствуйте, {user}!</h4>']
+            school = user_data['schools'][0]['id']
             offset = int(request.cookies.get('Offset', '3'))
 
             day = str(timeDate('day', offset=offset, feed=True))
@@ -278,12 +279,13 @@ def feed():
 
                 for card in recent_data:
                     for value in card['Values']:
-                        feed.append((value['Value'], coloring(value['Mood']), card["Subject"]["Name"], card["WorkType"]["Kind"]))
+                        feed.append((value['Value'], coloring(value['Mood']), card["Subject"]["Name"], card["WorkType"]["Kind"], card["LessonId"]))
 
             if feed:
                 html_out.append('<ul class="mdl-list" style="width: 300px;">')
                 for item in feed:
-                    html_out.append(f'<li class="mdl-list__item mdl-list__item--two-line"><span class="mdl-list__item-primary-content"><i class="material-icons mdl-list__item-avatar">info</i><span style="color:{item[1]}">{item[0]}</span><span class="mdl-list__item-sub-title">{item[2]} - {item[3]}</span></span><span class="mdl-list__item-secondary-content"><a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">label</i></a></span></li>')
+                    html_out.append(f'<li class="mdl-list__item mdl-list__item--two-line"><span class="mdl-list__item-primary-content"><i class="material-icons mdl-list__item-avatar">info</i><span style="color:{item[1]}">{item[0]}</span><span class="mdl-list__item-sub-title">{item[2]} - {item[3]}</span></span><span class="mdl-list__item-secondary-content"><a class="mdl-list__item-secondary-action" href="https://schools.dnevnik.ru/lesson.aspx?school={school}&lesson={item[4]}"><i class="material-icons">label</i></a></span></li>')
+
                 html_out.append("</ul>")
 
             else:
@@ -293,10 +295,6 @@ def feed():
 
         elif request.cookies.get("AccountType") == 'Parent':
             html_out = f'<h4>Здравствуйте, {user}!</h4> Спасибо, что решили протестировать beta-версию DnevnikClient. Я очень это ценю. <br>Обо всех ошибках просьба сообщать, открывая Issue в <a href="https://github.com/limitedeternity/dnevnik-client/" target="_blank" rel="noopener">репозитории на GitHub</a>. <br>Надеюсь, вам нравится клиент, и вы довольны его функционалом и проделанной мной работой. <br>Напоминаю, что проект - Open Source, так что вы в любой момент можете помочь разработке. <br>By <a href="https://github.com/limitedeternity/" target="_blank" rel="noopener">@limitedeternity</a>'
-            return make_response(jsonify(html_out))
-
-        else:
-            html_out = '<h4>О проекте</h4>DnevnikClient - облегченная версия Дневник.Ру, расчитанная на просмотр данных, помещенная в рамки Material Design. Клиент предоставляет функционал ровно в такой мере, которая требуется ученикам. Без тяжелого обвеса вроде ReactJS, избыточных элементов интерфейса и функционала "соцсети". <br> Ничего лишнего. <br>Исходный код доступен в моем <a href="https://github.com/limitedeternity/dnevnik-client/" target="_blank" rel="noopener">репозитории GitHub</a>. <br>By <a href="https://github.com/limitedeternity/" target="_blank" rel="noopener">@limitedeternity</a>'
             return make_response(jsonify(html_out))
 
     else:
@@ -459,14 +457,17 @@ def dnevnik():
 
         res_lessons = None
         if request.cookies.get('AccountType') == 'Student':
+            school = user_data['schools'][0]['id']
             res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
 
         elif request.cookies.get('AccountType') == 'Parent':
             for child in user_data['children']:
                 if childId == str(child['personId']):
+                    school = child['schools'][0]['id']
                     res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
 
             if res_lessons == None:
+                school = user_data['children'][0]['schools'][0]['id']
                 res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={user_data['children'][0]['personId']}&groupId={user_data['children'][0]['groupIds'][0]}&access_token={access_token}")
 
         lesson_data = loads(res_lessons.text)['Days'][0]['Schedule']
@@ -481,12 +482,18 @@ def dnevnik():
         for lesson in lesson_data:
             try:
                 lesson_name = lesson["Subject"]["Name"]
+                lesson_id = lesson["LessonId"]
 
             except (KeyError, TypeError):
                 continue
 
             html_out.append('<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><div style="display:block; height:2px; clear:both;"></div>')
-            html_out.append(f'<h5 style="font-weight:600">{lesson_name}</h5>')
+
+            if request.cookies.get('AccountType') == 'Student':
+                html_out.append(f'<a href="https://schools.dnevnik.ru/lesson.aspx?school={school}&lesson={lesson_id}"><h5 style="font-weight:600">{lesson_name}</h5></a>')
+
+            elif request.cookies.get('AccountType') == 'Parent':
+                html_out.append(f'<a href="https://children.dnevnik.ru/lesson.aspx?child={childId}&school={school}&lesson={lesson_id}"><h5 style="font-weight:600">{lesson_name}</h5></a>')
 
             for mark in lesson['Marks']:
                 if mark:
