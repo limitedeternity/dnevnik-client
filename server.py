@@ -284,7 +284,7 @@ def feed():
             if feed:
                 html_out.append('<ul class="mdl-list" style="width: 300px;">')
                 for item in feed:
-                    html_out.append(f'<li class="mdl-list__item mdl-list__item--two-line"><span class="mdl-list__item-primary-content"><i class="material-icons mdl-list__item-avatar">info</i><span style="color:{item[1]}">{item[0]}</span><span class="mdl-list__item-sub-title">{item[2]} - {item[3]}</span></span><span class="mdl-list__item-secondary-content"><a class="mdl-list__item-secondary-action" href="https://schools.dnevnik.ru/lesson.aspx?school={school}&lesson={item[4]}"><i class="material-icons">label</i></a></span></li>')
+                    html_out.append(f'<li class="mdl-list__item mdl-list__item--two-line"><span class="mdl-list__item-primary-content"><i class="material-icons mdl-list__item-avatar">info</i><span style="color:{item[1]}">{item[0]}</span><span class="mdl-list__item-sub-title">{item[2]} - {item[3]}</span></span><span class="mdl-list__item-secondary-content"><a class="mdl-list__item-secondary-action" href="https://schools.dnevnik.ru/lesson.aspx?school={school}&lesson={item[4]}" target="_blank" rel="noopener"><i class="material-icons">label</i></a></span></li>')
 
                 html_out.append("</ul>")
 
@@ -433,7 +433,7 @@ def dnevnik():
                 return response
 
         except ConnectionError:
-            html_out = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то отключитесь от сети.</div>'
+            html_out = '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\_(ツ)_/¯</h5>Кажется, Дневник.Ру ушел в оффлайн :> <br>Если вы сумели успешно запросить данные ранее, то отключитесь от сети.</div>'
 
             response = make_response(jsonify(html_out))
             return response
@@ -466,13 +466,13 @@ def dnevnik():
                     school = child['schools'][0]['id']
                     res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={childId}&groupId={child['groupIds'][0]}&access_token={access_token}")
 
-            if res_lessons == None:
+            if not res_lessons:
                 school = user_data['children'][0]['schools'][0]['id']
                 res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={user_data['children'][0]['personId']}&groupId={user_data['children'][0]['groupIds'][0]}&access_token={access_token}")
 
         lesson_data = loads(res_lessons.text)['Days'][0]['Schedule']
 
-        if lesson_data == []:
+        if not lesson_data:
             html_out = '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Упс...</h5>Уроков нет. Вот незадача :></div>'
 
             response = make_response(jsonify(html_out))
@@ -490,10 +490,10 @@ def dnevnik():
             html_out.append('<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><div style="display:block; height:2px; clear:both;"></div>')
 
             if request.cookies.get('AccountType') == 'Student':
-                html_out.append(f'<a href="https://schools.dnevnik.ru/lesson.aspx?school={school}&lesson={lesson_id}"><h5 style="font-weight:600">{lesson_name}</h5></a>')
+                html_out.append(f'<a href="https://schools.dnevnik.ru/lesson.aspx?school={school}&lesson={lesson_id}" target="_blank" rel="noopener"><h5 style="font-weight:600">{lesson_name}</h5></a>')
 
             elif request.cookies.get('AccountType') == 'Parent':
-                html_out.append(f'<a href="https://children.dnevnik.ru/lesson.aspx?child={childId}&school={school}&lesson={lesson_id}"><h5 style="font-weight:600">{lesson_name}</h5></a>')
+                html_out.append(f'<a href="https://children.dnevnik.ru/lesson.aspx?child={childId}&school={school}&lesson={lesson_id}" target="_blank" rel="noopener"><h5 style="font-weight:600">{lesson_name}</h5></a>')
 
             for mark in lesson['Marks']:
                 if mark:
@@ -510,7 +510,7 @@ def dnevnik():
                         if len(mark['Values']) > 1:
                             html_out.append('<div style="display:block; height:2px; clear:both;"></div>')
 
-            if lesson["Theme"] is not '':
+            if lesson["Theme"]:
                 try:
                     html_out.append(f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]} ({lesson["ImportantWorks"][0]["WorkType"]})</h8><br>')
 
@@ -520,7 +520,7 @@ def dnevnik():
             else:
                 pass
 
-            if lesson["HomeworksText"] is not "":
+            if lesson["HomeworksText"]:
                 hw = lesson["HomeworksText"]
                 links = (*set(findall(r"http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", hw)),)
 
