@@ -436,13 +436,13 @@ def dnevnik():
             response = make_response(jsonify(html_out))
             return response
 
-        if timeDay is '':
+        if not timeDay:
             day = str(timeDate('day', offset=offset))
 
         else:
             day = timeDay
 
-        if timeMonth is '':
+        if not timeMonth:
             month = str(timeDate('month', offset=offset))
 
         else:
