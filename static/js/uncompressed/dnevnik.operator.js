@@ -67,6 +67,7 @@
     if (navigator.onLine) {
       var dnevnikError = false;
       var statsError = false;
+      var feedError = false;
 
       fetch("/up").then((response) => {
         console.log(response.json());
@@ -129,13 +130,26 @@
           fetch("/feed", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, credentials: 'same-origin', body: JSON.stringify({".": "1"})}).then((response) => {
               return response.json();
             }).then((json) => {
-              localforage.setItem('feed', json)
+              if (json.includes("¯\_(ツ)_/¯")) {
+                localforage.setItem('feedError', json)
+                feedError = true;
+              } else {
+                localforage.setItem('feed', json)
+              }
             }).then(() => {
               whenDomReady.resume();
             }).then(() => {
-              localforage.getItem('feed').then((data) => {
-                document.getElementById("feedData").innerHTML = data;
-              })
+              if (feedError) {
+                localforage.getItem('feedError').then((data) => {
+                  document.getElementById("feedData").innerHTML = data;
+                })
+                localforage.removeItem('feedError')
+                feedError = false;
+              } else {
+                localforage.getItem('feed').then((data) => {
+                  document.getElementById("feedData").innerHTML = data;
+                })
+              }
             })
         );
       })
