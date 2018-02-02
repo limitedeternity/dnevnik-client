@@ -77,10 +77,12 @@
         </div>
         <div class="mdl-layout--large-screen-only mdl-layout__header-row">
         </div>
-        <div class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--primary-dark">
+        <div id="nav" class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--primary-dark">
           <a href="#overview" class="mdl-layout__tab is-active">Главная</a>
-          <a href="#diary" id="diary-tab" class="mdl-layout__tab">Дневник</a>
-          <a href="#stats" id="stats-tab" class="mdl-layout__tab">Статистика</a>
+          <a href="#diary" class="mdl-layout__tab">Дневник</a>
+          <a href="#stats" class="mdl-layout__tab">Статистика</a>
+          <a href="#" class="mdl-layout__tab" style="display:none;">События</a>
+          <a href="#" class="mdl-layout__tab" style="display:none;">Сообщения</a>
           <a href="#settings" class="mdl-layout__tab">Настройки</a>
           <a href="#" id="logout" class="mdl-layout__tab">Выход</a>
         </div>
@@ -121,26 +123,7 @@
                       <input class="mdl-textfield__input" type="text" name="month" id="month" pattern="^([1-9]|1[012])$" value="" autocomplete="off" />
                       <label class="mdl-textfield__label" for="month">Месяц (1-12)</label>
                   </div>
-                  {% if opts %}
-                      <div style="display:block; height: 15px; clear:both;"></div>
-                      {% for child in opts %}
-                          {% set counter = loop.index0 %}
-                          {% for name, id in child.items() %}
-                              <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="child_dnevnik{{ counter }}">
-                              {% if counter == 0 %}
-                                  <input type="radio" id="child_dnevnik{{ counter }}" class="mdl-radio__button" name="child" value="{{ id }}" checked>
-                              {% else %}
-                                  <input type="radio" id="child_dnevnik{{ counter }}" class="mdl-radio__button" name="child" value="{{ id }}">
-                              {% endif %}
-                              <span class="mdl-radio__label">{{ name.split(' ')[0] }} {{ name.split(' ')[1] }}</span>
-                              </label>
-                          {% endfor %}
-                          <div style="display:block; height: 5px; clear:both;"></div>
-                      {% endfor %}
-                      <div style="display:block; height: 15px; clear:both;"></div>
-                  {% else %}
-                  <div style="display:block; height: 35px; clear:both;"></div>
-                  {% endif %}
+                  <div style="display:block; height: 5px; clear:both;"></div>
                   <button type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
                       <i class="material-icons">arrow_forward</i>
                       <span class="visuallyhidden">Next</span>
@@ -168,23 +151,6 @@
                 <h4 class="mdl-cell mdl-cell--12-col">Запрос</h4>
                 <form action="/stats" method="post" id="dnevnik-stats">
                   <div style="display:block; height: 5px; clear:both;"></div>
-                  {% if opts %}
-                      {% for child in opts %}
-                          {% set counter = loop.index0 %}
-                          {% for name, id in child.items() %}
-                              <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="child_stats{{ counter }}">
-                              {% if counter == 0 %}
-                                  <input type="radio" id="child_stats{{ counter }}" class="mdl-radio__button" name="child" value="{{ id }}" checked>
-                              {% else %}
-                                  <input type="radio" id="child_stats{{ counter }}" class="mdl-radio__button" name="child" value="{{ id }}">
-                              {% endif %}
-                              <span class="mdl-radio__label">{{ name.split(' ')[0] }} {{ name.split(' ')[1] }}</span>
-                              </label>
-                          {% endfor %}
-                          <div style="display:block; height: 5px; clear:both;"></div>
-                      {% endfor %}
-                      <div style="display:block; height: 15px; clear:both;"></div>
-                  {% endif %}
                   <button type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
                       <i class="material-icons">arrow_forward</i>
                       <span class="visuallyhidden">Next</span>

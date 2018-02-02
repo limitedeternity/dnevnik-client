@@ -1,12 +1,12 @@
 Flask
 flask-sslify
-Flask-Cache
 flask-compress
 flask-cors
 CacheControl
 gunicorn
 redis
 eventlet
+pywebpush
 requests
 requests[security]
 pytz

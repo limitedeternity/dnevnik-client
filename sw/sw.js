@@ -1,5 +1,65 @@
+importScripts('/js/uncompressed/localforage.min.js');
+
 self.addEventListener('install', (event) => {
   event.waitUntil(preLoad());
+});
+
+self.addEventListener('periodicsync', (event) => {
+  if (event.registration.tag === 'dnevnik-notif-periodic') {
+    event.waitUntil(fetchPushNotification());
+  } else {
+    event.registration.unregister();
+  }
+});
+
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'dnevnik-notif-sync') {
+    event.waitUntil(fetchPushNotification());
+  } else {
+    event.unregister();
+  }
+});
+
+const fetchPushNotification = () => {
+  return localforage.getItem('pushSettings').then((data) => {
+    return fetch('/up').then(() => {
+      return fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'})
+    })
+  })
+}
+
+self.addEventListener('push', (event) => {
+  localforage.getItem("pushData").then((data) => {
+    if (!(data === event.data.text())) {
+      let title = 'Обновление сводки';
+      let options = {
+        body: event.data.text(),
+        icon: '/images/android-icon-96x96.png',
+        badge: '/images/android-icon-96x96.png',
+        vibrate: [200, 400],
+      };
+      localforage.setItem("pushData", event.data.text())
+      event.waitUntil(self.registration.showNotification(title, options));
+    }
+  })
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  event.waitUntil(clients.matchAll({
+    type: 'window'
+  }).then((clientList) => {
+    for (let i = 0; i < clientList.length; i++) {
+      let client = clientList[i];
+      if (client.url === '/' && 'focus' in client) {
+        return client.focus();
+      }
+    }
+    if (clients.openWindow) {
+      return clients.openWindow('/');
+    }
+  }));
 });
 
 const preLoad = () => {
@@ -18,6 +78,7 @@ const preLoad = () => {
               '/css/md_icons.css.br',
               '/css/Roboto.css.br',
               '/js/compressed.js.br',
+              '/js/uncompressed/localforage.min.js',
               '/js/material.min.js.br',
               '/config/browserconfig.xml',
               '/config/manifest.json',
@@ -45,7 +106,7 @@ self.addEventListener('fetch', (event) => {
 const checkResponse = (request) => {
   return new Promise((fulfill, reject) => {
     fetch(request).then((response) => {
-      if(response.status !== 404) {
+      if (response.status !== 404) {
         fulfill(response);
       } else {
         reject();
@@ -54,7 +115,7 @@ const checkResponse = (request) => {
   });
 };
 
-var addToCache = (request) => {
+const addToCache = (request) => {
   return caches.open('dnevnik-sw').then((cache) => {
     return fetch(request).then((response) => {
       return cache.put(request, response);
@@ -62,10 +123,10 @@ var addToCache = (request) => {
   });
 };
 
-var returnFromCache = (request) => {
+const returnFromCache = (request) => {
   return caches.open('dnevnik-sw').then((cache) => {
     return cache.match(request).then((matching) => {
-     if(!matching || matching.status == 404) {
+     if(!matching || matching.status === 404) {
        return cache.match('/main');
      } else {
        return matching;
@@ -75,7 +136,7 @@ var returnFromCache = (request) => {
 };
 
 self.addEventListener('activate', (event) => {
-  var cacheWhitelist = [];
+  let cacheWhitelist = [];
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
