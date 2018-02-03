@@ -6,23 +6,11 @@ self.addEventListener('install', (event) => {
   console.log("Installation finished.");
 });
 
-self.addEventListener('periodicsync', (event) => {
-  if (event.registration.tag === 'dnevnik-notif-periodic') {
-    console.log("Periodic sync started");
-    event.waitUntil(fetchSync());
-    console.log("Periodic sync finished");
-  } else {
-    event.registration.unregister();
-  }
-});
-
 self.addEventListener('sync', (event) => {
   if (event.tag === 'dnevnik-notif-sync') {
-    console.log("One-time sync started");
+    console.log("Sync started");
     event.waitUntil(fetchSync());
-    console.log("One-time sync finished");
-  } else {
-    event.unregister();
+    console.log("Sync finished");
   }
 });
 
