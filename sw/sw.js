@@ -6,7 +6,7 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('periodicsync', (event) => {
   if (event.registration.tag === 'dnevnik-notif-periodic') {
-    event.waitUntil(fetchPushNotification());
+    event.waitUntil(fetchSync());
   } else {
     event.registration.unregister();
   }
@@ -14,16 +14,18 @@ self.addEventListener('periodicsync', (event) => {
 
 self.addEventListener('sync', (event) => {
   if (event.tag === 'dnevnik-notif-sync') {
-    event.waitUntil(fetchPushNotification());
+    event.waitUntil(fetchSync());
   } else {
     event.unregister();
   }
 });
 
-const fetchPushNotification = () => {
+const fetchSync = () => {
   return localforage.getItem('pushSettings').then((data) => {
     return fetch('/up').then(() => {
-      return fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'})
+      return fetch("/feed", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, credentials: 'same-origin', body: JSON.stringify({".": "1"})}).then(() => {
+        return fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'})
+      })
     })
   })
 }

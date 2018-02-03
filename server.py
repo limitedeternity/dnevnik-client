@@ -165,15 +165,17 @@ def up():
 def push():
     subscription_info = loads(request.get_json()['pushSettings'])
     access_token = request.cookies.get('AccessToken', '')
+    if not access_token:
+        return jsonify("Finished")
 
     try:
         recent_marks = redis_storage.get(f"{access_token}_marks")
 
     except (Exception, KeyError):
-        return
+        return jsonify("Finished")
 
-    if not recent_marks or int(recent_marks) == 0:
-        return
+    if not recent_marks:
+        return jsonify("Finished")
 
     data = f"Оценок за сегодня: {int(recent_marks)}"
 
