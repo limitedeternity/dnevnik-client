@@ -8,14 +8,11 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('message', (event) => {
   if (event.data === "startSync") {
-    console.log("Sync initiated.");
-    event.waitUntil(fetchSync());
-    event.source.postMessage("syncFinished");
-    console.log("Sync finished.");
+    event.waitUntil(fetchSync(event.source));
   }
 });
 
-const fetchSync = () => {
+const fetchSync = (source) => {
   let promiseChain = [];
 
   promiseChain.push(
@@ -57,7 +54,11 @@ const fetchSync = () => {
   return fetch('/up').then(() => {
     return Promise.all(promiseChain).then(() => {
       return localforage.getItem('pushSettings').then((data) => {
-        return fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'})
+        return fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'}).then(() => {
+          return new Promise((resolve, reject) => {
+            resolve(source.postMessage("syncFinished"));
+          });
+        })
       })
     })
   })

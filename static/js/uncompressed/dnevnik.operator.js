@@ -150,7 +150,6 @@
               })
             }
           })
-          navigator.serviceWorker.controller.postMessage("startSync");
       })
     }
 
@@ -213,6 +212,10 @@
 
        if (Notification.permission !== 'denied' || Notification.permission === "default") {
          Notification.requestPermission();
+       }
+
+       if (navigator.serviceWorker.controller) {
+         navigator.serviceWorker.controller.postMessage("startSync");
        }
     })
   }
