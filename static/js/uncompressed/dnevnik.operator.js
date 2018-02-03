@@ -66,45 +66,45 @@
       return outputArray;
     }
 
-    if ('serviceWorker' in navigator) {
-      if (navigator.serviceWorker.controller) {
-        console.log('ServiceWorker is already registered.');
-      } else {
-        navigator.serviceWorker.register('/sw.js', {
-          scope: './'
-        }).then(() => {
-          console.log('Successfully registered ServiceWorker.');
-          navigator.serviceWorker.ready.then((registration) => {
-            if (registration.pushManager) {
-              registration.pushManager.subscribe({
-                  userVisibleOnly: true,
-                  applicationServerKey: urlBase64ToUint8Array("BPA5TPpI1kBquobW2MAKz-JqG0AiaTbKLIa3IzFtC7tM-gg_fqOyyg9DlFXi7cg_CEPeUTWiK0tn_Zc7IcOWrD0")
-              }).then(() => {
-                console.log("Successfully subscribed to notifications.");
-                registration.pushManager.getSubscription().then((subscription) => {
-                  let subscrJSON = subscription.toJSON();
-                  delete subscrJSON.expirationTime;
-                  localforage.setItem("pushSettings", subscrJSON);
-                })
-              })
-              if (registration.periodicSync) {
-                registration.periodicSync.register({
-                  tag: 'dnevnik-notif-periodic',
-                  minPeriod: 60 * 1000 * 10,
-                  powerState: 'auto',
-                  networkState: 'any'
+    if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready.then((registration) => {
+          if (registration.pushManager) {
+            registration.pushManager.getSubscription().then((subsc) => {
+              if (!subsc) {
+                registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array("BPA5TPpI1kBquobW2MAKz-JqG0AiaTbKLIa3IzFtC7tM-gg_fqOyyg9DlFXi7cg_CEPeUTWiK0tn_Zc7IcOWrD0")
                 }).then(() => {
-                  console.log("Periodic sync registered.");
-                })
-              } else if (registration.sync) {
-                registration.sync.register('dnevnik-notif-sync').then(() => {
-                  console.log("Sync registered.");
+                  console.log("Successfully subscribed to notifications.");
+                  registration.pushManager.getSubscription().then((subscription) => {
+                    let subscrJSON = subscription.toJSON();
+                    delete subscrJSON.expirationTime;
+                    localforage.setItem("pushSettings", subscrJSON);
+                  })
                 })
               }
+            })
+
+            if (registration.periodicSync) {
+              registration.periodicSync.getRegistrations().then((periodicReg) => {
+                if (!periodicReg.length) {
+                  registration.periodicSync.register({
+                    tag: 'dnevnik-notif-periodic',
+                    minPeriod: 60 * 1000 * 10,
+                    powerState: 'auto',
+                    networkState: 'any'
+                  }).then(() => {
+                    console.log("Periodic sync registered.");
+                  })
+                }
+              })
+            } else if (registration.sync) {
+              registration.sync.register('dnevnik-notif-sync').then(() => {
+                console.log("Sync registered.");
+              })
             }
-          })
+          }
         })
-      }
     }
 
     if (navigator.onLine) {
@@ -307,7 +307,7 @@
          if (navigator.onLine) {
              localforage.clear();
              if ('serviceWorker' in navigator) {
-               navigator.serviceWorker.getRegistrations().then(function(t){t.forEach(function(t){t.unregister()})});
+               navigator.serviceWorker.getRegistrations().then((t) => {t.forEach((k) => {k.unregister()})});
              }
              location.replace("/logout");
          }

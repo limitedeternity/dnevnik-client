@@ -165,7 +165,7 @@ def up():
 def push():
     subscription_info = loads(request.get_json()['pushSettings'])
     access_token = request.cookies.get('AccessToken', '')
-    if not access_token:
+    if not access_token or not subscription_info:
         return jsonify("Finished")
 
     try:
