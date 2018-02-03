@@ -54,6 +54,10 @@
       return JSON.stringify(object);
     }
 
+    const sleep = (ms) => {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     const urlBase64ToUint8Array = (base64String) => {
       let padding = '='.repeat((4 - base64String.length % 4) % 4);
       let base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
@@ -100,231 +104,131 @@
               })
             } else if (registration.sync) {
               registration.sync.register('dnevnik-notif-sync').then(() => {
-                console.log("Sync registered.");
+                console.log("Sync initiated.");
               })
             }
           }
         })
     }
 
-    if (navigator.onLine) {
-      var dnevnikError = false;
-      var statsError = false;
-      var feedError = false;
-
-      fetch("/up").then((response) => {
-        console.log(response.json());
-      }).then(() => {
-        promiseChain.push(
-          fetch("/dnevnik", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
-                return response.json();
-              }).then((json) => {
-                if (json.includes("¯\\_(ツ)_/¯")) {
-                  localforage.setItem('dnevnikError', json)
-                  dnevnikError = true;
-                } else {
-                  localforage.setItem('dnevnik', json)
-                }
-              }).then(() => {
-                whenDomReady.resume();
-              }).then(() => {
-                if (dnevnikError) {
-                  localforage.getItem('dnevnikError').then((data) => {
-                    document.getElementById("dnevnik-out").innerHTML = data;
-                  })
-                  localforage.removeItem('dnevnikError')
-                  dnevnikError = false;
-                } else {
-                  localforage.getItem('dnevnik').then((data) => {
-                    document.getElementById("dnevnik-out").innerHTML = data;
-                  })
-                }
-              })
-        );
-
-        promiseChain.push(
-          fetch("/stats", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((response) => {
-              return response.json();
-            }).then((json) => {
-              if (json.includes("¯\\_(ツ)_/¯")) {
-                localforage.setItem('statsError', json)
-                statsError = true;
-              } else {
-                localforage.setItem('stats', json)
-              }
-            }).then(() => {
-              whenDomReady.resume();
-            }).then(() => {
-              if (statsError) {
-                localforage.getItem('statsError').then((data) => {
-                  document.getElementById("stats-out").innerHTML = data;
-                })
-                localforage.removeItem('statsError')
-                statsError = false;
-              } else {
-                localforage.getItem('stats').then((data) => {
-                  document.getElementById("stats-out").innerHTML = data;
-                })
-              }
-            })
-        );
-
-        promiseChain.push(
-          fetch("/feed", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, credentials: 'same-origin', body: JSON.stringify({".": "1"})}).then((response) => {
-              return response.json();
-            }).then((json) => {
-              if (json.includes("¯\\_(ツ)_/¯")) {
-                localforage.setItem('feedError', json)
-                feedError = true;
-              } else {
-                localforage.setItem('feed', json)
-              }
-            }).then(() => {
-              whenDomReady.resume();
-            }).then(() => {
-              if (feedError) {
-                localforage.getItem('feedError').then((data) => {
-                  document.getElementById("feedData").innerHTML = data;
-                })
-                localforage.removeItem('feedError')
-                feedError = false;
-              } else {
-                localforage.getItem('feed').then((data) => {
-                  document.getElementById("feedData").innerHTML = data;
-                })
-              }
-            })
-        );
+    promiseChain.push(
+      localforage.getItem('statsError').then(async (errStats) => {
+        if (errStats) {
+          document.getElementById("stats-out").innerHTML = errStats;
+          localforage.removeItem('statsError')
+          await sleep(2000);
+        }
+        return localforage.getItem('stats').then((dataStats) => {
+          if (dataStats) {
+            return document.getElementById("stats-out").innerHTML = dataStats;
+          } else {
+            return document.getElementById("stats-out").innerHTML = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные еще не загружены ¯\\_(ツ)_/¯</h5>Обновите страницу или вернитесь позднее :> </div>';
+          }
+        })
       })
+    );
 
-    } else {
-      promiseChain.push(
-        localforage.getItem('stats').then((data) => {
-          if (data === null) {
-            whenDomReady().then(() => {
-              document.getElementById("stats-out").innerHTML = '<h4 class="mdl-cell mdl-cell--12-col">Статистика</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\\_(ツ)_/¯</h5>Кажется, Вы в оффлайне :> </div>';
-            })
+    promiseChain.push(
+      localforage.getItem('dnevnikError').then(async (errDnevnik) => {
+        if (errDnevnik) {
+          document.getElementById("dnevnik-out").innerHTML = errDnevnik;
+          localforage.removeItem('dnevnikError')
+          await sleep(2000);
+        }
+        return localforage.getItem('dnevnik').then((dataDnevnik) => {
+          if (dataDnevnik) {
+            return document.getElementById("dnevnik-out").innerHTML = dataDnevnik;
           } else {
-            whenDomReady().then(() => {
-              document.getElementById("stats-out").innerHTML = data;
-            })
+            return document.getElementById("dnevnik-out").innerHTML = '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные еще не загружены ¯\\_(ツ)_/¯</h5>Обновите страницу или вернитесь позднее :> </div>';
           }
         })
-      );
+      })
+    );
 
-      promiseChain.push(
-        localforage.getItem('dnevnik').then((data) => {
-          if (data === null) {
-              whenDomReady().then(() => {
-                document.getElementById("dnevnik-out").innerHTML = '<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4><div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;"></i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><h5>Данные не получены ¯\\_(ツ)_/¯</h5>Кажется, Вы в оффлайне :> </div>';
-              })
+    promiseChain.push(
+      localforage.getItem('feedError').then(async (errFeed) => {
+        if (errFeed) {
+          document.getElementById("feed-data").innerHTML = errFeed;
+          localforage.removeItem('feedError')
+          await sleep(2000);
+        }
+        return localforage.getItem('feed').then((dataFeed) => {
+          if (dataFeed) {
+            return document.getElementById("feed-data").innerHTML = dataFeed;
           } else {
-            whenDomReady().then(() => {
-              document.getElementById("dnevnik-out").innerHTML = data;
-            })
+            return document.getElementById("feed-data").innerHTML = '<h4>О проекте</h4>DnevnikClient - облегченная версия Дневник.Ру, расчитанная на просмотр данных, помещенная в рамки Material Design. Клиент предоставляет функционал ровно в такой мере, которая требуется ученикам. Без тяжелого обвеса вроде ReactJS, избыточных элементов интерфейса и функционала "соцсети". <br> Ничего лишнего. <br>Исходный код доступен в моем <a href="https://github.com/limitedeternity/dnevnik-client/" target="_blank" rel="noopener">репозитории GitHub</a>. <br>By <a href="https://github.com/limitedeternity/" target="_blank" rel="noopener">@limitedeternity</a>';
           }
         })
-      );
-
-      promiseChain.push(
-        localforage.getItem('feed').then((data) => {
-          if (data === null) {
-              whenDomReady().then(() => {
-                document.getElementById("feedData").innerHTML = '<h4>О проекте</h4>DnevnikClient - облегченная версия Дневник.Ру, расчитанная на просмотр данных, помещенная в рамки Material Design. Клиент предоставляет функционал ровно в такой мере, которая требуется ученикам. Без тяжелого обвеса вроде ReactJS, избыточных элементов интерфейса и функционала "соцсети". <br> Ничего лишнего. <br>Исходный код доступен в моем <a href="https://github.com/limitedeternity/dnevnik-client/" target="_blank" rel="noopener">репозитории GitHub</a>. <br>By <a href="https://github.com/limitedeternity/" target="_blank" rel="noopener">@limitedeternity</a>';
-              })
-          } else {
-            whenDomReady().then(() => {
-              document.getElementById("feedData").innerHTML = data;
-            })
-          }
-        })
-      );
-    }
-
-    Promise.all(promiseChain).catch((error) => {console.log(error)});
+      })
+    );
 
     whenDomReady().then(() => {
-      document.getElementById("dnevnik-date").addEventListener("submit", (event) => {
-          event.preventDefault();
-          let form = event.target;
+      return Promise.all(promiseChain).then(() => {
+        document.getElementById("dnevnik-date").addEventListener("submit", (event) => {
+            event.preventDefault();
+            let form = event.target;
 
-          if (!navigator.onLine) {
-            localforage.getItem('dnevnik').then((data) => {
-              document.getElementById("dnevnik-out").innerHTML = data;
-            })
-            return;
-          }
-
-          document.getElementById("dnevnik-out").innerHTML = "<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>";
-
-          fetch("/dnevnik", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
-                return response.json();
-              }).then((json) => {
-                document.getElementById("dnevnik-out").innerHTML = json;
+            if (!navigator.onLine) {
+              localforage.getItem('dnevnik').then((data) => {
+                document.getElementById("dnevnik-out").innerHTML = data;
               })
-      });
-
-      document.getElementById("dnevnik-stats").addEventListener("submit", (event) => {
-          event.preventDefault();
-          let form = event.target;
-
-          if (!navigator.onLine) {
-            localforage.getItem('stats').then((data) => {
-              document.getElementById("stats-out").innerHTML = data;
-            })
-            return;
-          }
-          document.getElementById("stats-out").innerHTML = "<h4 class='mdl-cell mdl-cell--12-col'>Статистика</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>";
-
-          fetch("/stats", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
-              return response.json();
-            }).then((json) => {
-              document.getElementById("stats-out").innerHTML = json;
-            });
-      });
-
-      document.getElementById("dnevnik-settings").addEventListener("submit", (event) => {
-          event.preventDefault();
-          let form = event.target;
-
-          if (!navigator.onLine) {return;}
-          fetch("/apply", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
-              return response.json();
-            }).then((json) => {
-            document.getElementById("error").innerHTML = json;
-
-            if (json.includes("color:red;")) {
-              setTimeout(() => {document.getElementById("error").innerHTML = ''}, 3000);
               return;
             }
 
-            setTimeout(() => {location.replace("/")}, 500);
-          });
-     });
+            document.getElementById("dnevnik-out").innerHTML = "<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>";
 
-     document.getElementById("logout").addEventListener("click", (event) => {
-         event.preventDefault();
-         if (navigator.onLine) {
-             localforage.clear();
-             if ('serviceWorker' in navigator) {
-               navigator.serviceWorker.getRegistrations().then((t) => {t.forEach((k) => {k.unregister()})});
-             }
-             location.replace("/logout");
-         }
-     });
+            fetch("/dnevnik", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((responseDnevnik) => {
+                  return response.json();
+                }).then((jsonDnevnik) => {
+                  document.getElementById("dnevnik-out").innerHTML = jsonDnevnik;
+                })
+        });
 
-     document.getElementById("reset-storage").addEventListener("click", (event) => {
-         event.preventDefault();
-         if (navigator.onLine) {
-             localforage.clear();
-             location.reload();
-         }
-     });
+        document.getElementById("dnevnik-settings").addEventListener("submit", (event) => {
+            event.preventDefault();
+            let form = event.target;
 
-     if (Notification.permission === 'denied' || Notification.permission === "default") {
-       Notification.requestPermission();
-     }
-   });
+            if (!navigator.onLine) {return;}
+            fetch("/apply", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((response) => {
+                return response.json();
+              }).then(async (json) => {
+              document.getElementById("error").innerHTML = json;
+
+              if (json.includes("color:red;")) {
+                await sleep(3000);
+                document.getElementById("error").innerHTML = '';
+                return;
+              }
+
+              await sleep(500);
+              location.replace("/");
+            });
+       });
+
+       document.getElementById("logout").addEventListener("click", (event) => {
+           event.preventDefault();
+           if (navigator.onLine) {
+               localforage.clear();
+               if ('serviceWorker' in navigator) {
+                 navigator.serviceWorker.getRegistrations().then((t) => {t.forEach((k) => {k.unregister()})});
+               }
+               location.replace("/logout");
+           }
+       });
+
+       document.getElementById("reset-storage").addEventListener("click", (event) => {
+           event.preventDefault();
+           if (navigator.onLine) {
+               localforage.clear();
+               location.reload();
+           }
+       });
+
+       if (Notification.permission !== 'denied' || Notification.permission === "default") {
+         Notification.requestPermission();
+       }
+      })
+    });
   }
 
   HTMLDocument.prototype.__defineGetter__("write", () => {

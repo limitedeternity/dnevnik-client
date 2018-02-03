@@ -103,7 +103,7 @@
                 <header class="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"></header>
             {% endif %}
             <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
-              <div class="mdl-card__supporting-text" id="feedData">
+              <div class="mdl-card__supporting-text" id="feed-data">
                 <div class='loader'>Loading...</div>
               </div>
             </div>
@@ -146,23 +146,6 @@
           </section>
         </div>
         <div class="mdl-layout__tab-panel" id="stats">
-          <section class="section--center mdl-grid mdl-grid--no-spacing">
-            <div class="mdl-card mdl-cell mdl-cell--12-col mdl-shadow--4dp">
-              <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
-                <h4 class="mdl-cell mdl-cell--12-col">Запрос</h4>
-                <form action="/stats" method="post" id="dnevnik-stats">
-                  <div style="display:block; height: 5px; clear:both;"></div>
-                  <button type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--primary">
-                      <i class="material-icons">arrow_forward</i>
-                      <span class="visuallyhidden">Next</span>
-                      <span class="mdl-button__ripple-container">
-                          <span class="mdl-ripple is-animating" style="width: 160.392px; height: 160.392px; transform: translate(-50%, -50%) translate(14px, 16px);"></span>
-                      </span>
-                  </button>
-                </form>
-              </div>
-            </div>
-          </section>
           <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--4dp">
             <div class="mdl-card mdl-cell mdl-cell--12-col">
               <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing" id="stats-out">

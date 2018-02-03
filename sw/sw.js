@@ -24,9 +24,47 @@ self.addEventListener('sync', (event) => {
 });
 
 const fetchSync = () => {
-  return localforage.getItem('pushSettings').then((data) => {
-    return fetch('/up').then(() => {
-      return fetch("/feed", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, credentials: 'same-origin', body: JSON.stringify({".": "1"})}).then(() => {
+  let promiseChain = [];
+
+  promiseChain.push(
+    fetch("/feed", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((responseFeed) => {
+      return responseFeed.json();
+    }).then((jsonFeed) => {
+      if (jsonFeed.includes("¯\\_(ツ)_/¯")) {
+        return localforage.setItem('feedError', jsonFeed)
+      } else {
+        return localforage.setItem('feed', jsonFeed)
+      }
+    })
+  );
+
+  promiseChain.push(
+    fetch("/dnevnik", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((responseDnevnik) => {
+      return responseDnevnik.json();
+    }).then((jsonDnevnik) => {
+      if (jsonDnevnik.includes("¯\\_(ツ)_/¯")) {
+        return localforage.setItem('dnevnikError', jsonDnevnik)
+      } else {
+        return localforage.setItem('dnevnik', jsonDnevnik)
+      }
+    })
+  );
+
+  promiseChain.push(
+    fetch("/stats", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((responseStats) => {
+      return responseStats.json();
+    }).then((jsonStats) => {
+      if (jsonStats.includes("¯\\_(ツ)_/¯")) {
+        return localforage.setItem('statsError', jsonStats)
+      } else {
+        return localforage.setItem('stats', jsonStats)
+      }
+    })
+  );
+
+  return fetch('/up').then(() => {
+    return Promise.all(promiseChain).then(() => {
+      return localforage.getItem('pushSettings').then((data) => {
         return fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'})
       })
     })
@@ -36,7 +74,7 @@ const fetchSync = () => {
 self.addEventListener('push', (event) => {
   localforage.getItem("pushData").then((data) => {
     if (!(data === event.data.text())) {
-      let title = 'Обновление сводки';
+      let title = 'Сводка';
       let options = {
         body: event.data.text(),
         icon: '/images/android-icon-96x96.png',
