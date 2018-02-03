@@ -9,12 +9,18 @@ self.addEventListener('install', (event) => {
 self.addEventListener('sync', (event) => {
   if (event.tag === 'dnevnik-notif-sync') {
     console.log("Sync started");
-    event.waitUntil(fetchSync());
+    event.waitUntil(fetchSync(event));
     console.log("Sync finished");
   }
 });
 
-const fetchSync = () => {
+/*
+self.addEventListener('message', (event) => {
+  event.source.postMessage("Response");
+});
+*/
+
+const fetchSync = (event) => {
   let promiseChain = [];
 
   promiseChain.push(
@@ -57,7 +63,7 @@ const fetchSync = () => {
     return Promise.all(promiseChain).then(() => {
       return localforage.getItem('pushSettings').then((data) => {
         return fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'}).then(() => {
-          return localforage.setItem("delayedOutput", "1")
+          return event.source.postMessage("syncFinished");
         })
       })
     })
