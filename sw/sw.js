@@ -56,7 +56,9 @@ const fetchSync = () => {
   return fetch('/up').then(() => {
     return Promise.all(promiseChain).then(() => {
       return localforage.getItem('pushSettings').then((data) => {
-        return fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'})
+        return fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'}).then(() => {
+          return localforage.setItem("delayedOutput", "1")
+        })
       })
     })
   })

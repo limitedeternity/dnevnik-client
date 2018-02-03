@@ -41,7 +41,7 @@
 
   } else if (location.pathname == "/main") {
 
-    let promiseChain = [];
+    let nextPromiseChain = [];
 
     const serialize = (formElement) => {
       let object = {};
@@ -87,8 +87,6 @@
                 })
               }
             })
-
-            registration.sync.register('dnevnik-notif-sync');
             /*
             registration.sync.register({
               id: 'dnevnik-notif-sync',
@@ -96,10 +94,11 @@
               minRequiredNetwork: 'network-any'
             })
             */
+            registration.sync.register('dnevnik-notif-sync');
         })
     }
 
-    promiseChain.push(
+    nextPromiseChain.push(
       localforage.getItem('statsError').then(async (errStats) => {
         if (errStats) {
           document.getElementById("stats-out").innerHTML = errStats;
@@ -116,7 +115,7 @@
       })
     );
 
-    promiseChain.push(
+    nextPromiseChain.push(
       localforage.getItem('dnevnikError').then(async (errDnevnik) => {
         if (errDnevnik) {
           document.getElementById("dnevnik-out").innerHTML = errDnevnik;
@@ -133,7 +132,7 @@
       })
     );
 
-    promiseChain.push(
+    nextPromiseChain.push(
       localforage.getItem('feedError').then(async (errFeed) => {
         if (errFeed) {
           document.getElementById("feed-data").innerHTML = errFeed;
@@ -151,19 +150,18 @@
     );
 
     whenDomReady().then(() => {
-      var not_checked = true;
-      while (not_checked) {
-        navigator.serviceWorker.ready.then((registration) => {
-          registration.sync.getTags().then(async (tags) => {
-              if (tags.length === 0) {
-                not_checked = false;
-              }
-              await sleep(10);
-          })
+      var delay = true;
+      while (delay) {
+        localforage.getItem("delayedOutput").then((out) => {
+          if (out === "1") {
+            delay = false;
+            return localforage.removeItem("delayedOutput");
+          }
+          return;
         })
       }
 
-      return Promise.all(promiseChain).then(() => {
+      return Promise.all(nextPromiseChain).then(() => {
         document.getElementById("dnevnik-date").addEventListener("submit", (event) => {
             event.preventDefault();
             let form = event.target;
