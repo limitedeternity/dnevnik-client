@@ -97,15 +97,11 @@
                     minPeriod: 60 * 1000 * 10,
                     powerState: 'auto',
                     networkState: 'any'
-                  }).then(() => {
-                    console.log("Periodic sync registered.");
                   })
                 }
               })
             } else if (registration.sync) {
-              registration.sync.register('dnevnik-notif-sync').then(() => {
-                console.log("Sync initiated.");
-              })
+              registration.sync.register('dnevnik-notif-sync')
             }
           }
         })
@@ -169,9 +165,6 @@
             let form = event.target;
 
             if (!navigator.onLine) {
-              localforage.getItem('dnevnik').then((data) => {
-                document.getElementById("dnevnik-out").innerHTML = data;
-              })
               return;
             }
 

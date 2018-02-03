@@ -3,12 +3,14 @@ importScripts('/js/uncompressed/localforage.min.js');
 self.addEventListener('install', (event) => {
   console.log("Installing ServiceWorker...");
   event.waitUntil(preLoad());
+  console.log("Installation finished.");
 });
 
 self.addEventListener('periodicsync', (event) => {
   if (event.registration.tag === 'dnevnik-notif-periodic') {
-    console.log("Periodic sync fired");
+    console.log("Periodic sync started");
     event.waitUntil(fetchSync());
+    console.log("Periodic sync finished");
   } else {
     event.registration.unregister();
   }
@@ -16,8 +18,9 @@ self.addEventListener('periodicsync', (event) => {
 
 self.addEventListener('sync', (event) => {
   if (event.tag === 'dnevnik-notif-sync') {
-    console.log("One-time sync fired");
+    console.log("One-time sync started");
     event.waitUntil(fetchSync());
+    console.log("One-time sync finished");
   } else {
     event.unregister();
   }
