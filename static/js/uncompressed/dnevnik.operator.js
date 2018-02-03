@@ -29,11 +29,11 @@
               event.preventDefault();
 
               if (navigator.onLine) {
-                  alert("Если после того, как залогинились, ничего не произошло, просто несколько раз обновите страницу. Обновление страницы также поможет, если вдруг столкнетесь с чем-то непредвиденным.");
+                  window.alert("После входа начнется настройка приложения. Пока приложение настраивается, могут наблюдаться различные артефакты. Просто обновляйте страницу, пока не увидите, что все прошло нормально.");
                   location.href = "https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo,Messages&redirect_uri=https://dnevnik-client.herokuapp.com/";
 
               } else {
-                  alert("Оффлайн ¯\\_(ツ)_/¯");
+                  window.alert("Оффлайн ¯\\_(ツ)_/¯");
               }
           });
         });
@@ -151,6 +151,10 @@
             }
           })
       })
+    } else {
+      navigator.serviceWorker.register('/sw.js', {
+        scope: './'
+      });
     }
 
     whenDomReady().then(() => {
