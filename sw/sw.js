@@ -6,21 +6,16 @@ self.addEventListener('install', (event) => {
   console.log("Installation finished.");
 });
 
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'dnevnik-notif-sync') {
-    console.log("Sync started");
-    event.waitUntil(fetchSync(event));
-    console.log("Sync finished");
+self.addEventListener('message', (event) => {
+  if (event.data === "startSync") {
+    console.log("Sync initiated.");
+    event.waitUntil(fetchSync());
+    event.source.postMessage("syncFinished");
+    console.log("Sync finished.");
   }
 });
 
-/*
-self.addEventListener('message', (event) => {
-  event.source.postMessage("Response");
-});
-*/
-
-const fetchSync = (event) => {
+const fetchSync = () => {
   let promiseChain = [];
 
   promiseChain.push(
@@ -62,9 +57,7 @@ const fetchSync = (event) => {
   return fetch('/up').then(() => {
     return Promise.all(promiseChain).then(() => {
       return localforage.getItem('pushSettings').then((data) => {
-        return fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'}).then(() => {
-          return event.source.postMessage("syncFinished");
-        })
+        return fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'})
       })
     })
   })

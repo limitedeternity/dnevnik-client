@@ -150,14 +150,7 @@
               })
             }
           })
-          /*
-          registration.sync.register({
-            id: 'dnevnik-notif-sync',
-            minPeriod: 60 * 1000 * 5,
-            minRequiredNetwork: 'network-any'
-          })
-          */
-          registration.sync.register('dnevnik-notif-sync');
+          navigator.serviceWorker.controller.postMessage("startSync");
       })
     }
 
