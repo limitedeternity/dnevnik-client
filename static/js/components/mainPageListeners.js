@@ -16,6 +16,12 @@
     return JSON.stringify(object);
   }
 
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js', {scope: './'});
+    });
+  }
+
   whenDomReady().then(() => {
     document.getElementById("dnevnik-date").addEventListener("submit", (event) => {
         event.preventDefault();

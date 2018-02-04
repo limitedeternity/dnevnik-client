@@ -7,6 +7,10 @@ self.addEventListener('install', (event) => {
 
 const registerRoutes = () => {
   workbox.core.setLogLevel(workbox.core.LOG_LEVELS.warn);
+  workbox.core.setCacheNameDetails({
+    prefix: 'dnevnik-sw',
+    suffix: '🎉'
+  });
   workbox.routing.registerRoute(
     new RegExp('\/js\/(?:libs|ui)\/.*\.js'),
     workbox.strategies.cacheFirst({
