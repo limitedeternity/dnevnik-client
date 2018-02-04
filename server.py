@@ -42,52 +42,6 @@ Required functionality
 '''
 
 
-@app.after_request
-def set_headers(response):
-    response.direct_passthrough = False
-
-    if request.method == "GET":
-        accept_encoding = request.headers.get('Accept-Encoding', '')
-
-        if 'gzip' not in accept_encoding.lower():
-            return response
-
-        if (response.status_code < 200 or response.status_code > 300 or 'Content-Encoding' in response.headers):
-            return response
-
-        if request.path.endswith(".js.gz"):
-            response.headers['Content-Encoding'] = 'gzip'
-            response.headers['Vary'] = 'Accept-Encoding'
-            response.headers['Content-Type'] = 'application/javascript'
-            response.headers['Server'] = 'Unicorn'
-            response.headers['Content-Length'] = len(response.data)
-            return response
-
-        elif request.path.endswith(".css.gz"):
-            response.headers['Content-Encoding'] = 'gzip'
-            response.headers['Vary'] = 'Accept-Encoding'
-            response.headers['Content-Type'] = 'text/css'
-            response.headers['Server'] = 'Unicorn'
-            response.headers['Content-Length'] = len(response.data)
-            return response
-
-        elif request.path.endswith("sw.js"):
-            response.headers['Cache-Control'] = 'no-cache, max-age=0'
-            response.headers['Server'] = 'Unicorn'
-            return response
-
-        else:
-            response.headers['X-Content-Type-Options'] = 'nosniff'
-            response.headers['X-Frame-Options'] = 'DENY'
-            response.headers['X-XSS-Protection'] = '1; mode=block'
-            response.headers['Server'] = 'Unicorn'
-            response.headers['Strict-Transport-Security'] = 'max-age=31536000'
-            return response
-
-    else:
-        return response
-
-
 def timeDate(typeDate, offset, feed=False):
     time = None
 
@@ -184,6 +138,10 @@ def push():
 @app.route("/", methods=['GET'])
 def index():
     response = make_response(render_template('index.html'))
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000'
     return response
 
 
@@ -222,6 +180,10 @@ def main():
     else:
         response = make_response(redirect("/"))
 
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000'
     return response
 
 
