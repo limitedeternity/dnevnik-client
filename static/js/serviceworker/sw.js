@@ -7,10 +7,6 @@ self.addEventListener('install', (event) => {
 
 const registerRoutes = () => {
   workbox.core.setLogLevel(workbox.core.LOG_LEVELS.warn);
-  workbox.core.setCacheNameDetails({
-    prefix: 'dnevnik-sw',
-    suffix: '🎉'
-  });
   workbox.routing.registerRoute(
     new RegExp('\/js\/(?:libs|ui)\/.*\.js'),
     workbox.strategies.cacheFirst({
@@ -20,6 +16,7 @@ const registerRoutes = () => {
           maxAgeSeconds: 30 * 24 * 60 * 60,
         }),
       ],
+      cacheableResponse: {statuses: [0, 200]}
     })
   );
 
@@ -33,6 +30,7 @@ const registerRoutes = () => {
           maxAgeSeconds: 30 * 24 * 60 * 60,
         }),
       ],
+      cacheableResponse: {statuses: [0, 200]}
     }),
   );
 
@@ -45,6 +43,7 @@ const registerRoutes = () => {
           maxEntries: 5,
         }),
       ],
+      cacheableResponse: {statuses: [0, 200]}
     }),
   );
 
@@ -57,6 +56,7 @@ const registerRoutes = () => {
           maxEntries: 5,
         }),
       ],
+      cacheableResponse: {statuses: [0, 200]}
     }),
   );
 
@@ -64,6 +64,7 @@ const registerRoutes = () => {
     new RegExp('\/js\/components\/.*\.js'),
     workbox.strategies.staleWhileRevalidate({
       cacheName: 'js-components',
+      cacheableResponse: {statuses: [0, 200]}
     }),
   );
 
@@ -71,6 +72,7 @@ const registerRoutes = () => {
     new RegExp('\/(?:main|)'),
     workbox.strategies.staleWhileRevalidate({
       cacheName: 'routes',
+      cacheableResponse: {statuses: [0, 200]}
     }),
   );
 
@@ -78,6 +80,7 @@ const registerRoutes = () => {
     new RegExp('\/config\/.*'),
     workbox.strategies.networkFirst({
       cacheName: 'config',
+      cacheableResponse: {statuses: [0, 200]}
     }),
   );
 

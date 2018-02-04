@@ -596,7 +596,9 @@ def serve_config(path):
 
 @app.route('/sw.js', methods=['GET'])
 def serviceworker():
-    return send_from_directory('static/js/serviceworker', 'sw.js')
+    response = make_response(send_from_directory('static/js/serviceworker', 'sw.js'))
+    response.headers['Cache-Control'] = 'no-cache, max-age=0'
+    return response
 
 
 if __name__ == "__main__":
