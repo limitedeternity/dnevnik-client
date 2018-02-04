@@ -4,6 +4,7 @@ self.addEventListener('install', (event) => {
   console.log("Installing ServiceWorker...");
   event.waitUntil(preLoad());
   console.log("Installation finished.");
+  return self.skipWaiting();
 });
 
 self.addEventListener('message', (event) => {
@@ -199,4 +200,5 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  return self.clients.claim();
 });
