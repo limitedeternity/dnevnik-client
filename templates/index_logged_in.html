@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
     <title>DnevnikClient</title>
       <meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
@@ -13,39 +13,44 @@
       <meta name="author" content="limitedeternity" />
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
-    <script async type="text/javascript" src="/js/compressed.js.br"></script>
-    <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/Roboto.css.br">
-    <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/md_icons.css.br">
+      <link rel="serviceworker" href="/sw.js" scope="./">
+      <link rel="preload" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/css?family=Roboto:400,500&amp;subset=cyrillic">
+      <link rel="preload" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+      <link rel="preload" as="script" href="/js/libs/domReady.js" onload="var script=document.createElement('script');script.src=this.href;document.body.appendChild(script);">
+      <link rel="preload" as="script" href="/js/libs/localforage.min.js" onload="var script=document.createElement('script');script.src=this.href;document.body.appendChild(script);">
+      <link rel="preload" as="script" href="/js/libs/js.cookie.min.js" onload="var script=document.createElement('script');script.src=this.href;document.body.appendChild(script);">
+      <link rel="preload" as="script" href="/js/ui/material.min.js" onload="var script=document.createElement('script');script.src=this.href;document.body.appendChild(script);">
+      <script async src="/js/components/initScripts.js"></script>
     {% if request.cookies.get('Theme') == "Teal" %}
         <meta name="msapplication-TileColor" content="teal">
         <meta name="msapplication-navbutton-color" content="teal">
         <meta name="theme-color" content="teal">
-        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/material.teal-blue.min.css.br">
-        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/styles-teal.css.br">
+        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/material.teal-blue.min.css">
+        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/styles-teal.css">
     {% elif request.cookies.get('Theme') == "Deep Orange" %}
         <meta name="msapplication-TileColor" content="#FF5722">
         <meta name="msapplication-navbutton-color" content="#FF5722">
         <meta name="theme-color" content="#FF5722">
-        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/material.deep_orange-blue.min.css.br">
-        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/styles-deep_orange.css.br">
+        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/material.deep_orange-blue.min.css">
+        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/styles-deep_orange.css">
     {% elif request.cookies.get('Theme') == "Deep Purple" %}
         <meta name="msapplication-TileColor" content="#673AB7">
         <meta name="msapplication-navbutton-color" content="#673AB7">
         <meta name="theme-color" content="#673AB7">
-        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/material.deep_purple-blue.min.css.br">
-        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/styles-deep_purple.css.br">
+        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/material.deep_purple-blue.min.css">
+        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/styles-deep_purple.css">
     {% elif request.cookies.get('Theme') == "Pink" %}
         <meta name="msapplication-TileColor" content="#E91E63">
         <meta name="msapplication-navbutton-color" content="#E91E63">
         <meta name="theme-color" content="#E91E63">
-        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/material.pink-blue.min.css.br">
-        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/styles-pink.css.br">
+        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/material.pink-blue.min.css">
+        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/styles-pink.css">
     {% else %}
         <meta name="msapplication-TileColor" content="teal">
         <meta name="msapplication-navbutton-color" content="teal">
         <meta name="theme-color" content="teal">
-        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/material.teal-blue.min.css.br">
-        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/styles-teal.css.br">
+        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/material.teal-blue.min.css">
+        <link rel="preload" as="style" onload="this.rel='stylesheet'" href="/css/styles-teal.css">
     {% endif %}
     <link rel="apple-touch-icon" sizes="57x57" href="/images/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/images/apple-icon-60x60.png">
@@ -288,6 +293,5 @@
         </div>
       </main>
     </div>
-    <script async type="text/javascript" src="/js/material.min.js.br" defer></script>
   </body>
 </html>

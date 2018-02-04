@@ -41,6 +41,7 @@ compress.init_app(app)
 Required functionality
 '''
 
+
 @app.after_request
 def set_headers(response):
     response.direct_passthrough = False
@@ -48,22 +49,22 @@ def set_headers(response):
     if request.method == "GET":
         accept_encoding = request.headers.get('Accept-Encoding', '')
 
-        if 'br' not in accept_encoding.lower():
+        if 'gzip' not in accept_encoding.lower():
             return response
 
-        if (response.status_code < 200 or response.status_code > 304 or 'Content-Encoding' in response.headers):
+        if (response.status_code < 200 or response.status_code > 300 or 'Content-Encoding' in response.headers):
             return response
 
-        if request.path.endswith(".js.br"):
-            response.headers['Content-Encoding'] = 'br'
+        if request.path.endswith(".js.gz"):
+            response.headers['Content-Encoding'] = 'gzip'
             response.headers['Vary'] = 'Accept-Encoding'
             response.headers['Content-Type'] = 'application/javascript'
             response.headers['Server'] = 'Unicorn'
             response.headers['Content-Length'] = len(response.data)
             return response
 
-        elif request.path.endswith(".css.br"):
-            response.headers['Content-Encoding'] = 'br'
+        elif request.path.endswith(".css.gz"):
+            response.headers['Content-Encoding'] = 'gzip'
             response.headers['Vary'] = 'Accept-Encoding'
             response.headers['Content-Type'] = 'text/css'
             response.headers['Server'] = 'Unicorn'
@@ -626,11 +627,6 @@ def serve_images(path):
     return send_from_directory('static/images', path)
 
 
-@app.route('/fonts/<path:path>', methods=['GET'])
-def serve_fonts(path):
-    return send_from_directory('static/fonts', path)
-
-
 @app.route('/config/<path:path>', methods=['GET'])
 def serve_config(path):
     return send_from_directory('static/config', path)
@@ -638,7 +634,7 @@ def serve_config(path):
 
 @app.route('/sw.js', methods=['GET'])
 def serviceworker():
-    return send_from_directory('sw', 'sw.js')
+    return send_from_directory('static/js/serviceworker', 'sw.js')
 
 
 if __name__ == "__main__":
