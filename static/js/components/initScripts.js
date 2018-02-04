@@ -4,6 +4,7 @@
   const loadJS = (script) => {
     let s = document.createElement('script');
     s.src = script;
+    s.type = 'application/javascript';
     document.body.appendChild(s);
   }
 
