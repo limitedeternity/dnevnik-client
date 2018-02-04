@@ -221,7 +221,11 @@
        }
 
        if (navigator.serviceWorker.controller) {
-         navigator.serviceWorker.controller.postMessage("startSync");
+         if (navigator.onLine) {
+           navigator.serviceWorker.controller.postMessage("startSync");
+         } else {
+           navigator.serviceWorker.controller.postMessage("restoreData");
+         }
        }
     })
   }

@@ -7,8 +7,17 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('message', (event) => {
-  if (event.data === "startSync") {
-    event.waitUntil(fetchSync(event.source));
+  switch (event.data) {
+    case "startSync":
+      event.waitUntil(fetchSync(event.source));
+      break;
+
+    case "restoreData":
+      event.source.postMessage("syncFinished");
+      break;
+
+    default:
+      break;
   }
 });
 

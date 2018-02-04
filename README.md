@@ -6,7 +6,7 @@ in Python (see `server.py`). Project also has an Android app (see `android_app` 
 
 ## Features:
 
-✨ Offline functionality for browsers supporing Service Worker feature.
+✨ Service Worker based.
 
 ✨ Last requested data is saved to offline.
 
@@ -16,7 +16,7 @@ in Python (see `server.py`). Project also has an Android app (see `android_app` 
 
 ## Functionality:
 
-💪 Support for "Parent" and "Pupil" account type.
+💪 Support for "Pupil" account type.
 
 🌚 Diary and statistics with final marks.
 
