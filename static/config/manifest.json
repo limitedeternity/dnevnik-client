@@ -4,7 +4,7 @@
 	"name": "DnevnikClient",
 	"scope": "/",
 	"display": "standalone",
-	"start_url": "https://dnevnik-client.herokuapp.com/",
+	"start_url": "https://dnevnik-client.herokuapp.com/main",
 	"short_name": "Dnevnik",
 	"theme_color": "transparent",
 	"description": "Облегченная версия Дневник.Ру.",
