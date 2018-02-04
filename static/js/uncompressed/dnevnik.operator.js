@@ -154,6 +154,8 @@
     } else {
       navigator.serviceWorker.register('/sw.js', {
         scope: './'
+      }).then(() => {
+        location.reload()
       });
     }
 
@@ -167,7 +169,7 @@
             document.getElementById("dnevnik-out").innerHTML = "<h4 class='mdl-cell mdl-cell--12-col'>Дневник</h4></div><div class='section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone'><div class='loader'>Loading...</div></div>";
 
             fetch("/dnevnik", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: serialize(form), credentials: 'same-origin'}).then((responseDnevnik) => {
-                  return response.json();
+                  return responseDnevnik.json();
                 }).then((jsonDnevnik) => {
                   document.getElementById("dnevnik-out").innerHTML = jsonDnevnik;
                 })
