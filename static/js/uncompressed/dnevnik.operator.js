@@ -13,7 +13,9 @@
         whenDomReady().then(() => {
           document.getElementById("nav").innerHTML = '<a href="#overview" class="mdl-layout__tab is-active">Загрузка...</a>';
           document.getElementById("text").innerHTML = "<div class='loader'>Loading...</div>";
-          location.replace("/main");
+          setTimeout(() => {
+            location.replace("/main");
+          }, 500);
         });
 
       } else if (location.href.includes("#access_token=")) {
@@ -29,11 +31,11 @@
               event.preventDefault();
 
               if (navigator.onLine) {
-                  window.alert("После входа начнется настройка приложения. Пока приложение настраивается, могут наблюдаться различные артефакты. Просто обновляйте страницу, пока не увидите, что все прошло нормально.");
+                  alert("После входа начнется настройка приложения. Пока приложение настраивается, могут наблюдаться различные артефакты. Просто обновляйте страницу, пока не увидите, что все прошло нормально.");
                   location.href = "https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo,Messages&redirect_uri=https://dnevnik-client.herokuapp.com/";
 
               } else {
-                  window.alert("Оффлайн ¯\\_(ツ)_/¯");
+                  alert("Оффлайн ¯\\_(ツ)_/¯");
               }
           });
         });
@@ -228,6 +230,11 @@
          }
        }
     })
+  }
+
+  if (!'serviceWorker' in navigator) {
+    alert("ServiceWorker не поддерживается вашим браузером. Печаль-беда. Обновите ваш браузер и возвращайтесь поскорее!");
+    location.replace("https://dnevnik.ru/");
   }
 
   HTMLDocument.prototype.__defineGetter__("write", () => {
