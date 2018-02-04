@@ -16,11 +16,11 @@
       <link rel="serviceworker" href="/sw.js" scope="./">
       <link rel="preload" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/css?family=Roboto:400,500&amp;subset=cyrillic">
       <link rel="preload" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-      <link rel="preload" as="script" href="/js/libs/domReady.js" onload="var script=document.createElement('script');script.src=this.href;document.body.appendChild(script);">
-      <link rel="preload" as="script" href="/js/libs/localforage.min.js" onload="var script=document.createElement('script');script.src=this.href;document.body.appendChild(script);">
-      <link rel="preload" as="script" href="/js/libs/js.cookie.min.js" onload="var script=document.createElement('script');script.src=this.href;document.body.appendChild(script);">
-      <link rel="preload" as="script" href="/js/ui/material.min.js" onload="var script=document.createElement('script');script.src=this.href;document.body.appendChild(script);">
-      <script async src="/js/components/initScripts.js"></script>
+      <link rel="preload" as="script" href="/js/libs/domReady.js" onload="var script=document.createElement('script');script.src=this.href;script.type='application/javascript';document.body.appendChild(script);">
+      <link rel="preload" as="script" href="/js/libs/localforage.min.js" onload="var script=document.createElement('script');script.src=this.href;script.type='application/javascript';document.body.appendChild(script);">
+      <link rel="preload" as="script" href="/js/libs/js.cookie.min.js" onload="var script=document.createElement('script');script.src=this.href;script.type='application/javascript';document.body.appendChild(script);">
+      <link rel="preload" as="script" href="/js/ui/material.min.js" onload="var script=document.createElement('script');script.src=this.href;script.type='application/javascript';document.body.appendChild(script);">
+      <script async type="application/javascript" src="/js/components/initScripts.js"></script>
     {% if request.cookies.get('Theme') == "Teal" %}
         <meta name="msapplication-TileColor" content="teal">
         <meta name="msapplication-navbutton-color" content="teal">

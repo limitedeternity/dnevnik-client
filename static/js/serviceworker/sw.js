@@ -1,4 +1,4 @@
-importScripts('/js/libs/localforage.min.js.gz', '/js/libs/workbox-sw.js.gz');
+importScripts('/js/libs/localforage.min.js', '/js/libs/workbox-sw.js');
 
 self.addEventListener('install', (event) => {
   event.waitUntil(registerRoutes());
