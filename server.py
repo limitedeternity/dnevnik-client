@@ -168,11 +168,8 @@ def push():
     if not access_token or not subscription_info:
         return jsonify("Finished")
 
-    try:
-        recent_marks = redis_storage.get(f"{access_token}_marks")
-
-    except (Exception, KeyError):
-        return jsonify("Finished")
+    recent_marks = redis_storage.get(f"{access_token}_marks")
+    redis_storage.delete(f"{access_token}_marks")
 
     if not recent_marks:
         return jsonify("Finished")
@@ -607,13 +604,9 @@ def log_out():
     response = make_response(redirect('/'))
 
     if 'AccessToken' in request.cookies and not offline:
-        try:
-            redis_storage.delete(f"{access_token}_marks")
-            response.set_cookie('AccessToken', value='', max_age=0, expires=0)
-            response.set_cookie('Offset', value='', max_age=0, expires=0)
-
-        except (Exception, KeyError):
-            pass
+        redis_storage.delete(f"{access_token}_marks")
+        response.set_cookie('AccessToken', value='', max_age=0, expires=0)
+        response.set_cookie('Offset', value='', max_age=0, expires=0)
 
     return response
 
