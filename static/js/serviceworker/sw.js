@@ -64,7 +64,7 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
   new RegExp('\/(?:main|)'),
-  workbox.strategies.staleWhileRevalidate({
+  workbox.strategies.networkFirst({
     cacheName: 'routes',
     cacheableResponse: {statuses: [0, 200]}
   })
@@ -72,7 +72,7 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
   new RegExp('\/config\/.*'),
-  workbox.strategies.networkFirst({
+  workbox.strategies.cacheFirst({
     cacheName: 'config',
     cacheableResponse: {statuses: [0, 200]}
   })
