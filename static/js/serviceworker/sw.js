@@ -63,14 +63,6 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-  new RegExp('\/(?:main|)'),
-  workbox.strategies.networkFirst({
-    cacheName: 'routes',
-    cacheableResponse: {statuses: [0, 200]}
-  })
-);
-
-workbox.routing.registerRoute(
   new RegExp('\/config\/.*'),
   workbox.strategies.cacheFirst({
     cacheName: 'config',
@@ -81,6 +73,14 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
   new RegExp('\/(?:dnevnik|stats|feed|login|logout|up|apply)'),
   workbox.strategies.networkOnly(),
+);
+
+workbox.routing.registerRoute(
+  new RegExp('\/(?:main|)'),
+  workbox.strategies.networkFirst({
+    cacheName: 'routes',
+    cacheableResponse: {statuses: [0, 200]}
+  })
 );
 
 self.addEventListener('install', (event) => {
