@@ -29,7 +29,7 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-  new RegExp('\/images\/.*\.png'),
+  new RegExp('\/images\/.*\.(?:png|ico)'),
   workbox.strategies.cacheFirst({
     cacheName: 'images',
     plugins: [
@@ -84,8 +84,9 @@ workbox.routing.registerRoute(
 );
 
 self.addEventListener('install', (event) => {
-  console.log("Installed ServiceWorker");
-  return workbox.skipWaiting();
+  let urls = ["/js/libs/workbox-sw.js"];
+  event.waitUntil(caches.open('js-deps').then((cache) => cache.addAll(urls)));
+  return self.skipWaiting();
 });
 
 self.addEventListener('fetch', (event) => {
@@ -186,5 +187,5 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  return workbox.clientsClaim();
+  event.waitUntil(clients.claim());
 });
