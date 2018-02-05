@@ -60,7 +60,7 @@
           }
 
           await sleep(500);
-          location.replace("/");
+          location.reload();
         });
    });
 

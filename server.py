@@ -137,6 +137,12 @@ def push():
 
 @app.route("/", methods=['GET'])
 def index():
+    response = make_response(redirect("/home"))
+    return response
+
+
+@app.route("/home", methods=['GET'])
+def home():
     response = make_response(render_template('index.html'))
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
@@ -179,7 +185,7 @@ def main():
         response = make_response(render_template('index_logged_in.html'))
 
     else:
-        response = make_response(redirect("/"))
+        response = make_response(redirect("/home"))
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
@@ -261,7 +267,7 @@ def feed():
         return make_response(jsonify(''.join(html_out)))
 
     else:
-        response = make_response(redirect("/"))
+        response = make_response(redirect("/home"))
         return response
 
 
@@ -345,7 +351,7 @@ def stats():
         return response
 
     else:
-        response = make_response(redirect("/"))
+        response = make_response(redirect("/home"))
         return response
 
 
@@ -472,7 +478,7 @@ def dnevnik():
         return response
 
     else:
-        response = make_response(redirect("/"))
+        response = make_response(redirect("/home"))
         return response
 
 
@@ -500,7 +506,7 @@ def log_in():
             raise ConnectionError
 
     except ConnectionError:
-        response = make_response(redirect("/"))
+        response = make_response(redirect("/home"))
         response.set_cookie('AccessToken_Temp', value='', max_age=0, expires=0)
         return response
 
@@ -508,14 +514,14 @@ def log_in():
         type_block = user_data['roles']
 
     except KeyError:
-        response = make_response(redirect("/"))
+        response = make_response(redirect("/home"))
         response.set_cookie('AccessToken_Temp', value='', max_age=0, expires=0)
         return response
 
     if "EduStudent" not in type_block:
         return jsonify("Тип аккаунта не поддерживается. Ну не хочу я :c")
 
-    response = make_response(redirect("/"))
+    response = make_response(redirect("/home"))
     response.set_cookie('AccessToken_Temp', value='', max_age=0, expires=0)
     response.set_cookie('AccessToken', value=access_token, max_age=2592000, expires=2592000, secure=True)
     return response
@@ -563,7 +569,7 @@ def log_out():
     except ConnectionError:
         offline = True
 
-    response = make_response(redirect('/'))
+    response = make_response(redirect("/home"))
 
     if 'AccessToken' in request.cookies and not offline:
         redis_storage.delete(f"{access_token}_marks")

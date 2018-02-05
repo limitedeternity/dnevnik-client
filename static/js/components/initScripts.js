@@ -9,7 +9,7 @@
   }
 
   switch (location.pathname) {
-    case "/":
+    case "/home":
       var componentScripts = ["/js/components/commonPageActions.js", "/js/components/homePageListeners.js"];
       break;
 
