@@ -13,7 +13,7 @@
     return outputArray;
   }
 
-  if (Notification.permission !== 'denied' || Notification.permission === "default") {
+  if (Notification.permission === "default") {
     Notification.requestPermission();
   }
 
