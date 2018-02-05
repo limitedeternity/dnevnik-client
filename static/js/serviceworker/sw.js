@@ -1,4 +1,4 @@
-importScripts('/js/libs/localforage.min.js', '/js/libs/workbox-sw.js');
+importScripts('/js/libs/localforage.min.js', 'https://storage.googleapis.com/workbox-cdn/releases/3.0.0-beta.0/workbox-sw.js');
 
 workbox.core.setLogLevel(workbox.core.LOG_LEVELS.warn);
 workbox.routing.registerRoute(
@@ -84,8 +84,6 @@ workbox.routing.registerRoute(
 );
 
 self.addEventListener('install', (event) => {
-  let urls = ["/js/libs/workbox-sw.js"];
-  event.waitUntil(caches.open('js-deps').then((cache) => cache.addAll(urls)));
   return self.skipWaiting();
 });
 
