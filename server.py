@@ -171,9 +171,10 @@ def main():
         except ConnectionError:
             offline = True
 
-        if 'apiRequestLimit' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
-            response = make_response(redirect("/logout"))
-            return response
+        if not offline:
+            if 'apiRequestLimit' in user_data.values() or 'parameterInvalid' in user_data.values() or 'invalidToken' in user_data.values():
+                response = make_response(redirect("/logout"))
+                return response
 
         response = make_response(render_template('index_logged_in.html'))
 
@@ -477,8 +478,6 @@ def dnevnik():
 
 @app.route("/login", methods=['GET'])
 def log_in():
-    accounttype = None
-
     s = CacheControl(Session())
     s.mount('http://', HTTPAdapter(max_retries=5))
     s.mount('https://', HTTPAdapter(max_retries=5))

@@ -18,7 +18,11 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js', {scope: './'});
+      if (!navigator.serviceWorker.controller) {
+        navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(() => {
+          location.reload();
+        });
+      }
     });
   }
 

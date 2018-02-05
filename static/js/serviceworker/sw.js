@@ -1,94 +1,96 @@
 importScripts('/js/libs/localforage.min.js', '/js/libs/workbox-sw.js');
 
+workbox.core.setLogLevel(workbox.core.LOG_LEVELS.warn);
+workbox.routing.registerRoute(
+  new RegExp('\/js\/(?:libs|ui)\/.*\.js'),
+  workbox.strategies.cacheFirst({
+    cacheName: 'js-deps',
+    plugins: [
+      new workbox.expiration.Plugin({
+        maxAgeSeconds: 30 * 24 * 60 * 60,
+      }),
+    ],
+    cacheableResponse: {statuses: [0, 200]}
+  })
+);
+
+workbox.routing.registerRoute(
+  new RegExp('\/css\/.*\.css'),
+  workbox.strategies.cacheFirst({
+    cacheName: 'styles',
+    plugins: [
+      new workbox.expiration.Plugin({
+        maxEntries: 4,
+        maxAgeSeconds: 30 * 24 * 60 * 60,
+      }),
+    ],
+    cacheableResponse: {statuses: [0, 200]}
+  })
+);
+
+workbox.routing.registerRoute(
+  new RegExp('\/images\/.*\.png'),
+  workbox.strategies.cacheFirst({
+    cacheName: 'images',
+    plugins: [
+      new workbox.expiration.Plugin({
+        maxEntries: 5,
+      }),
+    ],
+    cacheableResponse: {statuses: [0, 200]}
+  })
+);
+
+workbox.routing.registerRoute(
+  new RegExp('https://fonts.(?:googleapis|gstatic).com/(.*)'),
+  workbox.strategies.cacheFirst({
+    cacheName: 'fonts',
+    plugins: [
+      new workbox.expiration.Plugin({
+        maxEntries: 5,
+      }),
+    ],
+    cacheableResponse: {statuses: [0, 200]}
+  })
+);
+
+workbox.routing.registerRoute(
+  new RegExp('\/js\/components\/.*\.js'),
+  workbox.strategies.staleWhileRevalidate({
+    cacheName: 'js-components',
+    cacheableResponse: {statuses: [0, 200]}
+  })
+);
+
+workbox.routing.registerRoute(
+  new RegExp('\/(?:main|)'),
+  workbox.strategies.staleWhileRevalidate({
+    cacheName: 'routes',
+    cacheableResponse: {statuses: [0, 200]}
+  })
+);
+
+workbox.routing.registerRoute(
+  new RegExp('\/config\/.*'),
+  workbox.strategies.networkFirst({
+    cacheName: 'config',
+    cacheableResponse: {statuses: [0, 200]}
+  })
+);
+
+workbox.routing.registerRoute(
+  new RegExp('\/(?:dnevnik|stats|feed|login|logout|up|apply)'),
+  workbox.strategies.networkOnly(),
+);
+
 self.addEventListener('install', (event) => {
-  event.waitUntil(registerRoutes());
+  console.log("Installed ServiceWorker");
   return workbox.skipWaiting();
 });
 
-const registerRoutes = () => {
-  workbox.core.setLogLevel(workbox.core.LOG_LEVELS.warn);
-  workbox.routing.registerRoute(
-    new RegExp('\/js\/(?:libs|ui)\/.*\.js'),
-    workbox.strategies.cacheFirst({
-      cacheName: 'js-deps',
-      plugins: [
-        new workbox.expiration.Plugin({
-          maxAgeSeconds: 30 * 24 * 60 * 60,
-        }),
-      ],
-      cacheableResponse: {statuses: [0, 200]}
-    })
-  );
-
-  workbox.routing.registerRoute(
-    new RegExp('\/css\/.*\.css'),
-    workbox.strategies.cacheFirst({
-      cacheName: 'styles',
-      plugins: [
-        new workbox.expiration.Plugin({
-          maxEntries: 4,
-          maxAgeSeconds: 30 * 24 * 60 * 60,
-        }),
-      ],
-      cacheableResponse: {statuses: [0, 200]}
-    }),
-  );
-
-  workbox.routing.registerRoute(
-    new RegExp('\/images\/.*\.png'),
-    workbox.strategies.cacheFirst({
-      cacheName: 'images',
-      plugins: [
-        new workbox.expiration.Plugin({
-          maxEntries: 5,
-        }),
-      ],
-      cacheableResponse: {statuses: [0, 200]}
-    }),
-  );
-
-  workbox.routing.registerRoute(
-    new RegExp('https://fonts.(?:googleapis|gstatic).com/(.*)'),
-    workbox.strategies.cacheFirst({
-      cacheName: 'fonts',
-      plugins: [
-        new workbox.expiration.Plugin({
-          maxEntries: 5,
-        }),
-      ],
-      cacheableResponse: {statuses: [0, 200]}
-    }),
-  );
-
-  workbox.routing.registerRoute(
-    new RegExp('\/js\/components\/.*\.js'),
-    workbox.strategies.staleWhileRevalidate({
-      cacheName: 'js-components',
-      cacheableResponse: {statuses: [0, 200]}
-    }),
-  );
-
-  workbox.routing.registerRoute(
-    new RegExp('\/(?:main|)'),
-    workbox.strategies.staleWhileRevalidate({
-      cacheName: 'routes',
-      cacheableResponse: {statuses: [0, 200]}
-    }),
-  );
-
-  workbox.routing.registerRoute(
-    new RegExp('\/config\/.*'),
-    workbox.strategies.networkFirst({
-      cacheName: 'config',
-      cacheableResponse: {statuses: [0, 200]}
-    }),
-  );
-
-  workbox.routing.registerRoute(
-    new RegExp('\/(?:dnevnik|stats|feed|login|logout|up|apply)'),
-    workbox.strategies.networkOnly(),
-  );
-}
+self.addEventListener('fetch', (event) => {
+  /* console.log(event); */
+});
 
 self.addEventListener('message', (event) => {
   switch (event.data) {
