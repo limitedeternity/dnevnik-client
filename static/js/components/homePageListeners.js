@@ -1,6 +1,22 @@
 (() => {
   "use strict";
 
+  var isOnline = () => {
+    return new Promise((resolve, reject) => {
+      return fetch("/up").then(() => {
+        resolve(true)
+      }, () => {
+        resolve(false)
+      });
+    });
+  }
+
+  var sleep = (ms) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms)
+    });
+  }
+
   if (Cookies.get('AccessToken') !== undefined) {
     whenDomReady().then(async () => {
       document.getElementById("nav").innerHTML = '<a href="#overview" class="mdl-layout__tab is-active">Загрузка...</a>';

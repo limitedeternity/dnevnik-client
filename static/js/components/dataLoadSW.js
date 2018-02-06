@@ -1,6 +1,22 @@
 (() => {
   "use strict";
 
+  var isOnline = () => {
+    return new Promise((resolve, reject) => {
+      return fetch("/up").then(() => {
+        resolve(true)
+      }, () => {
+        resolve(false)
+      });
+    });
+  }
+
+  var sleep = (ms) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms)
+    });
+  }
+
   navigator.serviceWorker.addEventListener('message', (event) => {
     switch (event.data) {
       case "syncFinished":

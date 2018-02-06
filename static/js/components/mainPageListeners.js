@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const serialize = (formElement) => {
+  var serialize = (formElement) => {
     let object = {};
     let formdata = new FormData(formElement);
 
@@ -10,6 +10,22 @@
     });
 
     return JSON.stringify(object);
+  }
+
+  var isOnline = () => {
+    return new Promise((resolve, reject) => {
+      return fetch("/up").then(() => {
+        resolve(true)
+      }, () => {
+        resolve(false)
+      });
+    });
+  }
+
+  var sleep = (ms) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms)
+    });
   }
 
   if ('serviceWorker' in navigator) {
