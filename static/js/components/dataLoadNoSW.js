@@ -5,6 +5,18 @@
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  var isOnline = () => {
+    let is = null;
+
+    fetch("/up").then(() => {
+      is = true;
+    }, () => {
+      is = false;
+    });
+
+    return is;
+  }
+
   const renderData = () => {
     let nextPromiseChain = [];
     nextPromiseChain.push(
@@ -61,15 +73,27 @@
         })
       })
     );
-    Promise.all(nextPromiseChain).catch((err) => {console.warn(err);})
+    Promise.all(nextPromiseChain);
   }
 
   const fetchSync = () => {
     let promiseChain = [];
 
     promiseChain.push(
-      fetch("/feed", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((responseFeed) => {
+      fetch("/feed", {
+        method: 'POST',
+        redirect: 'follow',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ".": "1"
+        }),
+        credentials: 'same-origin'
+
+      }).then((responseFeed) => {
         return responseFeed.json();
+
       }).then((jsonFeed) => {
         if (jsonFeed.includes("¯\\_(ツ)_/¯")) {
           localforage.setItem('feedError', jsonFeed)
@@ -80,8 +104,20 @@
     );
 
     promiseChain.push(
-      fetch("/dnevnik", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((responseDnevnik) => {
+      fetch("/dnevnik", {
+        method: 'POST',
+        redirect: 'follow',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ".": "1"
+        }),
+        credentials: 'same-origin'
+
+      }).then((responseDnevnik) => {
         return responseDnevnik.json();
+
       }).then((jsonDnevnik) => {
         if (jsonDnevnik.includes("¯\\_(ツ)_/¯")) {
           localforage.setItem('dnevnikError', jsonDnevnik)
@@ -92,8 +128,20 @@
     );
 
     promiseChain.push(
-      fetch("/stats", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((responseStats) => {
+      fetch("/stats", {
+        method: 'POST',
+        redirect: 'follow',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ".": "1"
+        }),
+        credentials: 'same-origin'
+
+      }).then((responseStats) => {
         return responseStats.json();
+        
       }).then((jsonStats) => {
         if (jsonStats.includes("¯\\_(ツ)_/¯")) {
           localforage.setItem('statsError', jsonStats)
@@ -103,22 +151,27 @@
       })
     );
 
-    fetch('/up').then(() => {
-      Promise.all(promiseChain).then(() => {
-        localforage.getItem('pushSettings').then((data) => {
-          if (data) {
-            fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'}).then(() => {
-              renderData();
-            });
-          } else {
-            renderData();
-          }
-        })
+    Promise.all(promiseChain).then(() => {
+      localforage.getItem('pushSettings').then((data) => {
+        if (data) {
+          fetch('/push', {
+            method: 'POST',
+            redirect: 'follow',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              "pushSettings": JSON.stringify(data)
+            }),
+            credentials: 'same-origin'
+          });
+        }
+        renderData();
       })
     })
   }
 
-  if (navigator.onLine) {
+  if (isOnline()) {
     fetchSync();
 
   } else {

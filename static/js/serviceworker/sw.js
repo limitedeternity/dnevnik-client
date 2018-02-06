@@ -10,7 +10,9 @@ workbox.routing.registerRoute(
         maxAgeSeconds: 30 * 24 * 60 * 60,
       }),
     ],
-    cacheableResponse: {statuses: [0, 200]}
+    cacheableResponse: {
+      statuses: [0, 200]
+    }
   })
 );
 
@@ -24,7 +26,9 @@ workbox.routing.registerRoute(
         maxAgeSeconds: 30 * 24 * 60 * 60,
       }),
     ],
-    cacheableResponse: {statuses: [0, 200]}
+    cacheableResponse: {
+      statuses: [0, 200]
+    }
   })
 );
 
@@ -37,7 +41,9 @@ workbox.routing.registerRoute(
         maxEntries: 5,
       }),
     ],
-    cacheableResponse: {statuses: [0, 200]}
+    cacheableResponse: {
+      statuses: [0, 200]
+    }
   })
 );
 
@@ -50,7 +56,9 @@ workbox.routing.registerRoute(
         maxEntries: 5,
       }),
     ],
-    cacheableResponse: {statuses: [0, 200]}
+    cacheableResponse: {
+      statuses: [0, 200]
+    }
   })
 );
 
@@ -58,15 +66,19 @@ workbox.routing.registerRoute(
   new RegExp('\/js\/components\/.*\.js'),
   workbox.strategies.staleWhileRevalidate({
     cacheName: 'js-components',
-    cacheableResponse: {statuses: [0, 200]}
+    cacheableResponse: {
+      statuses: [0, 200]
+    }
   })
 );
 
 workbox.routing.registerRoute(
   new RegExp('\/(?:main|home)'),
-  workbox.strategies.networkFirst({
+  workbox.strategies.staleWhileRevalidate({
     cacheName: 'routes',
-    cacheableResponse: {statuses: [0, 200]}
+    cacheableResponse: {
+      statuses: [0, 200]
+    }
   })
 );
 
@@ -74,7 +86,9 @@ workbox.routing.registerRoute(
   new RegExp('\/config\/.*'),
   workbox.strategies.cacheFirst({
     cacheName: 'manifests',
-    cacheableResponse: {statuses: [0, 200]}
+    cacheableResponse: {
+      statuses: [0, 200]
+    }
   })
 );
 
@@ -106,12 +120,36 @@ self.addEventListener('message', (event) => {
   }
 });
 
+const isOnline = () => {
+  let is = null;
+
+  fetch("/up").then(() => {
+    is = true;
+  }, () => {
+    is = false;
+  });
+
+  return is;
+}
+
 const fetchSync = (source) => {
   let promiseChain = [];
 
   promiseChain.push(
-    fetch("/feed", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((responseFeed) => {
+    fetch("/feed", {
+      method: 'POST',
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ".": "1"
+      }),
+      credentials: 'same-origin'
+
+    }).then((responseFeed) => {
       return responseFeed.json();
+
     }).then((jsonFeed) => {
       if (jsonFeed.includes("¯\\_(ツ)_/¯")) {
         return localforage.setItem('feedError', jsonFeed)
@@ -122,8 +160,20 @@ const fetchSync = (source) => {
   );
 
   promiseChain.push(
-    fetch("/dnevnik", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((responseDnevnik) => {
+    fetch("/dnevnik", {
+      method: 'POST',
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ".": "1"
+      }),
+      credentials: 'same-origin'
+
+    }).then((responseDnevnik) => {
       return responseDnevnik.json();
+
     }).then((jsonDnevnik) => {
       if (jsonDnevnik.includes("¯\\_(ツ)_/¯")) {
         return localforage.setItem('dnevnikError', jsonDnevnik)
@@ -134,8 +184,20 @@ const fetchSync = (source) => {
   );
 
   promiseChain.push(
-    fetch("/stats", {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({".": "1"}), credentials: 'same-origin'}).then((responseStats) => {
+    fetch("/stats", {
+      method: 'POST',
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ".": "1"
+      }),
+      credentials: 'same-origin'
+
+    }).then((responseStats) => {
       return responseStats.json();
+
     }).then((jsonStats) => {
       if (jsonStats.includes("¯\\_(ツ)_/¯")) {
         return localforage.setItem('statsError', jsonStats)
@@ -145,23 +207,33 @@ const fetchSync = (source) => {
     })
   );
 
-  return fetch('/up').then(() => {
+  if (isOnline()) {
     return Promise.all(promiseChain).then(() => {
       return localforage.getItem('pushSettings').then((data) => {
         if (data) {
-          return fetch('/push', {method: 'POST', redirect: 'follow', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"pushSettings": JSON.stringify(data)}), credentials: 'same-origin'}).then(() => {
-            return new Promise((resolve, reject) => {
-              resolve(source.postMessage("syncFinished"));
-            });
-          })
-        } else {
-          return new Promise((resolve, reject) => {
-            resolve(source.postMessage("syncFinished"));
+          fetch('/push', {
+            method: 'POST',
+            redirect: 'follow',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              "pushSettings": JSON.stringify(data)
+            }),
+            credentials: 'same-origin'
           });
         }
+
+        return new Promise((resolve, reject) => {
+          resolve(source.postMessage("syncFinished"));
+        });
       })
     })
-  })
+  } else {
+    return new Promise((resolve, reject) => {
+      resolve(source.postMessage("syncFinished"));
+    });
+  }
 }
 
 self.addEventListener('push', (event) => {

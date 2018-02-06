@@ -19,21 +19,21 @@
 
   if (navigator.serviceWorker.controller) {
     navigator.serviceWorker.ready.then((registration) => {
-        registration.pushManager.getSubscription().then((subsc) => {
-          if (!subsc) {
-            registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array("BPA5TPpI1kBquobW2MAKz-JqG0AiaTbKLIa3IzFtC7tM-gg_fqOyyg9DlFXi7cg_CEPeUTWiK0tn_Zc7IcOWrD0")
-            }).then(() => {
-              console.log("Successfully subscribed to notifications.");
-              registration.pushManager.getSubscription().then((subscription) => {
-                let subscrJSON = subscription.toJSON();
-                delete subscrJSON.expirationTime;
-                localforage.setItem("pushSettings", subscrJSON);
-              })
+      registration.pushManager.getSubscription().then((subsc) => {
+        if (!subsc) {
+          registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array("BPA5TPpI1kBquobW2MAKz-JqG0AiaTbKLIa3IzFtC7tM-gg_fqOyyg9DlFXi7cg_CEPeUTWiK0tn_Zc7IcOWrD0")
+          }).then(() => {
+            console.log("Successfully subscribed to notifications.");
+            registration.pushManager.getSubscription().then((subscription) => {
+              let subscrJSON = subscription.toJSON();
+              delete subscrJSON.expirationTime;
+              localforage.setItem("pushSettings", subscrJSON);
             })
-          }
-        })
+          })
+        }
+      })
     })
   }
 })();

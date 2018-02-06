@@ -5,6 +5,18 @@
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  var isOnline = () => {
+    let is = null;
+
+    fetch("/up").then(() => {
+      is = true;
+    }, () => {
+      is = false;
+    });
+
+    return is;
+  }
+
   navigator.serviceWorker.addEventListener('message', (event) => {
     switch (event.data) {
       case "syncFinished":
@@ -63,7 +75,7 @@
             })
           })
         );
-        Promise.all(nextPromiseChain).catch((err) => {console.warn(err);})
+        Promise.all(nextPromiseChain);
         break;
 
       default:
@@ -72,7 +84,7 @@
   });
 
   if (navigator.serviceWorker.controller) {
-    if (navigator.onLine) {
+    if (isOnline()) {
       navigator.serviceWorker.controller.postMessage("startSync");
     } else {
       navigator.serviceWorker.controller.postMessage("restoreData");
