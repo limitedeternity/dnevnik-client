@@ -6,7 +6,7 @@ CacheControl
 gunicorn
 whitenoise
 redis
-eventlet
+gevent
 pywebpush
 requests
 requests[security]
