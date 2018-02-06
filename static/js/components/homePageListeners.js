@@ -1,22 +1,6 @@
 (() => {
   "use strict";
 
-  var sleep = (ms) => {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  var isOnline = () => {
-    let is = null;
-
-    fetch("/up").then(() => {
-      is = true;
-    }, () => {
-      is = false;
-    });
-
-    return is;
-  }
-
   if (Cookies.get('AccessToken') !== undefined) {
     whenDomReady().then(async () => {
       document.getElementById("nav").innerHTML = '<a href="#overview" class="mdl-layout__tab is-active">Загрузка...</a>';
@@ -33,16 +17,18 @@
     location.replace("/login");
 
   } else {
-    if (isOnline()) {
-      whenDomReady().then(() => {
-        document.getElementById("button-login").addEventListener("click", (event) => {
-          event.preventDefault();
-          alert("После входа начнется настройка приложения. Пока приложение настраивается, может наблюдаться задержка запуска.");
-          location.href = "https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo,Messages&redirect_uri=https://dnevnik-client.herokuapp.com/";
-        });
-      })
-    } else {
-      alert("Вы офлайн. Вход отключен.");
-    }
+    isOnline().then((online) => {
+      if (online) {
+        whenDomReady().then(() => {
+          document.getElementById("button-login").addEventListener("click", (event) => {
+            event.preventDefault();
+            alert("После входа начнется настройка приложения. Пока приложение настраивается, может наблюдаться задержка запуска.");
+            location.href = "https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo,Messages&redirect_uri=https://dnevnik-client.herokuapp.com/";
+          });
+        })
+      } else {
+        alert("Вы офлайн. Вход отключен.");
+      }
+    })
   }
 })();

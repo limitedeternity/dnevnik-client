@@ -1,22 +1,6 @@
 (() => {
   "use strict";
 
-  var sleep = (ms) => {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  var isOnline = () => {
-    let is = null;
-
-    fetch("/up").then(() => {
-      is = true;
-    }, () => {
-      is = false;
-    });
-
-    return is;
-  }
-
   const renderData = () => {
     let nextPromiseChain = [];
     nextPromiseChain.push(
@@ -171,10 +155,12 @@
     })
   }
 
-  if (isOnline()) {
-    fetchSync();
+  isOnline().then((online) => {
+    if (online) {
+      fetchSync();
 
-  } else {
-    renderData();
-  }
+    } else {
+      renderData();
+    }
+  });
 })();

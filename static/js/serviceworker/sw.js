@@ -120,18 +120,6 @@ self.addEventListener('message', (event) => {
   }
 });
 
-const isOnline = () => {
-  let is = null;
-
-  fetch("/up").then(() => {
-    is = true;
-  }, () => {
-    is = false;
-  });
-
-  return is;
-}
-
 const fetchSync = (source) => {
   let promiseChain = [];
 
@@ -207,33 +195,27 @@ const fetchSync = (source) => {
     })
   );
 
-  if (isOnline()) {
-    return Promise.all(promiseChain).then(() => {
-      return localforage.getItem('pushSettings').then((data) => {
-        if (data) {
-          fetch('/push', {
-            method: 'POST',
-            redirect: 'follow',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              "pushSettings": JSON.stringify(data)
-            }),
-            credentials: 'same-origin'
-          });
-        }
-
-        return new Promise((resolve, reject) => {
-          resolve(source.postMessage("syncFinished"));
+  return Promise.all(promiseChain).then(() => {
+    return localforage.getItem('pushSettings').then((data) => {
+      if (data) {
+        fetch('/push', {
+          method: 'POST',
+          redirect: 'follow',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            "pushSettings": JSON.stringify(data)
+          }),
+          credentials: 'same-origin'
         });
-      })
+      }
+
+      return new Promise((resolve, reject) => {
+        resolve(source.postMessage("syncFinished"));
+      });
     })
-  } else {
-    return new Promise((resolve, reject) => {
-      resolve(source.postMessage("syncFinished"));
-    });
-  }
+  })
 }
 
 self.addEventListener('push', (event) => {
