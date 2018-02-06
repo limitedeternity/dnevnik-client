@@ -120,7 +120,7 @@ self.addEventListener('message', (event) => {
   }
 });
 
-const fetchSync = (source) => {
+const fetchSync = (source, send=true) => {
   let promiseChain = [];
 
   promiseChain.push(
@@ -210,10 +210,12 @@ const fetchSync = (source) => {
           credentials: 'same-origin'
         });
       }
-
-      return new Promise((resolve, reject) => {
-        resolve(source.postMessage("syncFinished"));
-      });
+      
+      if (send) {
+        return new Promise((resolve, reject) => {
+          resolve(source.postMessage("syncFinished"));
+        });
+      }
     })
   })
 }
