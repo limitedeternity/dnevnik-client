@@ -12,6 +12,7 @@ from flask import Flask, render_template, make_response, request, redirect, json
 from flask_sslify import SSLify # Ensure HTTPS
 from flask_compress import Compress # Compression
 from flask_cors import CORS # Request origin Control
+from whitenoise import WhiteNoise
 from requests import Session
 from pywebpush import webpush
 from redis import Redis
@@ -21,9 +22,10 @@ from cachecontrol import CacheControl
 
 debug = False
 compress = Compress()
+redis_storage = Redis.from_url(environ.get("REDIS_URL"))
 
 app = Flask(__name__, template_folder='templates')
-redis_storage = Redis.from_url(environ.get("REDIS_URL"))
+app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
 app.config['SECRET_KEY'] = environ.get("SECRET_KEY", "".join(choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for _ in range(50)))
 app.config['COMPRESS_MIMETYPES'] = ['text/html', 'application/json']
 app.config['COMPRESS_MIN_SIZE'] = 0
@@ -577,26 +579,6 @@ def log_out():
         response.set_cookie('Offset', value='', max_age=0, expires=0)
 
     return response
-
-
-@app.route('/js/<path:path>', methods=['GET'])
-def serve_js(path):
-    return send_from_directory('static/js', path)
-
-
-@app.route('/css/<path:path>', methods=['GET'])
-def serve_css(path):
-    return send_from_directory('static/css', path)
-
-
-@app.route('/images/<path:path>', methods=['GET'])
-def serve_images(path):
-    return send_from_directory('static/images', path)
-
-
-@app.route('/config/<path:path>', methods=['GET'])
-def serve_config(path):
-    return send_from_directory('static/config', path)
 
 
 @app.route('/sw.js', methods=['GET'])

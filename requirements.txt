@@ -4,6 +4,7 @@ flask-compress
 flask-cors
 CacheControl
 gunicorn
+whitenoise
 redis
 eventlet
 pywebpush
