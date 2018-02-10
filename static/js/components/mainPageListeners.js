@@ -133,6 +133,9 @@
       isOnline().then((online) => {
         if (online) {
           localforage.clear();
+          for (key in Cookies.getJSON()) {
+            Cookies.remove(key);
+          }
           location.reload();
         }
       });
