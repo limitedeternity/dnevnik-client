@@ -246,7 +246,7 @@ def feed():
         year = str(timeDate('year', offset=offset, feed=True))
 
         if not feed:
-            res_userfeed = s.get(f"https://api.dnevnik.ru/mobile/v2/feed/?date={year}-{month}-{day}&limit=1&personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
+            res_userfeed = s.get(f"https://api.dnevnik.ru/mobile/v2/feed/?date={year}-{month}-{day}&limit=1&personId={user_data['personId']}&groupId={user_data['eduGroups'][0]['id_str']}&access_token={access_token}")
 
             recent_data = res_userfeed.json()['Feed']['Days'][0]['MarkCards']
 
@@ -307,7 +307,7 @@ def stats():
             response = make_response(jsonify(html_out))
             return response
 
-        res_marks = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
+        res_marks = s.get(f"https://api.dnevnik.ru/mobile/v2/allMarks?personId={user_data['personId']}&groupId={user_data['eduGroups'][0]['id_str']}&access_token={access_token}")
 
         marks_data = res_marks.json()["AllMarks"]
 
@@ -414,7 +414,7 @@ def dnevnik():
         month = f"0{month}" if match(r"^\d{1}$", month) else month
 
         school = user_data['schools'][0]['id']
-        res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={user_data['personId']}&groupId={user_data['groupIds'][0]}&access_token={access_token}")
+        res_lessons = s.get(f"https://api.dnevnik.ru/mobile/v2/schedule?startDate={year}-{month}-{day}&endDate={year}-{month}-{day}&personId={user_data['personId']}&groupId={user_data['eduGroups'][0]['id_str']}&access_token={access_token}")
 
         lesson_data = res_lessons.json()['Days'][0]['Schedule']
 
