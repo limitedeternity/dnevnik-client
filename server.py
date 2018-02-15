@@ -13,7 +13,7 @@ from flask_sslify import SSLify # Ensure HTTPS
 from flask_compress import Compress # Compression
 from flask_cors import CORS # Request origin Control
 from whitenoise import WhiteNoise
-from requests import Session
+from requests import Session, codes
 from pywebpush import webpush
 from redis import Redis
 from requests.adapters import HTTPAdapter
@@ -115,7 +115,16 @@ Template handling
 
 @app.route("/up", methods=['GET'])
 def up():
-    return jsonify("I'm here, master.")
+    s = CacheControl(Session())
+    s.mount('http://', HTTPAdapter(max_retries=5))
+    s.mount('https://', HTTPAdapter(max_retries=5))
+
+    response = s.head("https://api.dnevnik.ru/")
+    if response.status_code == codes.ok:
+        return jsonify("Online."), 200
+    
+    else:
+        return jsonify("Offline."), 400
 
 
 @app.route("/push", methods=['POST'])

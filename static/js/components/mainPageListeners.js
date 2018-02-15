@@ -1,6 +1,20 @@
 (() => {
   "use strict";
 
+  var isOnline = () => {
+    return new Promise((resolve, reject) => {
+      return fetch("/up").then((response) => {
+        if (response.ok) {
+          resolve(true)
+        } else {
+          resolve(false)
+        }
+      }, () => {
+        resolve(false)
+      });
+    });
+  }
+
   var serialize = (formElement) => {
     let object = {};
     let formdata = new FormData(formElement);
@@ -10,16 +24,6 @@
     });
 
     return JSON.stringify(object);
-  }
-
-  var isOnline = () => {
-    return new Promise((resolve, reject) => {
-      return fetch("/up").then(() => {
-        resolve(true)
-      }, () => {
-        resolve(false)
-      });
-    });
   }
 
   var sleep = (ms) => {

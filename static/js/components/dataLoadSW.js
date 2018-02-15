@@ -3,8 +3,12 @@
 
   var isOnline = () => {
     return new Promise((resolve, reject) => {
-      return fetch("/up").then(() => {
-        resolve(true)
+      return fetch("/up").then((response) => {
+        if (response.ok) {
+          resolve(true)
+        } else {
+          resolve(false)
+        }
       }, () => {
         resolve(false)
       });
