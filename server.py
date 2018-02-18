@@ -341,11 +341,11 @@ def stats():
                     try:
                         html_out.append(f'<h8 style="color:{coloring(markTuple[0][1])};">{markTuple[0][0]}: {markTuple[1]}</h8><br>')
 
-                        if len(markTuple[0][0]) == 2:
+                        if len(markTuple[0][0]) > 1:
                             tempMark = int(markTuple[0][0][0]) + (0.5 if markTuple[0][0][1] == "+" else -0.5)
                         
-                        elif len(markTuple[0][0]) == 1:
-                            tempMark = int(markTuple[0][0])
+                        else:
+                            tempMark = int(markTuple[0][0][0])
 
                         markSum += tempMark * int(markTuple[1])
 
