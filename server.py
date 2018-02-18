@@ -489,7 +489,7 @@ def dnevnik():
                 html_out.append(f'<h8 style="color:{coloring()};">Д/З: {hw}</h8><br>')
             
             else:
-                html_out.append(f'<h8 style="color:{coloring()};">ДЗ: нет {kaomoji()}</h8><br>')
+                html_out.append(f'<h8 style="color:{coloring()};">Д/З: нет {kaomoji()}</h8><br>')
 
             html_out.append('<div style="display:block; height:5px; clear:both;"></div></div>')
 
