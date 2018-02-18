@@ -330,7 +330,8 @@ def stats():
                 html_out.append(f'<h5 style="font-weight:600">{subjectData["Name"]}</h5>')
 
                 for mark in subjectData["Marks"]:
-                    markCollection.append((mark["Values"][0]["Value"], mark["Values"][0]["Mood"]))
+                    for item in mark["Values"]:
+                        markCollection.append((item["Value"], item["Mood"]))
 
                 markCollectionCounted = (*Counter(sorted(markCollection)).items(),)[::-1]
                 markSum = 0
@@ -339,10 +340,17 @@ def stats():
                 for markTuple in markCollectionCounted:
                     try:
                         html_out.append(f'<h8 style="color:{coloring(markTuple[0][1])};">{markTuple[0][0]}: {markTuple[1]}</h8><br>')
-                        markSum += int(markTuple[0][0]) * int(markTuple[1])
+
+                        if len(markTuple[0][0]) == 2:
+                            tempMark = int(markTuple[0][0][0]) + (0.5 if markTuple[0][0][1] == "+" else -0.5)
+                        
+                        elif len(markTuple[0][0]) == 1:
+                            tempMark = int(markTuple[0][0])
+
+                        markSum += tempMark * int(markTuple[1])
 
                     except (KeyError, IndexError):
-                        pass
+                        continue
 
                 try:
                     html_out.append(f'<h8 style="color:{coloring()};">Среднее значение: {round(markSum / markTotal, 2)}</h8><br>')
