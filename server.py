@@ -487,6 +487,9 @@ def dnevnik():
                     hw = hw.replace(link, f'<a href="{link}" target="_blank" rel="noopener">[ссылка]</a>')
 
                 html_out.append(f'<h8 style="color:{coloring()};">Д/З: {hw}</h8><br>')
+            
+            else:
+                html_out.append(f'<h8 style="color:{coloring()};">ДЗ: нет {kaomoji()}</h8><br>')
 
             html_out.append('<div style="display:block; height:5px; clear:both;"></div></div>')
 
