@@ -442,7 +442,7 @@ def dnevnik():
             return response
 
         html_out = ['<h4 class="mdl-cell mdl-cell--12-col">Дневник</h4>']
-        for lesson in lesson_data:
+        for index, lesson in enumerate(lesson_data):
             try:
                 lesson_name = lesson["Subject"]["Name"]
                 lesson_id = lesson["LessonId"]
@@ -452,7 +452,7 @@ def dnevnik():
 
             html_out.append('<div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone"><div style="display:block; height:2px; clear:both;"></div><i class="material-icons mdl-list__item-avatar mdl-color--primary" style="font-size:32px; padding-top:2.5px; text-align:center;">format_list_bulleted</i></div><div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone"><div style="display:block; height:2px; clear:both;"></div>')
 
-            html_out.append(f'<a href="https://schools.dnevnik.ru/lesson.aspx?school={school}&lesson={lesson_id}" target="_blank" rel="noopener"><h5 style="font-weight:600">{lesson_name}</h5></a>')
+            html_out.append(f'<a href="https://schools.dnevnik.ru/lesson.aspx?school={school}&lesson={lesson_id}" target="_blank" rel="noopener"><h5 style="font-weight:600">#{index}. {lesson_name}</h5></a>')
 
             for mark in lesson['Marks']:
                 if mark:
