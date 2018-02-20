@@ -471,7 +471,7 @@ def dnevnik():
 
             if lesson["Theme"]:
                 try:
-                    html_out.append(f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]} ({lesson["ImportantWorks"][0]["WorkType"]})</h8><br>')
+                    html_out.append(f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]} ({lesson["ImporantWorks"][0]["WorkType"]})</h8><br>')
 
                 except (KeyError, IndexError):
                     html_out.append(f'<h8 style="color:{coloring()};">Урок: {lesson["Theme"]}</h8><br>')
