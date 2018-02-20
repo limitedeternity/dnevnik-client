@@ -257,7 +257,7 @@ def feed():
         if not feed:
             res_userfeed = s.get(f"https://api.dnevnik.ru/mobile/v2/feed/?date={year}-{month}-{day}&limit=1&personId={user_data['personId']}&groupId={user_data['eduGroups'][0]['id_str']}&access_token={access_token}")
 
-            recent_data = res_userfeed.json()['Feed']['Days'][0]['MarkCards']
+            recent_data = res_userfeed.json()['Feed']['Days'][1]['MarkCards']
 
             redis_storage.set(f"{access_token}_marks", len(recent_data))
 
