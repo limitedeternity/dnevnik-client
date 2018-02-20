@@ -1,20 +1,17 @@
 # DnevnikClient
 > An unofficial client for Dnevnik.Ru
 
-DnevnikClient is a read-only client made using Material Design (kinda). Core is written
-in Python (see `server.py`). Project also has an Android app (see `android_app` folder).
+DnevnikClient is a read-only Material Design client for Dnevnik.ru.
 
 ## Features:
 
-✨ Service Worker based.
+✨ Offline functionality based on Service Worker feature.
 
-✨ Last requested data is saved to offline.
-
-✨ Theming engine.
+✨ All requested data is saved to offline.
 
 ✨ Faster than official client.
 
-## Functionality:
+## +:
 
 💪 Support for "Pupil" account type.
 
@@ -24,11 +21,15 @@ in Python (see `server.py`). Project also has an Android app (see `android_app` 
 
 ✨ Simple navigation.
 
-![Screenshot](http://i97.fastpic.ru/big/2017/1123/e4/f4f23b8131d81c93b943e0631fa5d8e4.png)
+## Note
+
+``server-side`` branch contains Flask-based web-server with same functionality, but different UI&UX.
+
+It's deployed on https://dnevnik-client.herokuapp.com/
 
 ## Deployed at:
 
-https://dnevnik-client.herokuapp.com/
+https://limitedeternity.github.io/dnevnik-client/
 
 ## Meta
 
