@@ -102,7 +102,7 @@ export default {
   data() {
     return {
       skipDays: 0
-    };
+    }
   },
   watch: {
     skipDays() {

@@ -55,20 +55,19 @@ export default {
   },
   methods: {
     checkLoginSeq() {
-      if (this.$route.hash.includes("access_token=")) {
-        fetch(`https://api.dnevnik.ru/v1/users/me/context?access_token=${this.$route.hash.match(new RegExp("access_token=(.*)&state="))[1]}`, { credentials: 'same-origin' }).then((response) => {
+      if (this.$route.fullPath.includes("access_token=")) {
+        fetch(`https://api.dnevnik.ru/v1/users/me/context?access_token=${this.$route.fullPath.match(new RegExp("access_token=(.*)&state="))[1]}`, { credentials: 'same-origin' }).then((response) => {
           return response.json();
         }).then((userData) => {
           if (userData.roles !== undefined && userData.roles.includes("EduStudent")) {
-            Cookies.set('AccessToken', this.$route.hash.match(new RegExp("access_token=(.*)&state="))[1]);
+            Cookies.set('AccessToken', this.$route.fullPath.match(new RegExp("access_token=(.*)&state="))[1]);
             this.$store.commit('setLoginState');
             this.$store.commit("userDataUpdate");
+            this.$router.replace({name: 'home'});
 
           } else {
-            alert("Неверный тип аккаунта.");
+            this.$router.replace({name: 'error'});
           }
-          
-          this.$router.replace({name: 'home'});
         })
       }
     }
