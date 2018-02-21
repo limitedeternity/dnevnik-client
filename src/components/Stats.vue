@@ -10,8 +10,8 @@
             <div v-if="statsData">
               <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
               <ul class="collection">
-                 <div v-for="(subjectData, index) in statsData.AllMarks[0].SubjectMarks" :key="index">
-                     <li class="collection-item avatar z-depth-1" v-if="subjectData.Marks.length">
+                 <div v-for="(subjectData, index) in statsData.AllMarks[0].SubjectMarks" v-if="subjectData.Marks.length" :key="index">
+                     <li class="collection-item avatar z-depth-1">
                        <i class="material-icons circle white" :style="{color: 'blue', transform: 'scale(1.5)'}">timeline</i>
 
                        <div :style="{display: 'block', clear: 'both', height: '6px'}"></div>

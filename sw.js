@@ -20,27 +20,27 @@ importScripts('workbox-sw.prod.v2.1.2.js');
 const fileManifest = [
   {
     "url": "dist/nature.jpg",
-    "revision": "9206b4a6d4f3401326e0e6297dfdf8af"
+    "revision": "55f6c0cc2c652057af1c256c6f2379f9"
   },
   {
     "url": "dist/office.jpg",
-    "revision": "f642206b67707e549bd18159506c4ad5"
+    "revision": "46c0e85848d294129ba35eb4238aa630"
   },
   {
     "url": "dist/stats.jpg",
-    "revision": "57a957ab773f069f322b866b2224832e"
+    "revision": "538c62186d88f1f936e1182c500cf517"
   },
   {
     "url": "src/assets/config/browserconfig.xml",
-    "revision": "dcab0d220edb7fb4f6074bb2ba2dd051"
+    "revision": "d0102224c669dec57534cb170001a767"
   },
   {
     "url": "src/assets/config/manifest.json",
-    "revision": "85999836855c584db3c15fdcf396de0d"
+    "revision": "535b9160db45ecc07e605180af5047b6"
   },
   {
     "url": "src/assets/css/materialize.min.css",
-    "revision": "23d8c4b88560b38f875706ec49711781"
+    "revision": "d0e6ce80dd0473745eb4ba65d996cb02"
   },
   {
     "url": "src/assets/images/icons/android-icon-144x144.png",
@@ -144,19 +144,19 @@ const fileManifest = [
   },
   {
     "url": "src/assets/images/nature.jpg",
-    "revision": "9206b4a6d4f3401326e0e6297dfdf8af"
+    "revision": "55f6c0cc2c652057af1c256c6f2379f9"
   },
   {
     "url": "src/assets/images/office.jpg",
-    "revision": "f642206b67707e549bd18159506c4ad5"
+    "revision": "46c0e85848d294129ba35eb4238aa630"
   },
   {
     "url": "src/assets/images/stats.jpg",
-    "revision": "57a957ab773f069f322b866b2224832e"
+    "revision": "538c62186d88f1f936e1182c500cf517"
   },
   {
     "url": "src/assets/js/materialize.min.js",
-    "revision": "32c46071d1dfe74999e6eb0a2a86aff7"
+    "revision": "cc0e5b7d3382f5c2407b6f7f8b8bb81e"
   }
 ];
 
@@ -165,7 +165,7 @@ const workboxSW = new self.WorkboxSW({
   "clientsClaim": true
 });
 workboxSW.precache(fileManifest);
-workboxSW.router.registerRoute(/https:\/\/fonts.(?:googleapis|gstatic).com\/(.*)$/, workboxSW.strategies.staleWhileRevalidate({
+workboxSW.router.registerRoute(/https:\/\/fonts.(?:googleapis|gstatic).com\/(.*)/, workboxSW.strategies.staleWhileRevalidate({
   "cacheableResponse": {
     "statuses": [
       0,
@@ -173,7 +173,7 @@ workboxSW.router.registerRoute(/https:\/\/fonts.(?:googleapis|gstatic).com\/(.*)
     ]
   }
 }), 'GET');
-workboxSW.router.registerRoute(/https:\/\/limitedeternity.github.io\/dnevnik-client\/$/, workboxSW.strategies.staleWhileRevalidate({
+workboxSW.router.registerRoute(/dnevnik-client\/$/, workboxSW.strategies.staleWhileRevalidate({
   "cacheableResponse": {
     "statuses": [
       0,

@@ -17,10 +17,10 @@
                         <i class="material-icons right">close</i>
                     </span>
                     <div v-if="feedData">
-                        <div v-if="feedData.Feed.Days[1].MarkCards.length">
-                            <blockquote :style="{borderLeft: '5px solid ' + coloring(feedData.Feed.Days[1].DayEmotion)}">Оценки за сегодня</blockquote>
+                        <div v-if="feedData.Feed.Days[0].MarkCards.length">
+                            <blockquote :style="{borderLeft: '5px solid ' + coloring(feedData.Feed.Days[0].DayEmotion)}">Оценки за сегодня</blockquote>
                             <ul class="collection">
-                              <div v-for="(card, index) in feedData.Feed.Days[1].MarkCards" :key="index">
+                              <div v-for="(card, index) in feedData.Feed.Days[0].MarkCards" :key="index">
                                   <div v-for="(value, index) in card.Values" :key="index">
                                       <li class="collection-item avatar z-depth-1">
                                           <i class="material-icons circle white" :style="{color: coloring(value.Mood), transform: 'scale(1.5)'}">subject</i>
@@ -36,7 +36,7 @@
                             <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                         </div>
                         <div v-if="feedData.Feed.Days[0].ImportantWorks.length">
-                            <blockquote>Важные работы на завтра</blockquote>
+                            <blockquote>Важные работы</blockquote>
                             <ul class="collection">
                                 <div v-for="(work, index) in feedData.Feed.Days[0].ImportantWorks" :key="index">
                                     <li class="collection-item avatar z-depth-1">
@@ -52,7 +52,7 @@
                             <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                         </div>
                         <div v-if="feedData.Feed.Days[0].Schedule.Notifications.length">
-                            <blockquote :style="{borderLeft: '5px solid #01579B'}">Объявления на завтра</blockquote>
+                            <blockquote :style="{borderLeft: '5px solid #01579B'}">Объявления</blockquote>
                             <ul class="collection">
                                 <div v-for="(notification, index) in feedData.Feed.Days[0].Schedule.Notifications" :key="index">
                                     <li class="collection-item avatar z-depth-1">
@@ -102,7 +102,7 @@ export default {
       "feedData"
     ]),
     user() {
-      return this.userData.firstName ? this.userData.firstName : "товарищ"
+      return this.userData ? this.userData.firstName : "товарищ"
     }
   },
   methods: {

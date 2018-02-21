@@ -121,7 +121,9 @@ const store = new Vuex.Store({
             Cookies.remove("AccessToken");
         },
         resetLoginState(state) {
-            store.replaceState({});
+            if (navigator.onLine) {
+                store.replaceState({});
+            }
         },
         userDataUpdate(state) {
             if (state.isLoggedIn) {

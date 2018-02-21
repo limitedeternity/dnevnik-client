@@ -7,7 +7,7 @@ module.exports = {
   entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
+    publicPath: '/dnevnik-client/dist/',
     filename: 'build.js'
   },
   module: {
@@ -63,7 +63,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports.plugins = (module.exports.plugins || []).concat([
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: '"production"'
+        NODE_ENV: JSON.stringify('production')
       }
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -72,6 +72,9 @@ if (process.env.NODE_ENV === 'production') {
         warnings: false
       }
     }),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new webpack.optimize.AggressiveMergingPlugin(),
+    new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.LoaderOptionsPlugin({
       minimize: true
     }),

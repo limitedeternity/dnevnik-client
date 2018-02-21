@@ -11,8 +11,6 @@ DnevnikClient is a read-only Material Design client for Dnevnik.ru.
 
 ✨ Faster than official client.
 
-## +:
-
 💪 Support for "Pupil" account type.
 
 🌚 Diary and statistics with final marks.
@@ -26,6 +24,8 @@ DnevnikClient is a read-only Material Design client for Dnevnik.ru.
 ``server-side`` branch contains Flask-based web-server with same functionality, but different UI&UX.
 
 It's deployed on https://dnevnik-client.herokuapp.com/
+
+! **Both versions work only in Chrome. Idk why.**
 
 ## Deployed at:
 

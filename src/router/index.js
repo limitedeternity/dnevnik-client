@@ -11,20 +11,24 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/',
+      path: '/dnevnik-client/',
+      name: 'home',
+      pathToRegexpOptions: { strict: true },
       component: Home
     },
     {
-      path: '/dnevnik',
+      path: '/dnevnik-client/dnevnik',
+      name: 'dnevnik',
       component: Dnevnik
     },
     {
-      path: '/stats',
+      path: '/dnevnik-client/stats',
+      name: 'stats',
       component: Stats
     },
     {
       path: '*',
-      redirect: '/'
+      redirect: '/dnevnik-client/'
     }
   ]
 })

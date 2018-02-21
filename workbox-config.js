@@ -10,7 +10,7 @@ module.exports = {
   importWorkboxFrom: 'cdn',
   runtimeCaching: [
     {
-      urlPattern: new RegExp('https://fonts.(?:googleapis|gstatic).com/(.*)$'),
+      urlPattern: new RegExp('https://fonts.(?:googleapis|gstatic).com/(.*)'),
       handler: 'staleWhileRevalidate',
       options: {
         cacheableResponse: {
@@ -19,7 +19,7 @@ module.exports = {
       }
     },
     {
-      urlPattern: new RegExp("https://limitedeternity.github.io/dnevnik-client/$"),
+      urlPattern: new RegExp("dnevnik-client/$"),
       handler: 'staleWhileRevalidate',
       options: {
         cacheableResponse: {

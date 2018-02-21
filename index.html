@@ -30,11 +30,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link rel="preload" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/css?family=Roboto:400,500&amp;subset=cyrillic">
   <link rel="preload" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="preload" as="style" onload="this.rel='stylesheet'" href="./src/assets/css/materialize.min.css">
+  <link rel="preload" as="style" onload="this.rel='stylesheet'" href="./src/assets/css/materialize.min.css" media="screen,projection">
 
-  <link rel="preload" as="script" href="./src/assets/js/materialize.min.js" onload="var script=document.createElement('script');script.src=this.href;script.type='application/javascript';document.head.appendChild(script);this.remove()">
+  <link rel="preload" as="script" href="./src/assets/js/materialize.min.js" onload="var script=document.createElement('script');script.src=this.href;script.type='application/javascript';document.body.appendChild(script);this.remove()">
 
   <link rel="apple-touch-icon" sizes="57x57" href="./src/assets/images/icons/apple-icon-57x57.png">
   <link rel="apple-touch-icon" sizes="60x60" href="./src/assets/images/icons/apple-icon-60x60.png">
@@ -53,16 +52,15 @@
   <meta name="msapplication-TileColor" content="#EE6E73">
   <meta name="msapplication-navbutton-color" content="#EE6E73">
   <meta name="theme-color" content="#EE6E73">
-  <meta name="msapplication-starturl" content="/">
+  <meta name="msapplication-starturl" content="/dnevnik-client/">
   <meta name="msapplication-TileImage" content="./src/assets/images/icons/ms-icon-144x144.png">
   <meta name="msapplication-config" content="./src/assets/config/browserconfig.xml">
   <link rel="manifest" href="./src/assets/config/manifest.json">
-  <link rel="serviceworker" href="./sw.js" scope="./">
 </head>
 
 <body>
   <div id="app"></div>
-  <script src="/dist/build.js" type="application/javascript" charset="utf-8"></script>
+  <script src="./dist/build.js" type="application/javascript" charset="utf-8"></script>
 </body>
 
 </html>

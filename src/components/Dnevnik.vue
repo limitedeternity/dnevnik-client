@@ -16,7 +16,7 @@
                       </a>
                     </li>
                     <li class="waves-effect">
-                      <a @click="$router.go($route.path)">
+                      <a @click="skipDays = 0">
                         <i class="material-icons">cached</i>
                       </a>
                     </li>
@@ -34,7 +34,7 @@
                                 <i class="material-icons circle white" :style="{color: '#039be5', transform: 'scale(1.5)'}">format_list_bulleted</i>
                                 
                                 <div :style="{display: 'block', clear: 'both', height: '8px'}"></div>
-                                <a href="#">
+                                <a :href="`https://schools.dnevnik.ru/lesson.aspx?school=${userData.schools[0].id}&lesson=${lesson.LessonId}`" target="_blank" rel="noopener">
                                  <span class="title">#{{ index }}. {{ lesson.Subject.Name }}</span>
                                 </a>
 
@@ -95,7 +95,8 @@ export default {
   computed: {
     ...mapGetters([
       "isLoggedIn",
-      "dnevnikData"
+      "dnevnikData",
+      "userData"
     ])
   },
   data() {
