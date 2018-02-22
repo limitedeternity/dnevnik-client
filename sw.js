@@ -165,7 +165,7 @@ const workboxSW = new self.WorkboxSW({
   "clientsClaim": true
 });
 workboxSW.precache(fileManifest);
-workboxSW.router.registerRoute(/https:\/\/fonts.(?:googleapis|gstatic).com\/(.*)/, workboxSW.strategies.staleWhileRevalidate({
+workboxSW.router.registerRoute(/https:\/\/fonts.(?:googleapis|gstatic).com\/(.*)/, workboxSW.strategies.cacheFirst({
   "cacheableResponse": {
     "statuses": [
       0,

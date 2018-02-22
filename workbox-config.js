@@ -13,7 +13,7 @@ module.exports = {
   runtimeCaching: [
     {
       urlPattern: new RegExp('https://fonts.(?:googleapis|gstatic).com/(.*)'),
-      handler: 'staleWhileRevalidate',
+      handler: 'cacheFirst',
       options: {
         cacheableResponse: {
           statuses: [0, 200]
