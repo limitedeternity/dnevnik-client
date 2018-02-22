@@ -92,6 +92,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import Autolinker from 'autolinker';
 
 export default {
   name: 'Home',
@@ -130,7 +131,22 @@ export default {
       } 
     },
     linkReplace(text) {
-      return text.replace(/http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+/, (match) => { return `<a href='${match}' rel='noopener' target='_blank'>[ссылка]</a>`})
+      return Autolinker.link(text, {
+        replaceFn: (match) => {
+          switch(match.getType()) {
+            case 'url':
+              return `<a href='${match.getUrl()}' rel='noopener' target='_blank'>[ссылка]</a>`
+            
+            case 'mention':
+            case 'hashtag':
+              return false;
+              
+            case 'phone':
+            case 'email':
+              return true;
+          }
+        }
+      });
     }
   },
   mounted() {

@@ -18,6 +18,7 @@
   },
   "homepage": "https://dnevnik-client.herokuapp.com/",
   "dependencies": {
+    "autolinker": "^1.6.2",
     "js-cookie": "^2.2.0",
     "moment": "^2.20.1",
     "secure-ls": "^1.1.0",
