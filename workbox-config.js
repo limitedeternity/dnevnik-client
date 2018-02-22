@@ -1,10 +1,12 @@
+/* eslint-disable */
+
 module.exports = {
-  globDirectory: ".",
+  globDirectory: '.',
   globPatterns: [
-    "dist/*.jpg",
-    "src/assets/**/*.{jpg,json,xml,css,png,ico,js}"
+    'dist/*.jpg',
+    'src/assets/**/*.{jpg,json,xml,css,png,ico,js}'
   ],
-  swDest: "sw.js",
+  swDest: 'sw.js',
   clientsClaim: true,
   skipWaiting: true,
   importWorkboxFrom: 'cdn',
@@ -19,7 +21,7 @@ module.exports = {
       }
     },
     {
-      urlPattern: new RegExp("dnevnik-client/$"),
+      urlPattern: new RegExp('dnevnik-client/$'),
       handler: 'staleWhileRevalidate',
       options: {
         cacheableResponse: {
@@ -28,7 +30,7 @@ module.exports = {
       }
     },
     {
-      urlPattern: new RegExp("dist\/.+\.js$"),
+      urlPattern: new RegExp('dist/.+.js$'),
       handler: 'staleWhileRevalidate',
       options: {
         cacheableResponse: {

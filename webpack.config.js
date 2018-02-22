@@ -1,7 +1,9 @@
-const path = require('path')
-const webpack = require('webpack')
-const workboxPlugin = require('workbox-webpack-plugin')
-const workboxConfig = require('./workbox-config')
+/* eslint-disable */
+
+const path = require('path');
+const webpack = require('webpack');
+const workboxPlugin = require('workbox-webpack-plugin');
+const workboxConfig = require('./workbox-config');
 
 module.exports = {
   entry: './src/main.js',
@@ -56,7 +58,7 @@ module.exports = {
     hints: false
   },
   devtool: '#eval-source-map'
-}
+};
 
 if (process.env.NODE_ENV === 'production') {
   module.exports.devtool = '#source-map'
@@ -79,5 +81,5 @@ if (process.env.NODE_ENV === 'production') {
       minimize: true
     }),
     new workboxPlugin(workboxConfig)
-  ])
+  ]);
 }

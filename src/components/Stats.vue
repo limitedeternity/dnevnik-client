@@ -52,38 +52,38 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'Stats',
   computed: {
     ...mapGetters([
-      "isLoggedIn",
-      "statsData"
+      'isLoggedIn',
+      'statsData'
     ])
   },
   methods: {
     coloring(mood) {
       switch (mood) {
-        case "AllIsGood":
-        case "Good":
-          return "teal"
+        case 'AllIsGood':
+        case 'Good':
+          return 'teal'
         
-        case "О":
-        case "Average":
-          return "#FF5722"
+        case 'О':
+        case 'Average':
+          return '#FF5722'
         
-        case "AllIsBad":
-        case "Н":
-        case "Bad":
-          return "red"
+        case 'AllIsBad':
+        case 'Н':
+        case 'Bad':
+          return 'red'
         
-        case "П":
-        case "Б":
-          return "#01579B"
+        case 'П':
+        case 'Б':
+          return '#01579B'
         
         default:
-          return "#212121"
+          return '#212121'
       } 
     },
     Counter(obj) {
@@ -122,7 +122,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.commit("fetchStats");
+    this.$store.commit('fetchStats');
   }
 }
 </script>

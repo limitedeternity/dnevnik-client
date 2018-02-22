@@ -27,7 +27,7 @@
                     </li>
                 </ul>
                 <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
-                <ul class="collection">
+                <ul class="collection" v-if="dnevnikData.Days[0].Schedule.length">
                       <div v-for="(lesson, index) in dnevnikData.Days[0].Schedule" :key="index" v-if="lesson.Subject">
                               <li class="collection-item avatar z-depth-1">
                         
@@ -54,7 +54,7 @@
                                 </div>
 
                                 <div v-if="lesson.HomeworksText">
-                                  <p :style="{ color: coloring() }" v-html="`Д/З: ${homeworkLinkReplace(lesson.HomeworksText)}`"></p>
+                                  <p :style="{ color: coloring() }" v-html="`Д/З: ${linkReplace(lesson.HomeworksText)}`"></p>
                                 </div>
                                 <div v-else>
                                   <p :style="{ color: coloring() }">Д/З: нет</p>
@@ -66,6 +66,10 @@
                               <div :style="{display: 'block', clear: 'both', height: '3px'}"></div>
                       </div>
                 </ul>
+                <div v-else class="card-panel teal center">
+                    <span class="white-text">Уроков нет.
+                    </span>
+                </div>
             </div>
             <div v-else>
               <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
@@ -136,8 +140,8 @@ export default {
           return "#212121"
       } 
     },
-    homeworkLinkReplace(text) {
-      return text.replace(/http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+/, (match) => { return "<a href='" + match + "' rel='noopener' target='_blank'>[ссылка]</a>"})
+    linkReplace(text) {
+      return text.replace(/http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+/, (match) => { return `<a href='${match}' rel='noopener' target='_blank'>[ссылка]</a>`})
     }
   },
   created() {

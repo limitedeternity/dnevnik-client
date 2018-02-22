@@ -60,7 +60,7 @@
                                         <div :style="{display: 'block', clear: 'both', height: '6px'}"></div>
                                         <span class="title" :style="{color: '#01579B'}">{{ notification.Title }}</span>
                                         <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
-                                        <div v-html="notification.Text"></div>
+                                        <div v-html="linkReplace(notification.Text)"></div>
                                         <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                                     </li>
                                     <div :style="{display: 'block', clear: 'both', height: '2px'}"></div>
@@ -91,47 +91,50 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'Home',
   computed: {
     ...mapGetters([
-      "isLoggedIn",
-      "userData",
-      "feedData"
+      'isLoggedIn',
+      'userData',
+      'feedData'
     ]),
     user() {
-      return this.userData ? this.userData.firstName : "товарищ"
+      return this.userData ? this.userData.firstName : 'товарищ'
     }
   },
   methods: {
     coloring(mood) {
       switch (mood) {
-        case "AllIsGood":
-        case "Good":
-          return "teal"
+        case 'AllIsGood':
+        case 'Good':
+          return 'teal'
         
-        case "О":
-        case "Average":
-          return "#FF5722"
+        case 'О':
+        case 'Average':
+          return '#FF5722'
         
-        case "AllIsBad":
-        case "Н":
-        case "Bad":
-          return "red"
+        case 'AllIsBad':
+        case 'Н':
+        case 'Bad':
+          return 'red'
         
-        case "П":
-        case "Б":
-          return "#01579B"
+        case 'П':
+        case 'Б':
+          return '#01579B'
         
         default:
-          return "#212121"
+          return '#212121'
       } 
+    },
+    linkReplace(text) {
+      return text.replace(/http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+/, (match) => { return `<a href='${match}' rel='noopener' target='_blank'>[ссылка]</a>`})
     }
   },
   mounted() {
-      this.$store.commit("fetchFeed");
+      this.$store.commit('fetchFeed');
   }
 }
 </script>
