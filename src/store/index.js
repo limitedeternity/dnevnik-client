@@ -65,7 +65,7 @@ const store = new Vuex.Store({
                     break;
                 }
 
-                fetch(`https://api.dnevnik.ru/mobile/v2/schedule?startDate=${date.year()}-${('0' + (date.month() + 1)).slice(-2)}-${('0' + date.date()).slice(-2)}&endDate=${date.year()}-${('0' + (date.month() + 1)).slice(-2)}-${('0' + date.date()).slice(-2)}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`).then((response) => {
+                fetch(`https://api.dnevnik.ru/mobile/v2/schedule?startDate=${date.year()}-${('0' + (date.month() + 1)).slice(-2)}-${('0' + date.date()).slice(-2)}&endDate=${date.year()}-${('0' + (date.month() + 1)).slice(-2)}-${('0' + date.date()).slice(-2)}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
                     if (response.ok) {
                         response.json().then((dnevnikJson) => {
                             if (params.shouldWrite) {
@@ -85,7 +85,7 @@ const store = new Vuex.Store({
         },
         fetchStats(state) {
             if (state.isLoggedIn) {
-                fetch(`https://api.dnevnik.ru/mobile/v2/allMarks?personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`).then((response) => {
+                fetch(`https://api.dnevnik.ru/mobile/v2/allMarks?personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
                     if (response.ok) {
                         response.json().then((statsJson) => {
                             state.statsData = statsJson;
@@ -99,7 +99,7 @@ const store = new Vuex.Store({
             if (state.isLoggedIn) {
                 let date = moment();
 
-                fetch(`https://api.dnevnik.ru/mobile/v2/feed/?date=${date.year()}-${('0' + (date.month() + 1)).slice(-2)}-${('0' + date.date()).slice(-2)}&limit=1&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`).then((response) => {
+                fetch(`https://api.dnevnik.ru/mobile/v2/feed/?date=${date.year()}-${('0' + (date.month() + 1)).slice(-2)}-${('0' + date.date()).slice(-2)}&limit=1&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
                     if (response.ok) {
                         response.json().then((feedJson) => {
                             if (feedJson.hasOwnProperty('type') && feedJson['type'] === 'apiRequestLimit') {
@@ -125,7 +125,7 @@ const store = new Vuex.Store({
         },
         userDataUpdate(state) {
             if (state.isLoggedIn) {
-                fetch(`https://api.dnevnik.ru/v1/users/me/context?access_token=${state.apiKey}`).then((response) => {
+                fetch(`https://api.dnevnik.ru/v1/users/me/context?access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
                     if (response.ok) {
                         response.json().then((userData) => {
                             state.userData = userData;
