@@ -1,6 +1,5 @@
 <template>
-  <div v-if="isLoggedIn">
-    <div class="col s12 offset-m4 m4">
+  <div class="col s12 offset-m1 m10 offset-l2 l8 offset-xl4 xl4" v-if="isLoggedIn">
       <div class="card">
         <div class="card-image">
             <img src="../assets/images/stats.jpg">
@@ -39,14 +38,11 @@
             </div>
         </div>
       </div>
-    </div>
   </div>
-  <div v-else>
-    <div class="col s12 m5">
-        <div class="card-panel red">
-            <span class="white-text">Для просмотра этой страницы вам необходимо авторизоваться.
-            </span>
-        </div>
+  <div class="col s12 offset-m1 m10 offset-l2 l8 offset-xl4 xl4" v-else>
+    <div class="card-panel red">
+        <span class="white-text">Для просмотра этой страницы вам необходимо авторизоваться.
+        </span>
     </div>
   </div>
 </template>

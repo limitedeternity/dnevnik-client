@@ -1,43 +1,75 @@
 <template>
-  <div id="app">
-    <nav>
-      <div class="nav-wrapper">
-        <router-link :to="{name: 'home'}" class="brand-logo left" replace>
-          <i class="material-icons" style="margin-left:15px;">book</i>
-        </router-link>
-        <ul class="right" id="tabs">
-          <div v-if="isLoggedIn">
-            <li>
-              <router-link :to="{name: 'dnevnik'}" replace>
-                <i class="material-icons">face</i>
-              </router-link>
-            </li>
-            <li>
-              <router-link :to="{name: 'stats'}" replace>
-                <i class="material-icons">view_list</i>
-              </router-link>
-            </li>
-            <li>
-              <a href="#" @click="$store.commit('resetLoginState')">
-                <i class="material-icons">exit_to_app</i>
-              </a>
-            </li>
-          </div>
-          <div v-else>
-            <li>
-              <a href="https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo,Messages&redirect_uri=https://limitedeternity.github.io/dnevnik-client/">
-                <i class="material-icons">settings_power</i>
-              </a>
-            </li>
-          </div>
-        </ul>
+  <div id="app" style="display:flex;min-height:100vh;flex-direction:column;">
+    <header>
+      <nav role="navigation">
+        <div class="nav-wrapper">
+          <router-link :to="{name: 'home'}" class="brand-logo left" replace>
+            <i class="material-icons" style="margin-left:15px;">book</i>
+          </router-link>
+          <ul class="right" id="tabs">
+            <div v-if="isLoggedIn">
+              <li>
+                <router-link :to="{name: 'dnevnik'}" replace>
+                  <i class="material-icons">face</i>
+                </router-link>
+              </li>
+              <li>
+                <router-link :to="{name: 'stats'}" replace>
+                  <i class="material-icons">view_list</i>
+                </router-link>
+              </li>
+              <li>
+                <a href="#" @click="$store.commit('resetLoginState')">
+                  <i class="material-icons">exit_to_app</i>
+                </a>
+              </li>
+            </div>
+            <div v-else>
+              <li>
+                <a href="https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo,Messages&redirect_uri=https://limitedeternity.github.io/dnevnik-client/">
+                  <i class="material-icons">settings_power</i>
+                </a>
+              </li>
+            </div>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main style="flex: 1 0 auto;">
+      <div class="row">
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
       </div>
-    </nav>
-    <div class="row">
-      <keep-alive>
-        <router-view></router-view>
-      </keep-alive>
-    </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col l6 s12">
+            <h5 class="white-text">DnevnikClient</h5>
+            <p class="grey-text text-lighten-4">Чистим вилкой то, что другие очистить не могут десятилетиями.</p>
+          </div>
+          <div class="col l2 offset-l2 s6">
+            <h6>О проекте</h6>
+            <ul>
+              <li><a href="https://github.com/limitedeternity/dnevnik-client/" class="grey-text text-lighten-3">Репозиторий</a></li>
+            </ul>
+          </div>
+          <div class="col l2 s6">
+            <h6>Разработчик</h6>
+            <ul>
+              <li><a href="https://github.com/limitedeternity" class="grey-text text-lighten-3">GitHub</a></li>
+              <li><a href="https://vk.com/limitedeternity" class="grey-text text-lighten-3">VK</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container">Made by @limitedeternity</div>
+      </div>
+    </footer>
   </div>
 </template>
 

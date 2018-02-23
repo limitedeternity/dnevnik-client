@@ -1,5 +1,5 @@
 <template>
-  <div class="col s12 offset-m4 m4">
+  <div class="col s12 offset-m1 m10 offset-l2 l8 offset-xl4 xl4">
         <div class="card">
             <div class="card-image">
                 <img src="../assets/images/nature.jpg">

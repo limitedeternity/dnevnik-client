@@ -1,5 +1,5 @@
 <template>
-    <div class="col s12 m6">
+    <div class="col s12 offset-m1 m10 offset-l2 l8 offset-xl4 xl4">
       <div class="card" style="background-color:#844204">
         <div class="card-content white-text">
           <span class="card-title">Подождите-ка...</span>
