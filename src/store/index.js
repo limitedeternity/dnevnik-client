@@ -93,9 +93,14 @@ const store = new Vuex.Store({
                             state.statsData = statsJson;
                             state.statsLoad = false;
                         });
-                    }
-                });
 
+                    } else {
+                        state.statsLoad = false;
+                    }
+
+                }, () => {
+                    state.statsLoad = false;
+                });
             }
         },
         fetchFeed(state) {
@@ -113,7 +118,13 @@ const store = new Vuex.Store({
                                 state.feedLoad = false;
                             }
                         });
+
+                    } else {
+                        state.feedLoad = false;
                     }
+
+                }, () => {
+                    state.feedLoad = false;
                 });
             }
         },
