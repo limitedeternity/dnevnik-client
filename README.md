@@ -23,7 +23,7 @@ DnevnikClient is a read-only Material Design client for Dnevnik.ru.
 
 ``server-side`` branch contains Flask-based web-server with same functionality, but different UI&UX.
 
-It's deployed on https://dnevnik-client.herokuapp.com/
+It's deployed on https://dnevnik-client.herokuapp.com/home
 
 ! **Both versions work only in Chrome. Idk why.**
 
