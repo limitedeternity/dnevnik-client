@@ -54,14 +54,14 @@
           <div class="col l2 offset-l2 s6">
             <h6>О проекте</h6>
             <ul>
-              <li><a href="https://github.com/limitedeternity/dnevnik-client/" class="grey-text text-lighten-3">Репозиторий</a></li>
+              <li><a href="https://github.com/limitedeternity/dnevnik-client/" rel="noopener" target="_blank" class="grey-text text-lighten-3">Репозиторий</a></li>
             </ul>
           </div>
           <div class="col l2 s6">
             <h6>Разработчик</h6>
             <ul>
-              <li><a href="https://github.com/limitedeternity" class="grey-text text-lighten-3">GitHub</a></li>
-              <li><a href="https://vk.com/limitedeternity" class="grey-text text-lighten-3">VK</a></li>
+              <li><a href="https://github.com/limitedeternity" rel="noopener" target="_blank" class="grey-text text-lighten-3">GitHub</a></li>
+              <li><a href="https://vk.com/limitedeternity" rel="noopener" target="_blank" class="grey-text text-lighten-3">VK</a></li>
             </ul>
           </div>
         </div>
