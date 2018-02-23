@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import VuexPersistence from 'vuex-persist';
+import createPersistedState from 'vuex-persistedstate';
 import SecureLS from 'secure-ls';
 import Cookies from 'js-cookie';
 import moment from 'moment';
@@ -11,19 +11,15 @@ const ls = new SecureLS({
     encodingType: 'aes'
 });
 
-/* eslint-disable no-unused-vars */
-const vuexLocal = new VuexPersistence({
-    restoreState: (key, storage) => ls.get(key),
-    saveState: (key, state, storage) => ls.set(key, state)
-});
-/* eslint-enable no-unused-vars */
-
 const store = new Vuex.Store({
     state: {
         dnevnikData: null,
         offlineDnevnik: null,
+        dnevnikLoad: true,
         statsData: null,
+        statsLoad: true,
         feedData: null,
+        feedLoad: true,
         userData: null,
         isLoggedIn: false,
         apiKey: null
@@ -34,7 +30,10 @@ const store = new Vuex.Store({
         statsData: (state) => state.statsData,
         feedData: (state) => state.feedData,
         userData: (state) => state.userData,
-        isLoggedIn: (state) => state.isLoggedIn
+        isLoggedIn: (state) => state.isLoggedIn,
+        dnevnikLoad: (state) => state.dnevnikLoad,
+        statsLoad: (state) => state.statsLoad,
+        feedLoad: (state) => state.feedLoad
     },
     mutations: {
         fetchDnevnik(state, params) {
@@ -72,14 +71,17 @@ const store = new Vuex.Store({
                                 state.offlineDnevnik = dnevnikJson;
                             }
                             state.dnevnikData = dnevnikJson;
+                            state.dnevnikLoad = false;
                         });
 
                     } else {
                         state.dnevnikData = state.offlineDnevnik;
+                        state.dnevnikLoad = false;
                     }
                     
                 }, () => {
                     state.dnevnikData = state.offlineDnevnik;
+                    state.dnevnikLoad = false;
                 });
             }
         },
@@ -89,6 +91,7 @@ const store = new Vuex.Store({
                     if (response.ok) {
                         response.json().then((statsJson) => {
                             state.statsData = statsJson;
+                            state.statsLoad = false;
                         });
                     }
                 });
@@ -107,6 +110,7 @@ const store = new Vuex.Store({
                                 
                             } else {
                                 state.feedData = feedJson;
+                                state.feedLoad = false;
                             }
                         });
                     }
@@ -136,7 +140,22 @@ const store = new Vuex.Store({
         }
     },
     plugins: [
-        vuexLocal.plugin
+        createPersistedState({
+            storage: {
+                getItem: (key) => ls.get(key),
+                setItem: (key, value) => ls.set(key, value),
+                removeItem: (key) => ls.remove(key)
+            },
+            paths: [
+                'dnevnikData',
+                'offlineDnevnik',
+                'statsData',
+                'feedData',
+                'userData',
+                'isLoggedIn',
+                'apiKey'
+            ]
+        })
     ]
 });
 

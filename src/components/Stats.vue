@@ -7,7 +7,7 @@
         </div>
         <div class="card-content">
           <span class="card-title grey-text text-darken-4">Статистика</span>
-            <div v-if="statsData">
+            <div v-if="!statsLoad">
               <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
               <ul class="collection">
                  <div v-for="(subjectData, index) in statsData.AllMarks[0].SubjectMarks" v-if="subjectData.Marks.length" :key="index">
@@ -59,7 +59,8 @@ export default {
   computed: {
     ...mapGetters([
       'isLoggedIn',
-      'statsData'
+      'statsData',
+      'statsLoad'
     ])
   },
   methods: {

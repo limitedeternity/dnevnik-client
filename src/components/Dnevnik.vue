@@ -7,7 +7,7 @@
         </div>
         <div class="card-content">
             <span class="card-title grey-text text-darken-4">Дневник</span>
-            <div v-if="dnevnikData">
+            <div v-if="!dnevnikLoad">
                 <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                 <ul class="pagination center">
                     <li class="waves-effect">
@@ -101,7 +101,8 @@ export default {
     ...mapGetters([
       "isLoggedIn",
       "dnevnikData",
-      "userData"
+      "userData",
+      "dnevnikLoad"
     ])
   },
   data() {
@@ -159,9 +160,6 @@ export default {
         }
       });
     }
-  },
-  created() {
-    this.$store.state.dnevnikData = null;
   },
   mounted() {
     this.fetchData(true);

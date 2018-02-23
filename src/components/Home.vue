@@ -16,7 +16,7 @@
                     <span class="card-title grey-text text-darken-4">Инфо
                         <i class="material-icons right">close</i>
                     </span>
-                    <div v-if="feedData">
+                    <div v-if="!feedLoad">
                         <div v-if="feedData.Feed.Days[0].MarkCards.length">
                             <blockquote :style="{borderLeft: '5px solid ' + coloring(feedData.Feed.Days[0].DayEmotion)}">Оценки за сегодня</blockquote>
                             <ul class="collection">
@@ -100,7 +100,8 @@ export default {
     ...mapGetters([
       'isLoggedIn',
       'userData',
-      'feedData'
+      'feedData',
+      'feedLoad'
     ]),
     user() {
       return this.userData ? this.userData.firstName : 'товарищ'
