@@ -90,7 +90,7 @@ export default {
           for (let i = 0; i < original.length; i++) {
 		          var myCount = 0;	
 		          for (let w = 0; w < copy.length; w++) {
-			            if (Object.is(original[i], copy[w])) {
+			            if (JSON.stringify(original[i]) === JSON.stringify(copy[w])) {
 				              myCount++;
 				              delete copy[w];
 			            }
