@@ -60,7 +60,7 @@
                                         <div :style="{display: 'block', clear: 'both', height: '6px'}"></div>
                                         <span class="title" :style="{color: '#01579B'}">{{ notification.Title }}</span>
                                         <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
-                                        <div v-html="linkReplace(notification.Text)"></div>
+                                        <p v-html="linkReplace(notification.Text)"></p>
                                         <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                                     </li>
                                     <div :style="{display: 'block', clear: 'both', height: '2px'}"></div>
@@ -92,7 +92,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import Autolinker from 'autolinker';
+import anchorme from "anchorme";
 
 export default {
   name: 'Home',
@@ -132,22 +132,22 @@ export default {
       } 
     },
     linkReplace(text) {
-      return Autolinker.link(text, {
-        replaceFn: (match) => {
-          switch(match.getType()) {
-            case 'url':
-              return `<a href='${match.getUrl()}' rel='noopener' target='_blank'>[ссылка]</a>`
-            
-            case 'mention':
-            case 'hashtag':
-              return false;
-              
-            case 'phone':
-            case 'email':
-              return true;
-          }
-        }
-      });
+        let replacedText = anchorme(text, {
+            emails: false,
+	        attributes: [
+		        {
+			        name: "target",
+			        value: "_blank"
+		        },
+                {
+                    name:"rel",
+                    value:"noopener"
+                }
+	        ]
+        });
+        let parsedText = (new DOMParser()).parseFromString(replacedText, "text/html");
+        Array.from(parsedText.getElementsByTagName('a')).forEach(link => link.innerText = "[ссылка]");
+        return parsedText.querySelector("body").innerHTML;
     }
   },
   mounted() {
