@@ -1,6 +1,6 @@
 <template>
   <div id="app" style="display:flex;min-height:100vh;flex-direction:column;">
-    <header>
+    <header class="navbar-fixed">
       <nav role="navigation">
         <div class="nav-wrapper">
           <router-link :to="{name: 'home'}" class="brand-logo left" replace>
