@@ -2,8 +2,15 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
 import SecureLS from 'secure-ls';
-import Cookies from 'js-cookie';
-import moment from 'moment';
+import { getRawCookie, removeCookie } from 'tiny-cookie';
+
+import addDays from 'date-fns/add_days';
+import getHours from 'date-fns/get_hours';
+import isSaturday from 'date-fns/is_saturday';
+import isSunday from 'date-fns/is_sunday';
+import getMonth from 'date-fns/get_month';
+import getYear from 'date-fns/get_year';
+import getDate from 'date-fns/get_date';
 
 Vue.use(Vuex);
 
@@ -38,33 +45,38 @@ const store = new Vuex.Store({
     mutations: {
         fetchDnevnik(state, params) {
             if (state.isLoggedIn) {
-                let date = null;
+                let dateCurrent = new Date;
+                let dateFormatted = null;
 
-                switch (moment().day()) {
-                case 0:
-                    date = moment().add(1, 'days').add(params.amount, 'days');
+                switch (true) {
+                case isSunday(dateCurrent):
+                    dateFormatted = addDays(addDays(dateCurrent, 1), params.amount);
                     break;
                     
-                case 6:
-                    if (moment().hour() < 14) {
-                        date = moment().add(params.amount, 'days');
+                case isSaturday(new Date):
+                    if (getHours(dateCurrent) < 14) {
+                        dateFormatted = addDays(dateCurrent, params.amount);
 
                     } else {
-                        date = moment().add(2, 'days').add(params.amount, 'days');
+                        dateFormatted = addDays(addDays(dateCurrent, 2), params.amount);
                     }
                     break;
                     
                 default:
-                    if (moment().hour() < 15) {
-                        date = moment().add(params.amount, 'days');
+                    if (getHours(dateCurrent) < 15) {
+                        dateFormatted = addDays(dateCurrent, params.amount);
 
                     } else {
-                        date = moment().add(1, 'days').add(params.amount, 'days');
+                        dateFormatted = addDays(addDays(dateCurrent, 1), params.amount);
                     }
                     break;
                 }
 
-                fetch(`https://api.dnevnik.ru/mobile/v2/schedule?startDate=${date.year()}-${('0' + (date.month() + 1)).slice(-2)}-${('0' + date.date()).slice(-2)}&endDate=${date.year()}-${('0' + (date.month() + 1)).slice(-2)}-${('0' + date.date()).slice(-2)}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
+                let day = ('0' + getDate(dateFormatted)).slice(-2);
+                let month = ('0' + (getMonth(dateCurrent) + 1)).slice(-2);
+                let year = getYear(dateFormatted);
+
+                fetch(`https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
                     if (response.ok) {
                         response.json().then((dnevnikJson) => {
                             if (params.shouldWrite) {
@@ -105,15 +117,19 @@ const store = new Vuex.Store({
         },
         fetchFeed(state) {
             if (state.isLoggedIn) {
-                let date = moment();
+                let dateCurrent = new Date;
 
                 let deauthChecker = (jsonData) => {
                     return ['invalidToken', 'apiRequestLimit'].some((elem) => {
-                        return (jsonData.hasOwnProperty('type') && jsonData['type'] === elem)
-                    })
-                }
+                        return (jsonData.hasOwnProperty('type') && jsonData['type'] === elem);
+                    });
+                };
 
-                fetch(`https://api.dnevnik.ru/mobile/v2/feed/?date=${date.year()}-${('0' + (date.month() + 1)).slice(-2)}-${('0' + date.date()).slice(-2)}&limit=1&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
+                let day = ('0' + getDate(dateCurrent)).slice(-2);
+                let month = ('0' + (getMonth(dateCurrent) + 1)).slice(-2);
+                let year = getYear(dateCurrent);
+
+                fetch(`https://api.dnevnik.ru/mobile/v2/feed/?date=${year}-${month}-${day}&limit=1&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
                     if (response.ok) {
                         response.json().then((feedJson) => {
                             if (deauthChecker(feedJson)) {
@@ -136,8 +152,8 @@ const store = new Vuex.Store({
         },
         setLoginState(state) {
             state.isLoggedIn = true;
-            state.apiKey = Cookies.get('AccessToken');
-            Cookies.remove('AccessToken');
+            state.apiKey = getRawCookie('AccessToken');
+            removeCookie('AccessToken');
         },
         resetLoginState() {
             if (navigator.onLine) {
