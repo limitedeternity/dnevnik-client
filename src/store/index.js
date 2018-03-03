@@ -107,10 +107,16 @@ const store = new Vuex.Store({
             if (state.isLoggedIn) {
                 let date = moment();
 
+                let deauthChecker = (jsonData) => {
+                    return ['invalidToken', 'apiRequestLimit'].some((elem) => {
+                        return (jsonData.hasOwnProperty('type') && jsonData['type'] === elem)
+                    })
+                }
+
                 fetch(`https://api.dnevnik.ru/mobile/v2/feed/?date=${date.year()}-${('0' + (date.month() + 1)).slice(-2)}-${('0' + date.date()).slice(-2)}&limit=1&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
                     if (response.ok) {
                         response.json().then((feedJson) => {
-                            if (feedJson.hasOwnProperty('type') && feedJson['type'] === 'apiRequestLimit') {
+                            if (deauthChecker(feedJson)) {
                                 store.replaceState({});
                                 
                             } else {
