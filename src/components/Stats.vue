@@ -118,7 +118,7 @@ export default {
       return compressArray(array);
     }
   },
-  mounted() {
+  created() {
     this.$store.commit('fetchStats');
   }
 }

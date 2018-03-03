@@ -157,7 +157,7 @@ export default {
       return parsedText.querySelector("body").innerHTML;
     }
   },
-  mounted() {
+  created() {
     this.fetchData(true);
   }
 };

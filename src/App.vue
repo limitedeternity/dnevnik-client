@@ -39,7 +39,7 @@
     <main style="flex: 1 0 auto;">
       <div class="row">
         <keep-alive>
-          <router-view></router-view>
+          <router-view :key="$route.fullPath"></router-view>
         </keep-alive>
       </div>
     </main>
@@ -112,12 +112,10 @@ export default {
     }
   },
   created() {
-    this.checkLoginSeq();
+    this.$store.commit('userDataUpdate');
   },
   mounted() {
-    if (this.isLoggedIn) {
-      this.$store.commit('userDataUpdate');
-    }
+    this.checkLoginSeq();
   }
 }
 </script>

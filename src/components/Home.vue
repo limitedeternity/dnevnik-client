@@ -3,7 +3,7 @@
         <div class="card">
             <div class="card-image">
                 <img src="../assets/images/nature.jpg">
-                <a class="btn-floating btn-large activator halfway-fab waves-effect waves-light red pulse" onclick="this.classList.remove('pulse')">
+                <a @click="fetchFeed" class="btn-floating btn-large activator halfway-fab waves-effect waves-light red pulse" onclick="this.classList.remove('pulse')">
                     <i class="material-icons">mode_edit</i>
                 </a>
             </div>
@@ -148,10 +148,12 @@ export default {
         let parsedText = (new DOMParser()).parseFromString(replacedText, "text/html");
         Array.from(parsedText.getElementsByTagName('a')).forEach(link => link.innerText = "[ссылка]");
         return parsedText.querySelector("body").innerHTML;
+    },
+    fetchFeed() {
+        if (this.feedLoad) {
+            this.$store.commit('fetchFeed');
+        }
     }
-  },
-  mounted() {
-      this.$store.commit('fetchFeed');
   }
 }
 </script>
