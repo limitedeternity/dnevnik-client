@@ -32,11 +32,11 @@ const fileManifest = [
   },
   {
     "url": "src/assets/config/browserconfig.xml",
-    "revision": "d0102224c669dec57534cb170001a767"
+    "revision": "63f136c2e10d56fe7d37864dca8cdc0e"
   },
   {
     "url": "src/assets/config/manifest.json",
-    "revision": "535b9160db45ecc07e605180af5047b6"
+    "revision": "00f1545fdfd74f7b5f3dd17d9673d43d"
   },
   {
     "url": "src/assets/css/materialize.min.css",

@@ -14,8 +14,8 @@ new Vue({
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js', {
-            scope: '/dnevnik-client/'
+        navigator.serviceWorker.register('sw.js', {
+            scope: './'
         });
     });
 }
