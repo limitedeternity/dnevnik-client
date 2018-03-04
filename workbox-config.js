@@ -6,7 +6,7 @@ module.exports = {
     'dist/*.jpg',
     'src/assets/**/*.{jpg,json,xml,css,png,ico,js}'
   ],
-  swDest: 'sw.js',
+  swDest: 'dist/sw.js',
   clientsClaim: true,
   skipWaiting: true,
   importWorkboxFrom: 'cdn',

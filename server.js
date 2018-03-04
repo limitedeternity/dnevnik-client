@@ -10,11 +10,19 @@ const application = () => {
     instance.use(helmet());
     instance.use(compression());
 
-    instance.use('/src', express.static('src'));
-    instance.use('/dist', express.static('dist'));
+    instance.use('/src/assets', express.static(path.join(__dirname + '/src/assets')));  // eslint-disable-line
+    instance.use('/dist', express.static(path.join(__dirname + '/dist'))); // eslint-disable-line
 
+    instance.get('/workbox-sw.prod.v2.1.2.js', (req, res) => {
+        res.sendFile(path.join(__dirname, 'dist', 'workbox-sw.prod.v2.1.2.js')); // eslint-disable-line
+    });
+
+    instance.get('/sw.js', (req, res) => {
+        res.sendFile(path.join(__dirname, 'dist', 'sw.js')); // eslint-disable-line
+    });
+    
     instance.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname + '/index.html')); // eslint-disable-line
+        res.sendFile(path.join(__dirname, 'index.html')); // eslint-disable-line
     });
     
     // eslint-disable-next-line
