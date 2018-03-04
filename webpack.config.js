@@ -2,6 +2,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const workboxPlugin = require('workbox-webpack-plugin');
 const BrotliPlugin = require('brotli-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
@@ -70,6 +71,7 @@ if (process.env.NODE_ENV === 'production') {
         NODE_ENV: JSON.stringify('production')
       }
     }),
+    new CleanWebpackPlugin(['dist']),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false

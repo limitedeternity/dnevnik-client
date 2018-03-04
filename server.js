@@ -11,12 +11,12 @@ const application = () => {
 
     instance.use(helmet());
 
-    instance.use(preCompressedAssets(/(^(?!.*(workbox-sw\.prod\.v2\.1\.2\.js|sw\.js)$).+\.js$)|(\.css$)/));
+    instance.use(preCompressedAssets(/(^(?!.*(workbox-sw\.prod\.v2\.1\.3\.js|sw\.js)$).+\.js$)|(\.css$)/));
     instance.use('/src/assets', express.static(path.join(__dirname, 'src', 'assets')));
     instance.use('/dist', express.static(path.join(__dirname, 'dist')));
 
-    instance.get('/workbox-sw.prod.v2.1.2.js', (req, res) => {
-        res.sendFile(path.join(__dirname, 'dist', 'workbox-sw.prod.v2.1.2.js'));
+    instance.get('/workbox-sw.prod.v2.1.3.js', (req, res) => {
+        res.sendFile(path.join(__dirname, 'dist', 'workbox-sw.prod.v2.1.3.js'));
     });
 
     instance.get('/sw.js', (req, res) => {
