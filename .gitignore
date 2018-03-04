@@ -1,5 +1,8 @@
 .DS_Store
 node_modules/
+dist/
+sw.js
+workbox-sw*.*
 npm-debug.log
 yarn-error.log
 

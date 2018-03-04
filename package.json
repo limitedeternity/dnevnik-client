@@ -6,7 +6,9 @@
   "license": "MIT",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot"
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
+    "postinstall": "npm run build",
+    "start-server": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 server.js"
   },
   "repository": {
     "type": "git",
@@ -18,13 +20,21 @@
   "homepage": "https://limitedeternity.github.io/dnevnik-client",
   "dependencies": {
     "anchorme": "^1.1.2",
+    "compress": "^0.99.0",
     "date-fns": "^1.29.0",
+    "express": "^4.16.2",
+    "helmet": "^3.12.0",
     "secure-ls": "^1.1.0",
+    "throng": "^4.0.0",
     "tiny-cookie": "^2.1.1",
     "vue": "^2.5.13",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
     "vuex-persistedstate": "^2.4.2"
+  },
+  "engines": {
+    "node": "9.6.1",
+    "npm": "5.6.0"
   },
   "browserslist": [
     "> 1%",

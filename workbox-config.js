@@ -21,7 +21,7 @@ module.exports = {
       }
     },
     {
-      urlPattern: new RegExp('dnevnik-client/$'),
+      urlPattern: '/',
       handler: 'staleWhileRevalidate',
       options: {
         cacheableResponse: {
