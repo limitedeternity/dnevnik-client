@@ -1,28 +1,30 @@
 const express = require('express');
-const compression = require('compression');
 const helmet = require('helmet');
 const throng = require('throng');
+const preCompressedAssets = require('pre-compressed-assets');
 const path = require('path');
 
+var __dirname = path.resolve();
 
 const application = () => {
     var instance = express();
-    instance.use(helmet());
-    instance.use(compression());
 
-    instance.use('/src/assets', express.static(path.join(__dirname + '/src/assets')));  // eslint-disable-line
-    instance.use('/dist', express.static(path.join(__dirname + '/dist'))); // eslint-disable-line
+    instance.use(helmet());
+
+    instance.use(preCompressedAssets(/(^(?!.*(workbox-sw\.prod\.v2\.1\.2\.js|sw\.js)$).+\.js$)|(\.css$)/));
+    instance.use('/src/assets', express.static(path.join(__dirname, 'src', 'assets')));
+    instance.use('/dist', express.static(path.join(__dirname, 'dist')));
 
     instance.get('/workbox-sw.prod.v2.1.2.js', (req, res) => {
-        res.sendFile(path.join(__dirname, 'dist', 'workbox-sw.prod.v2.1.2.js')); // eslint-disable-line
+        res.sendFile(path.join(__dirname, 'dist', 'workbox-sw.prod.v2.1.2.js'));
     });
 
     instance.get('/sw.js', (req, res) => {
-        res.sendFile(path.join(__dirname, 'dist', 'sw.js')); // eslint-disable-line
+        res.sendFile(path.join(__dirname, 'dist', 'sw.js'));
     });
     
     instance.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname, 'index.html')); // eslint-disable-line
+        res.sendFile(path.join(__dirname, 'index.html'));
     });
     
     // eslint-disable-next-line

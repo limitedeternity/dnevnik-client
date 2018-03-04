@@ -26,7 +26,7 @@
             </div>
             <div v-else>
               <li>
-                <a href="https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo,Messages&redirect_uri=https://limitedeternity.github.io/dnevnik-client/">
+                <a :href="'https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo,Messages&redirect_uri=' + getOrigin()">
                   <i class="material-icons">settings_power</i>
                 </a>
               </li>
@@ -109,6 +109,9 @@ export default {
     },
     randomChoice(arr) {
       return arr[Math.floor(Math.random() * arr.length)];
+    },
+    getOrigin() {
+      return location.origin;
     }
   },
   created() {

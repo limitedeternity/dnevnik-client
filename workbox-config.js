@@ -4,7 +4,7 @@ module.exports = {
   globDirectory: '.',
   globPatterns: [
     'dist/*.jpg',
-    'src/assets/**/*.{jpg,json,xml,css,png,ico,js}'
+    'src/assets/**/*.{jpg,json,xml,png,ico}'
   ],
   swDest: 'dist/sw.js',
   clientsClaim: true,
@@ -30,7 +30,16 @@ module.exports = {
       }
     },
     {
-      urlPattern: new RegExp('dist/.+.js$'),
+      urlPattern: /src\/assets\/.+\/.+\.(?:css|js)(?:\.br|\.gz|)$/,
+      handler: 'cacheFirst',
+      options: {
+        cacheableResponse: {
+          statuses: [0, 200]
+        }
+      }
+    },
+    {
+      urlPattern: /dist\/.+\.js(?:\.gz|\.br|)$/,
       handler: 'staleWhileRevalidate',
       options: {
         cacheableResponse: {
