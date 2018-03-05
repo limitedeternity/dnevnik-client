@@ -26,6 +26,10 @@ const application = () => {
     instance.get('/', (req, res) => {
         res.sendFile(path.join(__dirname, 'index.html'));
     });
+
+    instance.get('*', (req, res) => {
+        res.redirect('/');
+    });
     
     // eslint-disable-next-line
     instance.listen(process.env.PORT || 5000, () => {
