@@ -4,8 +4,6 @@ const path = require('path');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const workboxPlugin = require('workbox-webpack-plugin');
-const BrotliPlugin = require('brotli-webpack-plugin');
-const CompressionPlugin = require('compression-webpack-plugin');
 const workboxConfig = require('./workbox-config');
 
 module.exports = {
@@ -81,19 +79,6 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.LoaderOptionsPlugin({
       minimize: true
-    }),
-    new CompressionPlugin({
-      asset: '[path].gz',
-      algorithm: 'gzip',
-      test: /\.js$|\.css$/,
-      threshold: 10240,
-      minRatio: 0.8
-    }),
-    new BrotliPlugin({
-      asset: "[path].br",
-      test: /\.js$|\.css$/,
-      threshold: 10240,
-      minRatio: 0.8
     }),
     new workboxPlugin(workboxConfig)
   ]);

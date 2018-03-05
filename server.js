@@ -1,7 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const throng = require('throng');
-const preCompressedAssets = require('pre-compressed-assets');
+const shrinkRay = require('shrink-ray');
 const path = require('path');
 
 var __dirname = path.resolve();
@@ -11,7 +11,7 @@ const application = () => {
 
     instance.use(helmet());
 
-    instance.use(preCompressedAssets(/(^(?!.*(workbox-sw\.prod\.v2\.1\.3\.js|sw\.js)$).+\.js$)|(\.css$)/));
+    instance.use(shrinkRay());
     instance.use('/src/assets', express.static(path.join(__dirname, 'src', 'assets')));
     instance.use('/dist', express.static(path.join(__dirname, 'dist')));
 
