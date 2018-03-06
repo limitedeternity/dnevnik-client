@@ -43,31 +43,159 @@ const store = new Vuex.Store({
         feedLoad: (state) => state.feedLoad
     },
     mutations: {
-        fetchDnevnik(state, params) {
+        fetchData(state) {
+            if (state.isLoggedIn) {
+                fetch(`https://api.dnevnik.ru/v1/users/me/context?access_token=${state.apiKey}`, {
+                    credentials: 'same-origin'
+                }).then((response) => {
+                    if (response.ok) {
+                        response.json().then((userData) => {
+                            state.userData = userData;
+                        });
+                    }
+
+                }).catch(() => {
+                    console.log('Failed to fetch item: UserData'); // eslint-disable-line no-console
+
+                }).then(() => {
+                    let dateCurrent = new Date;
+                    let dateFormatted = null;
+
+                    switch (true) {
+                    case isSunday(dateCurrent):
+                        dateFormatted = addDays(dateCurrent, 1);
+                        break;
+
+                    case isSaturday(new Date):
+                        if (getHours(dateCurrent) < 14) {
+                            dateFormatted = dateCurrent;
+
+                        } else {
+                            dateFormatted = addDays(dateCurrent, 2);
+                        }
+                        break;
+
+                    default:
+                        if (getHours(dateCurrent) < 15) {
+                            dateFormatted = dateCurrent;
+
+                        } else {
+                            dateFormatted = addDays(dateCurrent, 1);
+                        }
+                        break;
+                    }
+
+                    let day = ('0' + getDate(dateFormatted)).slice(-2);
+                    let month = ('0' + (getMonth(dateCurrent) + 1)).slice(-2);
+                    let year = getYear(dateFormatted);
+
+                    fetch(`https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
+                        if (response.ok) {
+                            response.json().then((dnevnikJson) => {
+                                state.offlineDnevnik = dnevnikJson;
+                                state.dnevnikData = dnevnikJson;
+                                state.dnevnikLoad = false;
+                            });
+
+                        } else {
+                            state.dnevnikData = state.offlineDnevnik;
+                            state.dnevnikLoad = false;
+                        }
+
+                    }, () => {
+                        state.dnevnikData = state.offlineDnevnik;
+                        state.dnevnikLoad = false;
+                    });
+
+                }).catch(() => {
+                    console.log('Failed to fetch item: Dnevnik'); // eslint-disable-line no-console
+
+                }).then(() => {
+                    fetch(`https://api.dnevnik.ru/mobile/v2/allMarks?personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
+                        if (response.ok) {
+                            response.json().then((statsJson) => {
+                                state.statsData = statsJson;
+                                state.statsLoad = false;
+                            });
+
+                        } else {
+                            state.statsLoad = false;
+                        }
+
+                    }, () => {
+                        state.statsLoad = false;
+                    });
+
+                }).catch(() => {
+                    console.log('Failed to fetch item: Stats'); // eslint-disable-line no-console
+
+                }).then(() => {
+                    let dateCurrent = new Date;
+
+                    let deauthChecker = (jsonData) => {
+                        return ['invalidToken', 'apiRequestLimit'].some((elem) => {
+                            return (jsonData.hasOwnProperty('type') && jsonData['type'] === elem);
+                        });
+                    };
+
+                    let day = ('0' + getDate(dateCurrent)).slice(-2);
+                    let month = ('0' + (getMonth(dateCurrent) + 1)).slice(-2);
+                    let year = getYear(dateCurrent);
+
+                    fetch(`https://api.dnevnik.ru/mobile/v2/feed/?date=${year}-${month}-${day}&limit=1&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
+                        if (response.ok) {
+                            response.json().then((feedJson) => {
+                                if (deauthChecker(feedJson)) {
+                                    store.replaceState({});
+
+                                } else {
+                                    state.feedData = feedJson;
+                                    state.feedLoad = false;
+                                }
+                            });
+
+                        } else {
+                            state.feedLoad = false;
+                        }
+
+                    }, () => {
+                        state.feedLoad = false;
+                    });
+
+                }).catch(() => {
+                    console.log('Failed to fetch item: Feed'); // eslint-disable-line no-console
+
+                }).then(() => {
+                    console.log('Fetch operation finished.'); // eslint-disable-line no-console
+
+                });
+            }
+        },
+        viewDnevnik(state, amount) {
             if (state.isLoggedIn) {
                 let dateCurrent = new Date;
                 let dateFormatted = null;
 
                 switch (true) {
                 case isSunday(dateCurrent):
-                    dateFormatted = addDays(addDays(dateCurrent, 1), params.amount);
+                    dateFormatted = addDays(addDays(dateCurrent, 1), amount);
                     break;
                     
                 case isSaturday(new Date):
                     if (getHours(dateCurrent) < 14) {
-                        dateFormatted = addDays(dateCurrent, params.amount);
+                        dateFormatted = addDays(dateCurrent, amount);
 
                     } else {
-                        dateFormatted = addDays(addDays(dateCurrent, 2), params.amount);
+                        dateFormatted = addDays(addDays(dateCurrent, 2), amount);
                     }
                     break;
                     
                 default:
                     if (getHours(dateCurrent) < 15) {
-                        dateFormatted = addDays(dateCurrent, params.amount);
+                        dateFormatted = addDays(dateCurrent, amount);
 
                     } else {
-                        dateFormatted = addDays(addDays(dateCurrent, 1), params.amount);
+                        dateFormatted = addDays(addDays(dateCurrent, 1), amount);
                     }
                     break;
                 }
@@ -79,9 +207,6 @@ const store = new Vuex.Store({
                 fetch(`https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
                     if (response.ok) {
                         response.json().then((dnevnikJson) => {
-                            if (params.shouldWrite) {
-                                state.offlineDnevnik = dnevnikJson;
-                            }
                             state.dnevnikData = dnevnikJson;
                             state.dnevnikLoad = false;
                         });
@@ -97,59 +222,6 @@ const store = new Vuex.Store({
                 });
             }
         },
-        fetchStats(state) {
-            if (state.isLoggedIn) {
-                fetch(`https://api.dnevnik.ru/mobile/v2/allMarks?personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
-                    if (response.ok) {
-                        response.json().then((statsJson) => {
-                            state.statsData = statsJson;
-                            state.statsLoad = false;
-                        });
-
-                    } else {
-                        state.statsLoad = false;
-                    }
-
-                }, () => {
-                    state.statsLoad = false;
-                });
-            }
-        },
-        fetchFeed(state) {
-            if (state.isLoggedIn) {
-                let dateCurrent = new Date;
-
-                let deauthChecker = (jsonData) => {
-                    return ['invalidToken', 'apiRequestLimit'].some((elem) => {
-                        return (jsonData.hasOwnProperty('type') && jsonData['type'] === elem);
-                    });
-                };
-
-                let day = ('0' + getDate(dateCurrent)).slice(-2);
-                let month = ('0' + (getMonth(dateCurrent) + 1)).slice(-2);
-                let year = getYear(dateCurrent);
-
-                fetch(`https://api.dnevnik.ru/mobile/v2/feed/?date=${year}-${month}-${day}&limit=1&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
-                    if (response.ok) {
-                        response.json().then((feedJson) => {
-                            if (deauthChecker(feedJson)) {
-                                store.replaceState({});
-                                
-                            } else {
-                                state.feedData = feedJson;
-                                state.feedLoad = false;
-                            }
-                        });
-
-                    } else {
-                        state.feedLoad = false;
-                    }
-
-                }, () => {
-                    state.feedLoad = false;
-                });
-            }
-        },
         setLoginState(state) {
             state.isLoggedIn = true;
             state.apiKey = getRawCookie('AccessToken');
@@ -158,17 +230,6 @@ const store = new Vuex.Store({
         resetLoginState() {
             if (navigator.onLine) {
                 store.replaceState({});
-            }
-        },
-        userDataUpdate(state) {
-            if (state.isLoggedIn) {
-                fetch(`https://api.dnevnik.ru/v1/users/me/context?access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
-                    if (response.ok) {
-                        response.json().then((userData) => {
-                            state.userData = userData;
-                        });
-                    }
-                });
             }
         }
     },

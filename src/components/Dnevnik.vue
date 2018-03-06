@@ -108,12 +108,12 @@ export default {
   },
   watch: {
     skipDays() {
-      this.fetchData(false);
+      this.fetchData();
     }
   },
   methods: {
-    fetchData(write) {
-      this.$store.commit("fetchDnevnik", {amount: this.skipDays, shouldWrite: write});
+    fetchData() {
+      this.$store.commit("viewDnevnik", this.skipDays);
     },
     coloring(mood) {
       switch (mood) {
@@ -156,9 +156,6 @@ export default {
       Array.from(parsedText.getElementsByTagName('a')).forEach(link => link.innerText = "[ссылка]");
       return parsedText.querySelector("body").innerHTML;
     }
-  },
-  created() {
-    this.fetchData(true);
   }
 };
 </script>

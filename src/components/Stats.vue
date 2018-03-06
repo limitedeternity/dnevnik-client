@@ -117,9 +117,6 @@ export default {
       array = array.sort().reverse();
       return compressArray(array);
     }
-  },
-  created() {
-    this.$store.commit('fetchStats');
   }
 }
 </script>

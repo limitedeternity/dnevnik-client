@@ -99,9 +99,9 @@ export default {
           return response.json();
         }).then((userData) => {
           if (userData.roles !== undefined && userData.roles.includes('EduStudent')) {
-            setRawCookie('AccessToken', accessToken, { secure: true });
+            setRawCookie('AccessToken', accessToken, { secure: !location.origin.includes('127.0.0.1') });
             this.$store.commit('setLoginState');
-            this.$store.commit('userDataUpdate');
+            this.$store.commit('fetchData');
             this.$router.replace({name: 'home'});
           }
         })
@@ -115,7 +115,7 @@ export default {
     }
   },
   created() {
-    this.$store.commit('userDataUpdate');
+    this.$store.commit('fetchData');
   },
   mounted() {
     this.checkLoginSeq();
