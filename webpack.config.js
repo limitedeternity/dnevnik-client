@@ -4,7 +4,8 @@ const path = require('path');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const workboxPlugin = require('workbox-webpack-plugin');
-const workboxConfig = require('./workbox-config');
+const workboxConfigProduction = require('./workbox-config.prod');
+const workboxConfigDevelopment = require('./workbox-config.dev');
 
 module.exports = {
   entry: './src/main.js',
@@ -44,7 +45,7 @@ module.exports = {
       }
     ]
   },
-  plugins: [],
+  plugins: [new workboxPlugin(workboxConfigDevelopment)],
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
@@ -64,7 +65,7 @@ module.exports = {
 
 if (process.env.NODE_ENV === 'production') {
   module.exports.devtool = '#source-map'
-  module.exports.plugins = [...module.exports.plugins,
+  module.exports.plugins = [
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('production')
@@ -81,6 +82,6 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.LoaderOptionsPlugin({
       minimize: true
     }),
-    new workboxPlugin(workboxConfig)
+    new workboxPlugin(workboxConfigProduction)
   ]
 }

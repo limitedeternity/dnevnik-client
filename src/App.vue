@@ -74,8 +74,8 @@
 </template>
 
 <script>
-import { setRawCookie } from 'tiny-cookie';
 import { mapGetters } from 'vuex';
+import SecureLS from 'secure-ls';
 
 export default {
   name: 'App',
@@ -93,14 +93,22 @@ export default {
   methods: {
     checkLoginSeq() {
       if (this.$route.fullPath.includes('access_token=')) {
+        
         let accessToken = this.$route.fullPath.match(new RegExp('access_token=(.*)&state='))[1];
+        const ls = new SecureLS({ encodingType: 'aes' });
 
         fetch(`https://api.dnevnik.ru/v1/users/me/context?access_token=${accessToken}`, { credentials: 'same-origin' }).then((response) => {
           return response.json();
+
         }).then((userData) => {
           if (userData.roles !== undefined && userData.roles.includes('EduStudent')) {
-            setRawCookie('AccessToken', accessToken, { secure: !location.origin.includes('127.0.0.1') });
-            this.$store.commit('setLoginState');
+
+            this.$store.commit('setDefaultState');
+            
+            ls.set('apiKey', accessToken);
+            ls.set('userData', userData);
+            ls.set('isLoggedIn', true);
+
             this.$store.commit('fetchData');
             this.$router.replace({name: 'home'});
           }
