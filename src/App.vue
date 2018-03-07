@@ -1,10 +1,10 @@
 <template>
-  <div id="app" style="display:flex;min-height:100vh;flex-direction:column;">
+  <div id="app">
     <header class="navbar-fixed">
       <nav role="navigation">
         <div class="nav-wrapper">
           <router-link :to="{name: 'home'}" class="brand-logo left" replace>
-            <i class="material-icons" style="margin-left:15px;">book</i>
+            <i class="material-icons">book</i>
           </router-link>
           <ul class="right" id="tabs">
             <div v-if="isLoggedIn">
@@ -36,7 +36,7 @@
       </nav>
     </header>
 
-    <main style="flex: 1 0 auto;">
+    <main>
       <div class="row">
         <keep-alive>
           <router-view :key="$route.fullPath"></router-view>
@@ -72,6 +72,36 @@
     </footer>
   </div>
 </template>
+
+<style scoped>
+#tabs .router-link-exact-active {
+  background-color: rgba(0,0,0,0.1);
+}
+
+a.brand-logo {
+  left: 0.5rem !important;
+}
+
+a.brand-logo.router-link-exact-active {
+  border-bottom: 2px solid white;
+  margin-top: -2px;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+#app {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+a.brand-logo > i {
+  margin-left: 15px;
+}
+</style>
+
 
 <script>
 import { mapGetters } from 'vuex';
