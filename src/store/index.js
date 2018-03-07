@@ -42,7 +42,7 @@ const store = new Vuex.Store({
     },
     mutations: {
         fetchData() {
-            let localState = {};
+            let localState = defaultState;
 
             ls.getAllKeys().forEach((key) => {
                 localState[key] = ls.get(key);
@@ -88,18 +88,21 @@ const store = new Vuex.Store({
                             .then((response) => {
                                 if (response.ok) {
                                     response.json().then((dnevnikJson) => {
-                                        localState.offlineDnevnik, localState.dnevnikData = dnevnikJson;
-                                        localState.dnevnikLoad = false;
+                                        localState['offlineDnevnik'] = dnevnikJson;
+                                        ls.set('offlineDnevnik', dnevnikJson);
+
+                                        localState['dnevnikData'] = dnevnikJson;
+                                        localState['dnevnikLoad'] = false;
                                     });
 
                                 } else {
-                                    localState.dnevnikData = localState.offlineDnevnik;
-                                    localState.dnevnikLoad = false;
+                                    localState['dnevnikData'] = localState['offlineDnevnik'];
+                                    localState['dnevnikLoad'] = false;
                                 }
 
                             }, () => {
-                                localState.dnevnikData = localState.offlineDnevnik;
-                                localState.dnevnikLoad = false;
+                                localState['dnevnikData'] = localState['offlineDnevnik'];
+                                localState['dnevnikLoad'] = false;
                             });
                     })
                 );
@@ -110,16 +113,18 @@ const store = new Vuex.Store({
                         .then((response) => {
                             if (response.ok) {
                                 response.json().then((statsJson) => {
-                                    localState.statsData = statsJson;
-                                    localState.statsLoad = false;
+                                    localState['statsData'] = statsJson;
+                                    ls.set('statsData', statsJson);
+
+                                    localState['statsLoad'] = false;
                                 });
 
                             } else {
-                                localState.statsLoad = false;
+                                localState['statsLoad'] = false;
                             }
 
                         }, () => {
-                            localState.statsLoad = false;
+                            localState['statsLoad'] = false;
                         })
                 );
 
@@ -143,20 +148,22 @@ const store = new Vuex.Store({
                                     response.json().then((feedJson) => {
                                         if (deauthChecker(feedJson)) {
                                             localState = defaultState;
-                                            store.replaceState(defaultState);
+                                            ls.clear();
 
                                         } else {
-                                            localState.feedData = feedJson;
-                                            localState.feedLoad = false;
+                                            localState['feedData'] = feedJson;
+                                            ls.set('feedData', feedJson);
+
+                                            localState['feedLoad'] = false;
                                         }
                                     });
 
                                 } else {
-                                    localState.feedLoad = false;
+                                    localState['feedLoad'] = false;
                                 }
 
                             }, () => {
-                                localState.feedLoad = false;
+                                localState['feedLoad'] = false;
                             });
                     })
                 );
@@ -166,23 +173,15 @@ const store = new Vuex.Store({
                 }).then((response) => {
                     if (response.ok) {
                         response.json().then((userData) => {
-                            localState.userData = userData;
+                            localState['userData'] = userData;
+                            ls.set('userData', userData);
                         });
                     }
-                }).then(() => {
-                    Promise.all(promiseArray);
                 });
 
-                for (let [key, value] of Object.entries(localState)) {
-                    if (!['statsLoad', 'dnevnikLoad', 'feedLoad'].includes(key)) {
-                        ls.set(key, value);
-
-                    } else {
-                        ls.set(key, true);
-                    }
-                }
-
-                store.replaceState(localState);
+                Promise.all(promiseArray).then(() => {
+                    store.replaceState(localState);
+                });
             }
         },
         viewDnevnik(state, amount) {
@@ -243,11 +242,8 @@ const store = new Vuex.Store({
         },
         resetLoginState() {
             if (navigator.onLine) {
-                for (let [key, value] of Object.entries(defaultState)) {
-                    ls.set(key, value);
-                }
-
-                store.replaceState(defaultState);
+                ls.clear();
+                store.replaceState({});
             }
         }
     }
