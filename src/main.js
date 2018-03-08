@@ -9,7 +9,9 @@ new Vue({
     el: '#app',
     router: Router,
     store: Store,
-    render: h => h(App)
+    render (createElement) {
+        return createElement(App);
+    }
 });
 
 if ('serviceWorker' in navigator) {
