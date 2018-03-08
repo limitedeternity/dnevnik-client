@@ -2,7 +2,9 @@ import Vue from 'vue';
 import App from './App';
 import Router from './router';
 import Store from './store';
+import VueTouch from 'vue-touch';
 
+Vue.use(VueTouch, { name: 'v-touch' });
 Vue.config.productionTip = false;
 
 new Vue({

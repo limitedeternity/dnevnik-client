@@ -26,7 +26,7 @@
             </div>
             <div v-else>
               <li>
-                <a :href="'https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo,Messages&redirect_uri=' + getOrigin()">
+                <a :href="'https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo&redirect_uri=' + getOrigin()">
                   <i class="material-icons">settings_power</i>
                 </a>
               </li>
@@ -37,11 +37,13 @@
     </header>
 
     <main>
-      <div class="row">
+      <v-touch @swipeleft="onswipeLeft" @swiperight="onswipeRight" id="routerArea" class="row">
         <keep-alive>
-          <router-view :key="$route.fullPath"></router-view>
+          <transition :name="transition">
+            <router-view :key="$route.fullPath"></router-view>
+          </transition>
         </keep-alive>
-      </div>
+      </v-touch>
     </main>
 
     <footer class="page-footer">
@@ -73,32 +75,87 @@
   </div>
 </template>
 
-<style scoped>
-#tabs .router-link-exact-active {
-  background-color: rgba(0,0,0,0.1);
+<style>
+#tabs a.router-link-exact-active {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
-a.brand-logo {
-  left: 0.5rem !important;
+a.router-link-exact-active {
+    border-bottom: 2px solid white;
+    margin-top: -2px;
 }
 
-a.brand-logo.router-link-exact-active {
-  border-bottom: 2px solid white;
-  margin-top: -2px;
+@media (hover: none) {
+    nav ul a:hover {
+        background-color: inherit;
+    }
+}
+
+a.brand-logo.left {
+    left: 0.5rem;
+}
+
+a.brand-logo.left>i {
+    margin-left: 15px;
 }
 
 main {
-  flex: 1 0 auto;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 0 auto;
+    flex: 1 0 auto;
 }
 
 #app {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    min-height: 100vh;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
 }
 
-a.brand-logo > i {
-  margin-left: 15px;
+#routerArea {
+    -ms-touch-action: pan-y !important;
+    touch-action: pan-y !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+}
+
+.slide-right-enter-active,
+.slide-left-enter-active {
+    -webkit-transition: all .4s ease;
+    -o-transition: all .4s ease;
+    transition: all .4s ease;
+}
+
+.slide-right-leave-active,
+.slide-left-leave-active {
+    -webkit-transition: all .4s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    -o-transition: all .4s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    transition: all .4s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.slide-right-leave-active,
+.slide-left-enter {
+    -webkit-transform: translateX(25em);
+    -ms-transform: translateX(25em);
+    transform: translateX(25em);
+}
+
+.slide-right-enter,
+.slide-left-leave-active {
+    -webkit-transform: translateX(-25em);
+    -ms-transform: translateX(-25em);
+    transform: translateX(-25em);
+}
+
+.slide-right-leave-to,
+.slide-left-leave-to {
+    display: none;
 }
 </style>
 
@@ -117,7 +174,28 @@ export default {
   },
   data() {
     return {
+      transition: 'slide-right',
       footerText: this.randomChoice(["Чистим вилкой то, что другие не могут очистить десятилетиями.", "Просто сделайте вид, что тут что-то интеллектуальное и революционное.", "Это приложение - как котенок в зоомагазине. Всем нравится, но никому нах*й не сдалось.", "ͰͱͳͷϏ҇ӻӼӽӾԖԘԙԚԟԡԢԤԥԦԧԪԫԬԭԮԯ؇ऀ॥ఁ෧กขbၗၘᄁᣞe᷿ḀẝỺỼỽỾỿἀₗₘₙₚₛₜ"])
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      document.getElementById('tabs').style.visibility = 'hidden';
+
+      if (from.name === "stats") {
+        this.transition = 'slide-right';
+
+      } else if (from.name === "dnevnik" && to.name === "home") {
+        this.transition = 'slide-right';
+
+      } else if (from.name === "dnevnik" && to.name === "stats") {
+        this.transition = 'slide-left';
+
+      } else if (from.name === "home") {
+        this.transition = 'slide-left';
+      }
+
+      setTimeout(() => {document.getElementById('tabs').style.visibility = 'visible'}, 400)
     }
   },
   methods: {
@@ -150,12 +228,39 @@ export default {
     },
     getOrigin() {
       return location.origin;
+    },
+    onswipeRight() {
+      switch (this.$route.name) {
+      case 'stats':
+        return this.$router.replace({name: 'dnevnik'});
+      
+      case 'dnevnik':
+        return this.$router.replace({name: 'home'});
+      
+      default:
+        return;
+      }
+    },
+    onswipeLeft() {
+      switch (this.$route.name) {
+      case 'home':
+        return this.$router.replace({name: 'dnevnik'});
+      
+      case 'dnevnik':
+        return this.$router.replace({name: 'stats'});
+      
+      default:
+        return;
+      }
     }
   },
   created() {
     this.$store.commit('fetchData');
   },
   mounted() {
+    document.getElementById('preloader').style.opacity = "0";
+    setTimeout(() => {document.getElementById('preloader').remove()}, 1000);
+
     this.checkLoginSeq();
   }
 }

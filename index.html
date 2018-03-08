@@ -32,6 +32,8 @@
 
   <link rel="preload" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="preload" as="style" onload="this.rel='stylesheet'" href="src/assets/css/materialize.min.css" media="screen,projection">
+  <link rel="preload" as="style" onload="this.rel='stylesheet'" href="src/assets/css/preloader.css">
+  
   <link rel="preload" as="script" href="src/assets/js/materialize.min.js" onload="var script=document.createElement('script');script.src=this.href;script.type='application/javascript';document.body.appendChild(script);this.remove()">
   
   <link rel="apple-touch-icon" sizes="57x57" href="src/assets/images/icons/apple-icon-57x57.png">
@@ -49,8 +51,8 @@
   <link rel="icon" type="image/png" sizes="16x16" href="src/assets/images/icons/favicon-16x16.png">
   <link rel="shortcut icon" href="src/assets/images/icons/favicon.ico">
   <meta name="msapplication-TileColor" content="#EE6E73">
-  <meta name="msapplication-navbutton-color" content="#EE6E73">
-  <meta name="theme-color" content="#EE6E73">
+  <meta name="msapplication-navbutton-color" content="transparent">
+  <meta name="theme-color" content="transparent">
   <meta name="msapplication-starturl" content=".">
   <meta name="msapplication-TileImage" content="src/assets/images/icons/ms-icon-144x144.png">
   <meta name="msapplication-config" content="src/assets/config/browserconfig.xml">
@@ -59,8 +61,16 @@
 
 <body>
   <noscript>Что вы тут ожидаете увидеть без JavaScript?</noscript>
+
+  <div id="preloader">
+    <div class="spinner">
+      <div class="double-bounce1"></div>
+      <div class="double-bounce2"></div>
+    </div>
+  </div>
+
   <div id="app"></div>
-  <script src="dist/build.js" type="application/javascript"></script>
+  <script async src="dist/build.js" type="application/javascript"></script>
 </body>
 
 </html>
