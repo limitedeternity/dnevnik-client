@@ -2,7 +2,6 @@
 dist/
 node_modules/
 sw.js
-workbox-sw*.js*
 npm-debug.log
 yarn-error.log
 

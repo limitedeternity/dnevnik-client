@@ -3,9 +3,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const workboxPlugin = require('workbox-webpack-plugin');
-const workboxConfigProduction = require('./workbox-config.prod');
-const workboxConfigDevelopment = require('./workbox-config.dev');
 
 module.exports = {
   entry: './src/main.js',
@@ -45,7 +42,7 @@ module.exports = {
       }
     ]
   },
-  plugins: [new workboxPlugin(workboxConfigDevelopment)],
+  plugins: [],
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
@@ -81,7 +78,6 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.LoaderOptionsPlugin({
       minimize: true
-    }),
-    new workboxPlugin(workboxConfigProduction)
+    })
   ]
 }

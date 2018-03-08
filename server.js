@@ -15,10 +15,6 @@ const application = () => {
     instance.use('/src/assets', express.static(path.join(__dirname, 'src', 'assets')));
     instance.use('/dist', express.static(path.join(__dirname, 'dist')));
 
-    instance.get('/workbox-sw.prod.v2.1.3.js', (req, res) => {
-        res.sendFile(path.join(__dirname, 'dist', 'workbox-sw.prod.v2.1.3.js'));
-    });
-
     instance.get('/sw.js', (req, res) => {
         res.sendFile(path.join(__dirname, 'dist', 'sw.js'));
     });
