@@ -11,9 +11,9 @@ new Vue({
     el: '#app',
     router: Router,
     store: Store,
-    render (createElement) {
-        return createElement(App);
-    }
+    name: App,
+    components: { App },
+    template: '<App />'
 });
 
 if ('serviceWorker' in navigator) {
