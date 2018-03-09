@@ -7,13 +7,26 @@ import VueTouch from 'vue-touch';
 Vue.use(VueTouch, { name: 'v-touch' });
 Vue.config.productionTip = false;
 
-new Vue({
+const app = new Vue({
     el: '#app',
     router: Router,
     store: Store,
-    name: App,
-    components: { App },
-    template: '<App />'
+    ...App
+});
+
+window.addEventListener('keydown', (event) => {
+    switch (event.key) {
+    case 'ArrowRight':
+        app.onswipeLeft();
+        break;
+    
+    case 'ArrowLeft':
+        app.onswipeRight();
+        break;
+    
+    default:
+        break;
+    }
 });
 
 if ('serviceWorker' in navigator) {
