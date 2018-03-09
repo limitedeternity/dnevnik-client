@@ -4,7 +4,6 @@ const throng = require('throng');
 const shrinkRay = require('shrink-ray');
 const path = require('path');
 
-var __dirname = path.resolve();
 
 const application = () => {
     var instance = express();
@@ -27,14 +26,13 @@ const application = () => {
         res.redirect('/');
     });
     
-    // eslint-disable-next-line
-    instance.listen(process.env.PORT || 5000, () => {
-        console.log('Up and running'); // eslint-disable-line
+    instance.listen(process.env.PORT || 8080, () => {
+        console.log('Up and running');
     });
 };
 
 
 throng({
-    workers: process.env.WEB_CONCURRENCY || 1, // eslint-disable-line
+    workers: process.env.WEB_CONCURRENCY || 1,
     lifetime: Infinity
 }, application);
