@@ -33,7 +33,7 @@
                                 <i class="material-icons circle white" :style="{color: '#039be5', transform: 'scale(1.5)'}">format_list_bulleted</i>
                                 
                                 <div :style="{display: 'block', clear: 'both', height: '8px'}"></div>
-                                <a :href="`https://schools.dnevnik.ru/lesson.aspx?school=${userData.schools[0].id}&lesson=${lesson.LessonId}`" target="_blank" rel="noopener">
+                                <a href="#">
                                  <span class="title">#{{ index }}. {{ lesson.Subject.Name }}</span>
                                 </a>
 
@@ -139,7 +139,16 @@ export default {
       } 
     },
     linkReplace(text) {
-      let replacedText = anchorme(text, {
+      let escapeMap = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&apos;'
+      };
+
+      let escapedText = text.replace(/[&<>"']/g, (match) => { return escapeMap[match] });
+      let replacedText = anchorme(escapedText, {
           emails: false,
 	        attributes: [
 		          {

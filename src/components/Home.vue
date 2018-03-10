@@ -132,7 +132,16 @@ export default {
       } 
     },
     linkReplace(text) {
-        let replacedText = anchorme(text, {
+        let escapeMap = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&apos;'
+        };
+
+        let escapedText = text.replace(/[&<>"']/g, (match) => { return escapeMap[match] });
+        let replacedText = anchorme(escapedText, {
             emails: false,
 	        attributes: [
 		        {

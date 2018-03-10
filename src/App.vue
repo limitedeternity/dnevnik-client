@@ -37,13 +37,13 @@
     </header>
 
     <main>
-      <v-touch @swipeleft="onswipeLeft" @swiperight="onswipeRight" id="routerArea" class="row">
-        <keep-alive>
+      <keep-alive>
+        <v-touch @swipeleft="onswipeLeft" @swiperight="onswipeRight" id="routerArea" class="row">
           <transition :name="transition">
             <router-view :key="$route.fullPath"></router-view>
           </transition>
-        </keep-alive>
-      </v-touch>
+        </v-touch>
+      </keep-alive>
     </main>
 
     <footer class="page-footer">
@@ -95,7 +95,7 @@ a.brand-logo.left {
     left: 0.5rem;
 }
 
-a.brand-logo.left>i {
+a.brand-logo.left > i {
     margin-left: 15px;
 }
 
