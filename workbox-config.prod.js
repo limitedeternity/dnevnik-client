@@ -3,7 +3,7 @@
 module.exports = {
   globDirectory: '.',
   globPatterns: [
-    'dist/*.jpg',
+    'dist/*.{jpg,js}',
     'src/assets/**/*.{jpg,json,xml,png,ico,js,css}'
   ],
   swDest: 'dist/sw.js',
@@ -22,16 +22,7 @@ module.exports = {
     },
     {
       urlPattern: '/',
-      handler: 'staleWhileRevalidate',
-      options: {
-        cacheableResponse: {
-          statuses: [0, 200]
-        }
-      }
-    },
-    {
-      urlPattern: /dist\/.+\.js$/,
-      handler: 'staleWhileRevalidate',
+      handler: 'cacheFirst',
       options: {
         cacheableResponse: {
           statuses: [0, 200]
