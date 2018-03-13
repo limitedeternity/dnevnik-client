@@ -37,4 +37,8 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+if (self !== top) {
+    top.location = self.location;
+}
+
 HTMLDocument.prototype.__defineGetter__('write', () => { return null; });
