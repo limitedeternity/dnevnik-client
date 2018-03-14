@@ -30,10 +30,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+  <link rel="preload" as="style" onload="this.rel='stylesheet'" href="src/assets/css/preloader.css">
   <link rel="preload" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="preload" as="style" onload="this.rel='stylesheet'" href="src/assets/css/materialize.min.css" media="screen,projection">
-  <link rel="preload" as="style" onload="this.rel='stylesheet'" href="src/assets/css/preloader.css">
-  
   <link rel="preload" as="script" href="src/assets/js/materialize.min.js" onload="var script=document.createElement('script');script.src=this.href;script.type='application/javascript';document.body.appendChild(script);this.remove()">
   
   <link rel="apple-touch-icon" sizes="57x57" href="src/assets/images/icons/apple-icon-57x57.png">
@@ -71,6 +70,7 @@
 
   <div id="app"></div>
   <script async src="dist/build.js" type="application/javascript"></script>
+  <link rel="stylesheet" href="dist/build.css">
 </body>
 
 </html>

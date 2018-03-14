@@ -6,7 +6,7 @@
         </div>
         <div class="card-content">
             <span class="card-title grey-text text-darken-4">Дневник</span>
-            <div v-if="!dnevnikLoad">
+            <template v-if="!dnevnikLoad">
                 <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                 <ul class="pagination center">
                     <li class="waves-effect">
@@ -27,8 +27,8 @@
                 </ul>
                 <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                 <ul class="collection" v-if="dnevnikData.Days[0].Schedule.length">
-                      <div v-for="(lesson, index) in dnevnikData.Days[0].Schedule" :key="index" v-if="lesson.Subject">
-                              <li class="collection-item avatar z-depth-1">
+                      <template v-for="(lesson, index) in dnevnikData.Days[0].Schedule" v-if="lesson.Subject">
+                              <li class="collection-item avatar z-depth-1" :key="'item-' + index">
                         
                                 <i class="material-icons circle white" :style="{color: '#039be5', transform: 'scale(1.5)'}">format_list_bulleted</i>
                                 
@@ -62,20 +62,20 @@
                                 <div :style="{display: 'block', clear: 'both', height: '8px'}"></div>
                                 
                               </li>
-                              <div :style="{display: 'block', clear: 'both', height: '3px'}"></div>
-                      </div>
+                              <div :style="{display: 'block', clear: 'both', height: '3px'}" :key="'delimiter-' + index"></div>
+                      </template>
                 </ul>
                 <div v-else class="card-panel teal center">
                     <span class="white-text">Уроков нет.
                     </span>
                 </div>
-            </div>
-            <div v-else>
+            </template>
+            <template v-else>
               <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
               <div class="progress">
                   <div class="indeterminate"></div>
               </div>
-            </div>
+            </template>
         </div>
     </div>
   </div>

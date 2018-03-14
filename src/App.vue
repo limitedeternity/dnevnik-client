@@ -1,13 +1,13 @@
 <template>
   <div id="app">
-    <header class="navbar-fixed">
+    <header class="header-sticky">
       <nav role="navigation">
         <div class="nav-wrapper">
           <router-link :to="{name: 'home'}" class="brand-logo left" replace>
             <i class="material-icons">book</i>
           </router-link>
           <ul class="right" id="tabs">
-            <div v-if="isLoggedIn">
+            <template v-if="isLoggedIn">
               <li>
                 <router-link :to="{name: 'dnevnik'}" replace>
                   <i class="material-icons">face</i>
@@ -23,14 +23,14 @@
                   <i class="material-icons">exit_to_app</i>
                 </a>
               </li>
-            </div>
-            <div v-else>
+            </template>
+            <template v-else>
               <li>
                 <a :href="'https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo&redirect_uri=' + getOrigin()">
                   <i class="material-icons">settings_power</i>
                 </a>
               </li>
-            </div>
+            </template>
           </ul>
         </div>
       </nav>
@@ -99,6 +99,13 @@ a.brand-logo.left > i {
     margin-left: 15px;
 }
 
+.header-sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 997;
+}
+
 main {
     -webkit-box-flex: 1;
     -ms-flex: 1 0 auto;
@@ -139,15 +146,13 @@ main {
     transition: all .4s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
 
-.slide-right-leave-active,
 .slide-left-enter {
     -webkit-transform: translateX(25em);
     -ms-transform: translateX(25em);
     transform: translateX(25em);
 }
 
-.slide-right-enter,
-.slide-left-leave-active {
+.slide-right-enter {
     -webkit-transform: translateX(-25em);
     -ms-transform: translateX(-25em);
     transform: translateX(-25em);
@@ -180,8 +185,6 @@ export default {
   },
   watch: {
     '$route' (to, from) {
-      document.getElementById('tabs').style.visibility = 'hidden';
-
       if (from.name === "stats") {
         this.transition = 'slide-right';
 
@@ -194,8 +197,6 @@ export default {
       } else if (from.name === "home") {
         this.transition = 'slide-left';
       }
-
-      setTimeout(() => {document.getElementById('tabs').style.visibility = 'visible'}, 400)
     }
   },
   methods: {

@@ -3,6 +3,9 @@
 const path = require('path');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 
 module.exports = {
   entry: './src/main.js',
@@ -12,19 +15,16 @@ module.exports = {
     filename: 'build.js'
   },
   module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: [
-          'vue-style-loader',
-          'css-loader'
-        ],
-      },      
+    rules: [     
       {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
           loaders: {
+            css: ExtractTextPlugin.extract({
+              use: 'css-loader',
+              fallback: 'vue-style-loader'
+            })
           }
         }
       },
@@ -42,7 +42,10 @@ module.exports = {
       }
     ]
   },
-  plugins: [],
+  plugins: [
+    new BundleAnalyzerPlugin(),
+    new ExtractTextPlugin("build.css")
+  ],
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
@@ -57,11 +60,11 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map'
+  devtool: 'eval'
 };
 
 if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map'
+  module.exports.devtool = ''
   module.exports.plugins = [
     new webpack.DefinePlugin({
       'process.env': {
@@ -71,9 +74,15 @@ if (process.env.NODE_ENV === 'production') {
     new CleanWebpackPlugin(['dist']),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
-        warnings: false
-      }
+        warnings: false,
+        screw_ie8: true
+      },
+      output: {
+        comments: false,
+      },
+      exclude: [/\.min\.js$/gi]
     }),
+    new ExtractTextPlugin("build.css"),
     new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.LoaderOptionsPlugin({

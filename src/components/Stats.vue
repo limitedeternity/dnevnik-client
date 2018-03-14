@@ -6,11 +6,11 @@
         </div>
         <div class="card-content">
           <span class="card-title grey-text text-darken-4">Статистика</span>
-            <div v-if="!statsLoad">
+            <template v-if="!statsLoad">
               <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
               <ul class="collection">
-                 <div v-for="(subjectData, index) in statsData.AllMarks[0].SubjectMarks" v-if="subjectData.Marks.length" :key="index">
-                     <li class="collection-item avatar z-depth-1">
+                 <template v-for="(subjectData, index) in statsData.AllMarks[0].SubjectMarks" v-if="subjectData.Marks.length">
+                     <li class="collection-item avatar z-depth-1" :key="'item-' + index">
                        <i class="material-icons circle white" :style="{color: 'blue', transform: 'scale(1.5)'}">timeline</i>
 
                        <div :style="{display: 'block', clear: 'both', height: '6px'}"></div>
@@ -26,16 +26,16 @@
                        <p :style="{color: coloring()}">Среднее значение: {{ subjectData.Avg.Value }}</p>
                        <p v-if="subjectData.FinalMark" :style="{color: coloring(subjectData.FinalMark.Values[0].Mood)}">Итоговое значение: {{ subjectData.FinalMark.Values[0].Value }}</p>
                      </li>
-                     <div :style="{display: 'block', clear: 'both', height: '3px'}"></div>
-                 </div>
+                     <div :style="{display: 'block', clear: 'both', height: '3px'}" :key="'delimiter-' + index"></div>
+                 </template>
               </ul>
-            </div>
-            <div v-else>
+            </template>
+            <template v-else>
               <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
               <div class="progress">
                 <div class="indeterminate"></div>
               </div>
-            </div>
+            </template>
         </div>
       </div>
   </div>
