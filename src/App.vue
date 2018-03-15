@@ -37,13 +37,13 @@
     </header>
 
     <main>
-      <keep-alive>
-        <v-touch @swipeleft="onswipeLeft" @swiperight="onswipeRight" id="routerArea" class="row">
-          <transition :name="transition">
-            <router-view :key="$route.fullPath"></router-view>
-          </transition>
-        </v-touch>
-      </keep-alive>
+      <v-touch @swipeleft="onswipeLeft" @swiperight="onswipeRight" id="routerArea" class="row">
+        <transition :name="transition">
+          <keep-alive>
+            <router-view></router-view>
+          </keep-alive>
+        </transition>
+      </v-touch>
     </main>
 
     <footer class="page-footer">
@@ -147,15 +147,15 @@ main {
 }
 
 .slide-left-enter {
-    -webkit-transform: translateX(25em);
-    -ms-transform: translateX(25em);
-    transform: translateX(25em);
+    -webkit-transform: translate3d(25.1em, 0, 0);
+    -ms-transform: translate3d(25.1em, 0, 0);
+    transform: translate3d(25.1em, 0, 0);
 }
 
 .slide-right-enter {
-    -webkit-transform: translateX(-25em);
-    -ms-transform: translateX(-25em);
-    transform: translateX(-25em);
+    -webkit-transform: translate3d(-25.1em, 0, 0);
+    -ms-transform: translate3d(-25.1em, 0, 0);
+    transform: translate3d(-25.1em, 0, 0);
 }
 
 .slide-right-leave-to,

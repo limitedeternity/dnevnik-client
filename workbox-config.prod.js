@@ -22,7 +22,7 @@ module.exports = {
     },
     {
       urlPattern: '/',
-      handler: 'cacheFirst',
+      handler: 'staleWhileRevalidate',
       options: {
         cacheableResponse: {
           statuses: [0, 200]
