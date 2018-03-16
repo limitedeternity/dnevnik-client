@@ -3,10 +3,25 @@ const helmet = require('helmet');
 const throng = require('throng');
 const shrinkRay = require('shrink-ray');
 const path = require('path');
+const fs = require('fs');
 
 
 const application = () => {
     var instance = express();
+
+    if (process.env.NODE_ENV === 'production') {
+        var PORT = '/tmp/nginx.socket';
+        var callbackFn = () => {
+            fs.closeSync(fs.openSync('/tmp/app-initialized', 'w'));
+            console.log(`Listening on ${PORT}`);
+        };
+
+    } else {
+        var PORT = 8080;
+        var callbackFn = () => {
+            console.log(`Listening on ${PORT}`);
+        };
+    }
 
     instance.use(helmet());
 
@@ -26,9 +41,7 @@ const application = () => {
         res.redirect('/');
     });
     
-    instance.listen(process.env.PORT || 8080, () => {
-        console.log('Up and running');
-    });
+    instance.listen(PORT, callbackFn);
 };
 
 
