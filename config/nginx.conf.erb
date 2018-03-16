@@ -18,25 +18,30 @@ http {
 	default_type application/octet-stream;
 	sendfile on;
 
-	client_body_timeout 5;
+	client_body_timeout 10;
+	client_header_timeout 10;
+	keepalive_timeout 5 5;
+	send_timeout 10;
+	
+	client_body_buffer_size  1K;
+	client_header_buffer_size 1k;
+	client_max_body_size 1k;
+	large_client_header_buffers 2 1k;
 
 	upstream app_server {
 		server unix:/tmp/nginx.socket fail_timeout=0;
- 	}
+	}
 
 	server {
 		listen <%= ENV["PORT"] %>;
 		server_name _;
-		keepalive_timeout 5;
 
 		location / {
 			proxy_pass http://app_server;
 			proxy_http_version 1.1;
-			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 			proxy_set_header Host $http_host;
 			proxy_set_header Upgrade $http_upgrade;
 			proxy_set_header Connection 'upgrade';
-			proxy_redirect off;
 			proxy_cache_bypass $http_upgrade;
 		}
 	}
