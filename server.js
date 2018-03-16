@@ -30,6 +30,7 @@ const application = () => {
     instance.use('/dist', express.static(path.join(__dirname, 'dist')));
 
     instance.get('/sw.js', (req, res) => {
+        res.setHeader('Cache-Control', 'no-cache');
         res.sendFile(path.join(__dirname, 'dist', 'sw.js'));
     });
     
