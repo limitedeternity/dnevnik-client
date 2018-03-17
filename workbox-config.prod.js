@@ -21,12 +21,23 @@ module.exports = {
       }
     },
     {
-      urlPattern: '/',
+      urlPattern: /\/(#.+)?$/,
       handler: 'staleWhileRevalidate',
       options: {
         cacheableResponse: {
           statuses: [0, 200]
-        }
+        },
+        plugins: [
+          {cachedResponseWillBeUsed: ({ cache, request, cachedResponse }) => {
+            var response = caches.match('/');
+            if (response) {
+              return response;
+
+            } else {
+              return false;
+            }
+          }}
+        ]
       }
     }
   ]
