@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <header class="header-sticky">
+    <header class="navbar-fixed">
       <nav role="navigation">
         <div class="nav-wrapper">
           <router-link :to="{name: 'home'}" class="brand-logo left" replace>
@@ -97,13 +97,6 @@ a.brand-logo.left {
 
 a.brand-logo.left > i {
     margin-left: 15px;
-}
-
-.header-sticky {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  z-index: 997;
 }
 
 main {
