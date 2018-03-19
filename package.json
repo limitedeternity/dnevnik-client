@@ -15,12 +15,9 @@
   "author": "Marise Hayashi <@limitedeternity> (https://limitedeternity.github.io/)",
   "license": "MIT",
   "scripts": {
-    "devSWBuild": "workbox generateSW workbox-config.dev.js",
-    "devServer": "npm run devSWBuild && cross-env NODE_ENV=development webpack-dev-server --open --hot",
-    "buildProd": "cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "prodSWBuild": "workbox generateSW workbox-config.prod.js",
-    "startProd": "bin/start-nginx cross-env NODE_ENV=production node --optimize_for_size --max_old_space_size=460 --gc_interval=100 server.js",
-    "postinstall": "if [[ $NODE_ENV == production ]]; then npm run buildProd && npm run prodSWBuild; fi; prune"
+    "devServer": "workbox generateSW workbox-config.dev.js && cross-env NODE_ENV=development webpack-dev-server --open --hot",
+    "start": "bin/start-nginx cross-env NODE_ENV=production node --optimize_for_size --max_old_space_size=460 --gc_interval=100 server.js",
+    "postinstall": "scripts/postinstall.sh"
   },
   "repository": {
     "type": "git",
