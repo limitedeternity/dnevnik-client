@@ -51,7 +51,7 @@
         <div class="row">
           <div class="col l6 s12">
             <h5 class="white-text">DnevnikClient</h5>
-            <p class="grey-text text-lighten-4">{{ footerText }}</p>
+            <p class="grey-text text-lighten-4" @click.once="footerText = 'Просто сделайте вид, что тут что-то интеллектуальное и революционное.'">{{ footerText }}</p>
           </div>
           <div class="col l2 offset-l2 s6">
             <h6>О проекте</h6>
@@ -178,7 +178,7 @@ export default {
   data() {
     return {
       transition: 'slide-right',
-      footerText: this.randomChoice(["Чистим вилкой то, что другие не могут очистить десятилетиями.", "Просто сделайте вид, что тут что-то интеллектуальное и революционное.", "Это приложение - как котенок в зоомагазине. Всем нравится, но никому нах*й не сдалось.", "ͰͱͳͷϏ҇ӻӼӽӾԖԘԙԚԟԡԢԤԥԦԧԪԫԬԭԮԯ؇ऀ॥ఁ෧กขbၗၘᄁᣞe᷿ḀẝỺỼỽỾỿἀₗₘₙₚₛₜ"])
+      footerText: 'Версия: 2.0.0-beta1'
     }
   },
   watch: {
@@ -221,9 +221,6 @@ export default {
           }
         })
       }
-    },
-    randomChoice(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
     },
     getOrigin() {
       return location.origin;
