@@ -4,7 +4,7 @@ module.exports = {
   globDirectory: '.',
   globPatterns: [
     'dist/*.{jpg,js,css}',
-    'src/assets/**/*.{jpg,json,xml,png,ico,js,css,woff2}'
+    'src/assets/**/*.{json,xml,png,ico,js,css,woff2}'
   ],
   swDest: 'dist/sw.js',
   clientsClaim: true,

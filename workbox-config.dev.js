@@ -3,7 +3,7 @@
 module.exports = {
     globDirectory: '.',
     globPatterns: [
-        'src/assets/**/*.{jpg,json,xml,png,ico,js,css,woff2}'
+        'src/assets/**/*.{json,xml,png,ico,js,css,woff2}'
     ],
     swDest: 'sw.js',
     clientsClaim: true,
