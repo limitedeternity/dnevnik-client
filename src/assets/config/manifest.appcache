@@ -1,0 +1,21 @@
+CACHE MANIFEST
+# v1
+
+CACHE:
+/
+/src/assets/css/materialize.min.css
+/src/assets/js/materialize.min.js
+/src/assets/css/preloader.css
+/src/assets/css/MaterialIcons.css
+/src/assets/fonts/MaterialIcons.woff2
+/dist/build.css
+/dist/build.js
+/dist/nature.jpg
+/dist/office.jpg
+/dist/stats.jpg
+
+NETWORK:
+*
+
+FALLBACK:
+/

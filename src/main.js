@@ -37,6 +37,12 @@ if ('serviceWorker' in navigator) {
             navigator.storage.persist();
         });
     });
+
+} else {
+    window.addEventListener('load', () => {
+        document.querySelector('html').setAttribute('manifest', 'src/assets/config/manifest.appcache');
+        navigator.storage.persist();
+    });
 }
 
 if (self !== top) {
