@@ -1,7 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const throng = require('throng');
-const shrinkRay = require('shrink-ray');
+const shrinkRay = require('shrink-ray-current');
 const path = require('path');
 const fs = require('fs');
 
