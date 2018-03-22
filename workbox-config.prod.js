@@ -13,7 +13,7 @@ module.exports = {
   runtimeCaching: [
     {
       urlPattern: /\/(#.+)?$/,
-      handler: 'staleWhileRevalidate',
+      handler: 'cacheFirst',
       options: {
         cacheableResponse: {
           statuses: [0, 200]
