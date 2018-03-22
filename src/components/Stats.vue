@@ -2,7 +2,7 @@
   <div class="col s12 offset-m1 m10 offset-l2 l8 offset-xl4 xl4" v-if="isLoggedIn">
       <div class="card">
         <div class="card-image">
-            <img src="../assets/images/stats.jpg" alt>
+            <img src="../assets/images/stats.webp" alt>
         </div>
         <div class="card-content">
           <span class="card-title grey-text text-darken-4">Статистика</span>
