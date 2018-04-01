@@ -18,7 +18,7 @@
                     </li>
                     <li class="waves-effect">
                       <a @click="skipDays = 0">
-                        <i class="material-icons">cached</i>
+                        <i class="material-icons">history</i>
                       </a>
                     </li>
                     <li class="waves-effect">
