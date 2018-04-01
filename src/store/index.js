@@ -296,12 +296,14 @@ const store = new Vuex.Store({
 
                             } else {
                                 state.dnevnikData = state.offlineDnevnik;
+                                sessionStorage.setItem('switchFailed', true);
                             }
                         }
                     });
                     
                 }, () => {
                     state.dnevnikData = state.offlineDnevnik;
+                    sessionStorage.setItem('switchFailed', true);
                 });
             }
         },

@@ -114,6 +114,13 @@ export default {
   methods: {
     fetchData() {
       this.$store.commit("viewDnevnik", this.skipDays);
+      let isFailed = sessionStorage.getItem('switchFailed');
+
+      if (isFailed) {
+          window.M.toast({html: 'Упс, дальше ничего нет. Возвращаемся...', displayLength: 2000, classes: 'rounded'});
+          sessionStorage.removeItem('switchFailed');
+          this.skipDays = 0;
+      }
     },
     coloring(mood) {
       switch (mood) {
