@@ -2,12 +2,12 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import SecureLS from 'secure-ls';
 
-import addDays from 'date-fns/add_days';
-import getHours from 'date-fns/get_hours';
-import isSaturday from 'date-fns/is_saturday';
-import isSunday from 'date-fns/is_sunday';
-import getMonth from 'date-fns/get_month';
-import getYear from 'date-fns/get_year';
+import addDays from 'date-fns/add_days'; 
+import getHours from 'date-fns/get_hours'; 
+import isSaturday from 'date-fns/is_saturday'; 
+import isSunday from 'date-fns/is_sunday'; 
+import getMonth from 'date-fns/get_month'; 
+import getYear from 'date-fns/get_year'; 
 import getDate from 'date-fns/get_date';
 
 Vue.use(Vuex);
@@ -26,6 +26,65 @@ const defaultState = {
 };
 
 const ls = new SecureLS({ encodingType: 'aes' });
+
+var cachedKeysList = [];
+
+const cacheClearCheck = () => {
+    if (cachedKeysList.length > 4) {
+        let oldEntry = cachedKeysList[0];
+        ls.remove(oldEntry);
+        cachedKeysList = cachedKeysList.slice(1);
+    }
+};
+
+const hashurl = (s) => {
+    cacheClearCheck();
+    
+    let hash = 0;
+
+    if (s.length === 0) {
+        return hash;
+    }
+
+    for (let i = 0; i < s.length; i++) {
+        let char = s.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+
+    cachedKeysList.push(Math.abs(hash));
+    return Math.abs(hash);
+};
+
+const cachedFetch = (url, options) => {
+    let cacheKey = hashurl(url);
+    let cached = ls.get(cacheKey);
+
+    if (cached && !navigator.onLine) {
+        let response = new Response(new Blob([cached]));
+        return Promise.resolve(response);
+    }
+  
+    return fetch(url, options).then((response) => {
+        if (response.ok) {
+            let ct = response.headers.get('Content-Type');
+
+            if (ct && ct.match(/application\/json/i)) {
+                response.clone().text().then((content) => {
+                    ls.set(cacheKey, content);
+                });
+            }
+        }
+
+        return response;
+    });
+};
+
+const deauthChecker = (jsonData) => {
+    return ['invalidToken', 'apiRequestLimit'].some((elem) => {
+        return (jsonData.hasOwnProperty('type') && jsonData['type'] === elem);
+    });
+};
 
 const store = new Vuex.Store({
     state: defaultState,
@@ -53,7 +112,7 @@ const store = new Vuex.Store({
 
                 promiseArray.push(
                     new Promise(() => {
-                        let dateCurrent = new Date;
+                        let dateCurrent = new Date();
                         let dateFormatted = null;
 
                         switch (true) {
@@ -61,7 +120,7 @@ const store = new Vuex.Store({
                             dateFormatted = addDays(dateCurrent, 1);
                             break;
 
-                        case isSaturday(new Date):
+                        case isSaturday(dateCurrent):
                             if (getHours(dateCurrent) < 14) {
                                 dateFormatted = dateCurrent;
 
@@ -81,7 +140,7 @@ const store = new Vuex.Store({
                         }
 
                         let day = ('0' + getDate(dateFormatted)).slice(-2);
-                        let month = ('0' + (getMonth(dateCurrent) + 1)).slice(-2);
+                        let month = ('0' + (getMonth(dateFormatted) + 1)).slice(-2);
                         let year = getYear(dateFormatted);
 
                         fetch(`https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${localState.userData.personId}&groupId=${localState.userData.eduGroups[0].id_str}&access_token=${localState.apiKey}`, { credentials: 'same-origin' })
@@ -107,36 +166,31 @@ const store = new Vuex.Store({
                     })
                 );
 
-
                 promiseArray.push(
-                    fetch(`https://api.dnevnik.ru/mobile/v2/allMarks?personId=${localState.userData.personId}&groupId=${localState.userData.eduGroups[0].id_str}&access_token=${localState.apiKey}`, { credentials: 'same-origin' })
-                        .then((response) => {
-                            if (response.ok) {
-                                response.json().then((statsJson) => {
-                                    localState['statsData'] = statsJson;
-                                    ls.set('statsData', statsJson);
+                    new Promise(() => {
+                        fetch(`https://api.dnevnik.ru/mobile/v2/allMarks?personId=${localState.userData.personId}&groupId=${localState.userData.eduGroups[0].id_str}&access_token=${localState.apiKey}`, { credentials: 'same-origin' })
+                            .then((response) => {
+                                if (response.ok) {
+                                    response.json().then((statsJson) => {
+                                        localState['statsData'] = statsJson;
+                                        ls.set('statsData', statsJson);
 
+                                        localState['statsLoad'] = false;
+                                    });
+
+                                } else {
                                     localState['statsLoad'] = false;
-                                });
+                                }
 
-                            } else {
+                            }, () => {
                                 localState['statsLoad'] = false;
-                            }
-
-                        }, () => {
-                            localState['statsLoad'] = false;
-                        })
+                            });
+                    })
                 );
 
                 promiseArray.push(
                     new Promise(() => {
-                        let dateCurrent = new Date;
-
-                        let deauthChecker = (jsonData) => {
-                            return ['invalidToken', 'apiRequestLimit'].some((elem) => {
-                                return (jsonData.hasOwnProperty('type') && jsonData['type'] === elem);
-                            });
-                        };
+                        let dateCurrent = new Date();
 
                         let day = ('0' + getDate(dateCurrent)).slice(-2);
                         let month = ('0' + (getMonth(dateCurrent) + 1)).slice(-2);
@@ -146,18 +200,12 @@ const store = new Vuex.Store({
                             .then((response) => {
                                 if (response.ok) {
                                     response.json().then((feedJson) => {
-                                        if (deauthChecker(feedJson)) {
-                                            localState = defaultState;
-                                            ls.clear();
-
-                                        } else {
-                                            localState['feedData'] = feedJson;
-                                            ls.set('feedData', feedJson);
-
-                                            localState['feedLoad'] = false;
-                                        }
+                                        localState['feedData'] = feedJson;
+                                        ls.set('feedData', feedJson);
+    
+                                        localState['feedLoad'] = false;
                                     });
-
+                                    
                                 } else {
                                     localState['feedLoad'] = false;
                                 }
@@ -171,22 +219,33 @@ const store = new Vuex.Store({
                 fetch(`https://api.dnevnik.ru/v1/users/me/context?access_token=${localState.apiKey}`, {
                     credentials: 'same-origin'
                 }).then((response) => {
-                    if (response.ok) {
-                        response.json().then((userData) => {
-                            localState['userData'] = userData;
-                            ls.set('userData', userData);
-                        });
-                    }
-                });
+                    response.json().then((userData) => {
+                        if (deauthChecker(userData)) {
+                            ls.clear();
+                            store.replaceState({});
 
-                Promise.all(promiseArray).then(() => {
-                    store.replaceState(localState);
+                        } else {
+                            if (response.ok) {
+                                localState['userData'] = userData;
+                                ls.set('userData', userData);
+
+                                Promise.all(promiseArray).then(() => {
+                                    store.replaceState(localState);
+                                });
+                            }
+                        }
+                    });
                 });
             }
         },
         viewDnevnik(state, amount) {
             if (state.isLoggedIn) {
-                let dateCurrent = new Date;
+                if (amount === 0) {
+                    state.dnevnikData = state.offlineDnevnik;
+                    return true;
+                }
+                
+                let dateCurrent = new Date();
                 let dateFormatted = null;
 
                 switch (true) {
@@ -194,7 +253,7 @@ const store = new Vuex.Store({
                     dateFormatted = addDays(addDays(dateCurrent, 1), amount);
                     break;
                     
-                case isSaturday(new Date):
+                case isSaturday(dateCurrent):
                     if (getHours(dateCurrent) < 14) {
                         dateFormatted = addDays(dateCurrent, amount);
 
@@ -214,24 +273,27 @@ const store = new Vuex.Store({
                 }
 
                 let day = ('0' + getDate(dateFormatted)).slice(-2);
-                let month = ('0' + (getMonth(dateCurrent) + 1)).slice(-2);
+                let month = ('0' + (getMonth(dateFormatted) + 1)).slice(-2);
                 let year = getYear(dateFormatted);
 
-                fetch(`https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
-                    if (response.ok) {
-                        response.json().then((dnevnikJson) => {
-                            state.dnevnikData = dnevnikJson;
-                            state.dnevnikLoad = false;
-                        });
+                cachedFetch(`https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
+                    response.json().then((dnevnikJson) => {
+                        if (deauthChecker(dnevnikJson)) {
+                            ls.clear();
+                            store.replaceState({});
 
-                    } else {
-                        state.dnevnikData = state.offlineDnevnik;
-                        state.dnevnikLoad = false;
-                    }
+                        } else {
+                            if (response.ok) {
+                                state.dnevnikData = dnevnikJson;
+
+                            } else {
+                                state.dnevnikData = state.offlineDnevnik;
+                            }
+                        }
+                    });
                     
                 }, () => {
                     state.dnevnikData = state.offlineDnevnik;
-                    state.dnevnikLoad = false;
                 });
             }
         },

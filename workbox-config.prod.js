@@ -3,7 +3,7 @@
 module.exports = {
   globDirectory: '.',
   globPatterns: [
-    'dist/*.{webp,js,css}',
+    'dist/*.{webp,js}',
     'src/assets/**/*.{json,xml,png,ico,js,css,woff2}'
   ],
   swDest: 'dist/sw.js',
@@ -15,6 +15,11 @@ module.exports = {
       urlPattern: /\/(#.+)?$/,
       handler: 'cacheFirst',
       options: {
+        cacheName: 'main',
+        expiration: {
+          maxEntries: 1,
+          maxAgeSeconds: 7 * 24 * 60 * 60
+        },
         cacheableResponse: {
           statuses: [0, 200]
         },

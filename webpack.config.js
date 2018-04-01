@@ -3,7 +3,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   entry: './src/main.js',
@@ -13,18 +12,17 @@ module.exports = {
     filename: 'build.js'
   },
   module: {
-    rules: [     
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          'css-loader'
+        ],
+      },  
       {
         test: /\.vue$/,
-        loader: 'vue-loader',
-        options: {
-          loaders: {
-            css: ExtractTextPlugin.extract({
-              use: 'css-loader',
-              fallback: 'vue-style-loader'
-            })
-          }
-        }
+        loader: 'vue-loader'
       },
       {
         test: /\.js$/,
@@ -40,9 +38,7 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    new ExtractTextPlugin("build.css")
-  ],
+  plugins: [],
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
@@ -71,15 +67,13 @@ if (process.env.NODE_ENV === 'production') {
     new CleanWebpackPlugin(['dist']),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
-        warnings: false,
-        screw_ie8: true
+        warnings: false
       },
       output: {
         comments: false,
       },
       exclude: [/\.min\.js$/gi]
     }),
-    new ExtractTextPlugin("build.css"),
     new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.LoaderOptionsPlugin({
