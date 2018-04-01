@@ -71,6 +71,10 @@ const cachedFetch = (url, options) => {
     if (cached && !navigator.onLine) {
         let response = new Response(new Blob([cached]));
         return Promise.resolve(response);
+
+    } else if (!cached && !navigator.onLine) {
+        let response = new Response(new Blob(['false']));
+        return Promise.resolve(response);
     }
   
     return fetch(url, options).then((response) => {
@@ -286,6 +290,10 @@ const store = new Vuex.Store({
 
                 cachedFetch(`https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
                     response.json().then((dnevnikJson) => {
+                        if (!dnevnikJson) {
+                            return sessionStorage.setItem('switchFailed', true);
+                        }
+
                         if (deauthChecker(dnevnikJson)) {
                             localStorage.clear();
                             store.replaceState({});
@@ -296,14 +304,12 @@ const store = new Vuex.Store({
 
                             } else {
                                 state.dnevnikData = state.offlineDnevnik;
-                                sessionStorage.setItem('switchFailed', true);
                             }
                         }
                     });
                     
                 }, () => {
                     state.dnevnikData = state.offlineDnevnik;
-                    sessionStorage.setItem('switchFailed', true);
                 });
             }
         },

@@ -7,6 +7,8 @@
         <div class="card-content">
             <span class="card-title grey-text text-darken-4">Дневник</span>
             <template v-if="!dnevnikLoad">
+                <p style="font-size: 110%">({{ dnevnikData.Days[0].Date.split("T")[0] }})</p>
+                
                 <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                 <ul class="pagination center">
                     <li class="waves-effect">
