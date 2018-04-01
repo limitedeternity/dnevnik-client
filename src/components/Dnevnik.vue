@@ -125,7 +125,7 @@ export default {
           sessionStorage.removeItem('switchFailed');
           this.skipDays = 0;
         }
-      }, 250);
+      }, 150);
     },
     coloring(mood) {
       switch (mood) {
