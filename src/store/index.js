@@ -52,12 +52,15 @@ const genHash = (s) => {
 
     hash = Math.abs(hash);
 
-    if (cachedKeysList.includes(hash)) {
-        cachedKeysList = cachedKeysList.filter(item => item !== hash);
+    if (navigator.onLine) {
+        if (cachedKeysList.includes(hash)) {
+            cachedKeysList = cachedKeysList.filter(item => item !== hash);
+        }
+    
+        cachedKeysList.push(hash);
+        cacheClearCheck();
     }
-
-    cachedKeysList.push(hash);
-    cacheClearCheck();
+    
     return hash;
 };
 
