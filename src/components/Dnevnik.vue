@@ -121,11 +121,11 @@ export default {
         let isFailed = sessionStorage.getItem('switchFailed');
 
         if (isFailed) {
-          window.M.toast({html: 'Упс, дальше ничего нет. Возвращаемся...', displayLength: 2000, classes: 'rounded'});
+          window.M.toast({html: 'Упс, дальше ничего нет. Возвращаемся...', displayLength: 2000});
           sessionStorage.removeItem('switchFailed');
           this.skipDays = 0;
         }
-      }, 150);
+      }, 100);
     },
     coloring(mood) {
       switch (mood) {
