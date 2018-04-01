@@ -226,7 +226,7 @@ const store = new Vuex.Store({
                 }).then((response) => {
                     response.json().then((userData) => {
                         if (deauthChecker(userData)) {
-                            ls.clear();
+                            localStorage.clear();
                             store.replaceState({});
 
                         } else {
@@ -284,7 +284,7 @@ const store = new Vuex.Store({
                 cachedFetch(`https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
                     response.json().then((dnevnikJson) => {
                         if (deauthChecker(dnevnikJson)) {
-                            ls.clear();
+                            localStorage.clear();
                             store.replaceState({});
 
                         } else {
@@ -309,7 +309,7 @@ const store = new Vuex.Store({
         },
         resetLoginState() {
             if (navigator.onLine) {
-                ls.clear();
+                localStorage.clear();
                 store.replaceState({});
             }
         }
