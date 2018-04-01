@@ -27,7 +27,7 @@ const defaultState = {
 
 const ls = new SecureLS({ encodingType: 'aes' });
 
-var cachedKeysList = [];
+var cachedKeysList = Object.keys(localStorage).filter(item => item.match(/^[0-9]+$/));
 
 const cacheClearCheck = () => {
     if (cachedKeysList.length > 4) {
@@ -37,9 +37,7 @@ const cacheClearCheck = () => {
     }
 };
 
-const hashurl = (s) => {
-    cacheClearCheck();
-    
+const genHash = (s) => {
     let hash = 0;
 
     if (s.length === 0) {
@@ -52,12 +50,19 @@ const hashurl = (s) => {
         hash = hash & hash;
     }
 
-    cachedKeysList.push(Math.abs(hash));
-    return Math.abs(hash);
+    hash = Math.abs(hash);
+
+    if (cachedKeysList.includes(hash)) {
+        cachedKeysList = cachedKeysList.filter(item => item !== hash);
+    }
+
+    cachedKeysList.push(hash);
+    cacheClearCheck();
+    return hash;
 };
 
 const cachedFetch = (url, options) => {
-    let cacheKey = hashurl(url);
+    let cacheKey = genHash(url);
     let cached = ls.get(cacheKey);
 
     if (cached && !navigator.onLine) {
