@@ -253,7 +253,7 @@ export default {
   created() {
     this.$store.commit('fetchData');
   },
-  beforeMount() {
+  mounted() {
     document.getElementById('preloader').style.opacity = "0";
     setTimeout(() => {document.getElementById('preloader').remove()}, 1000);
 
