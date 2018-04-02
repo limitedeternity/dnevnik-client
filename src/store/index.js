@@ -27,45 +27,78 @@ const defaultState = {
 
 const ls = new SecureLS({ encodingType: 'aes' });
 
-var cachedKeysList = Object.keys(localStorage).filter(item => item.match(/^[0-9]+$/));
+var keyStampList = [];
+
+(() => {
+    let keyStampObj = {};
+    let cachedKeysList = Object.keys(localStorage).filter(item => item.match(/^\d{4}-\d{2}-\d{2}$/));
+    let timeStampList = cachedKeysList.map(item => ls.get(`${item}:ts`));
+
+    cachedKeysList.forEach((value, index) => {
+        keyStampObj[value] = timeStampList[index];
+    });
+
+    Object.entries(keyStampObj).forEach(([key, value]) => {
+        keyStampList.push({key: key, value: value});
+    });
+
+    keyStampList.sort((a, b) => {
+        if (a.value > b.value) {
+            return 1;
+
+        } else if (a.value < b.value) {
+            return -1;
+            
+        } else {
+            return 0;
+        }
+    });
+})();
 
 const cacheClearCheck = () => {
-    if (cachedKeysList.length > 4) {
-        let oldEntry = cachedKeysList[0];
-        ls.remove(oldEntry);
-        cachedKeysList = cachedKeysList.slice(1);
+    if (keyStampList.length > 4) {
+        let oldEntry = keyStampList[0];
+        let oldKey = oldEntry.key;
+        let oldTS = `${oldKey}:ts`;
+
+        ls.remove(oldKey);
+        ls.remove(oldTS);
+        keyStampList = keyStampList.slice(1);
     }
 };
 
-const genHash = (s) => {
-    let hash = 0;
+const genKey = (s) => {
+    let queryParams = {};
 
-    if (s.length === 0) {
-        return hash;
-    }
+    s.split('?')[1]
+        .split('&')
+        .forEach((i) => {
+            queryParams[i.split('=')[0]] = i.split('=')[1];
+        });
 
-    for (let i = 0; i < s.length; i++) {
-        let char = s.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
-    }
-
-    hash = Math.abs(hash);
+    let key = queryParams.startDate;
 
     if (navigator.onLine) {
-        if (cachedKeysList.includes(hash)) {
-            cachedKeysList = cachedKeysList.filter(item => item !== hash);
+        let possibleMatch = keyStampList.filter(item => item.key === key);
+
+        if (possibleMatch.length === 1) {
+            let possibleMatchIndex = keyStampList.indexOf(possibleMatch[0]);
+
+            possibleMatch[0].value = Date.now();
+            ls.set(`${key}:ts`, possibleMatch[0].value);
+
+            keyStampList.splice(possibleMatchIndex, 1);
+            keyStampList.push(possibleMatch[0]);
         }
     
-        cachedKeysList.push(hash);
         cacheClearCheck();
     }
     
-    return hash;
+    return key;
 };
 
 const cachedFetch = (url, options) => {
-    let cacheKey = genHash(url);
+    let cacheKey = genKey(url);
     let cached = ls.get(cacheKey);
 
     if (cached && !navigator.onLine) {
@@ -84,6 +117,16 @@ const cachedFetch = (url, options) => {
             if (ct && ct.match(/application\/json/i)) {
                 response.clone().text().then((content) => {
                     ls.set(cacheKey, content);
+                    ls.set(`${cacheKey}:ts`, Date.now());
+
+                    if (cached) {
+                        let existingKey = keyStampList.filter(item => item.key === cacheKey);
+                        let existingKeyIndex = keyStampList.indexOf(existingKey[0]);
+
+                        existingKey[0].value = ls.get(`${cacheKey}:ts`);
+                        keyStampList.splice(existingKeyIndex, 1);
+                        keyStampList.push(existingKey[0]);
+                    }
                 });
             }
         }
