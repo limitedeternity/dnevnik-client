@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <header class="navbar-fixed">
+    <header>
       <nav role="navigation">
         <div class="nav-wrapper">
           <router-link :to="{name: 'home'}" class="brand-logo left" replace>
@@ -178,7 +178,7 @@ export default {
   data() {
     return {
       transition: 'slide-right',
-      footerText: 'Версия: 2.0.0-beta1'
+      footerText: 'Версия: 2.0.0-beta2'
     }
   },
   watch: {
