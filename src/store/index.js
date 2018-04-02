@@ -38,9 +38,9 @@ var keyStampList = [];
         keyStampObj[value] = timeStampList[index];
     });
 
-    Object.entries(keyStampObj).forEach(([key, value]) => {
+    for (let [key, value] of Object.entries(keyStampObj)) {
         keyStampList.push({key: key, value: value});
-    });
+    }
 
     keyStampList.sort((a, b) => {
         if (a.value > b.value) {
@@ -77,21 +77,6 @@ const genKey = (s) => {
         });
 
     let key = queryParams.startDate;
-
-    if (navigator.onLine) {
-        let possibleMatch = keyStampList.filter(item => item.key === key);
-
-        if (possibleMatch.length === 1) {
-            let possibleMatchIndex = keyStampList.indexOf(possibleMatch[0]);
-
-            possibleMatch[0].value = Date.now();
-            ls.set(`${key}:ts`, possibleMatch[0].value);
-
-            keyStampList.splice(possibleMatchIndex, 1);
-            keyStampList.push(possibleMatch[0]);
-        }
-    }
-    
     return key;
 };
 
