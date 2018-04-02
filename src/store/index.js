@@ -99,7 +99,16 @@ const cachedFetch = (url, options) => {
     let cacheKey = genKey(url);
     let cached = ls.get(cacheKey);
 
-    if (cached && !navigator.onLine) {
+    if (cached && navigator.onLine) {
+        let cacheTimeStamp = ls.get(`${cacheKey}:ts`);
+        let timeDifference = (Date.now() - cacheTimeStamp) / (1000 * 60);
+        
+        if (( timeDifference >> 0 ) < 15) {
+            let response = new Response(new Blob([cached]));
+            return Promise.resolve(response);
+        }
+
+    } else if (cached && !navigator.onLine) {
         let response = new Response(new Blob([cached]));
         return Promise.resolve(response);
 
