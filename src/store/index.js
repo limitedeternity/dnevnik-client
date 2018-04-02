@@ -90,8 +90,6 @@ const genKey = (s) => {
             keyStampList.splice(possibleMatchIndex, 1);
             keyStampList.push(possibleMatch[0]);
         }
-    
-        cacheClearCheck();
     }
     
     return key;
@@ -116,16 +114,22 @@ const cachedFetch = (url, options) => {
 
             if (ct && ct.match(/application\/json/i)) {
                 response.clone().text().then((content) => {
+                    let cacheTimeStamp = Date.now();
+
                     ls.set(cacheKey, content);
-                    ls.set(`${cacheKey}:ts`, Date.now());
+                    ls.set(`${cacheKey}:ts`, cacheTimeStamp);
 
                     if (cached) {
                         let existingKey = keyStampList.filter(item => item.key === cacheKey);
                         let existingKeyIndex = keyStampList.indexOf(existingKey[0]);
 
-                        existingKey[0].value = ls.get(`${cacheKey}:ts`);
+                        existingKey[0].value = cacheTimeStamp;
                         keyStampList.splice(existingKeyIndex, 1);
                         keyStampList.push(existingKey[0]);
+
+                    } else {
+                        keyStampList.push({key: cacheKey, value: cacheTimeStamp});
+                        cacheClearCheck();
                     }
                 });
             }
