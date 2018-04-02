@@ -12,7 +12,7 @@
                 <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                 <ul class="pagination center">
                     <li class="waves-effect">
-                      <a @click="skipDays--">
+                      <a @click="skipDays -= 1">
                         <i class="material-icons">chevron_left</i>
                       </a>
                     </li>
@@ -22,7 +22,7 @@
                       </a>
                     </li>
                     <li class="waves-effect">
-                      <a @click="skipDays++">
+                      <a @click="skipDays += 1">
                         <i class="material-icons">chevron_right</i>
                       </a>
                     </li>
@@ -117,15 +117,17 @@ export default {
     fetchData() {
       this.$store.commit("viewDnevnik", this.skipDays);
 
-      return setTimeout(() => {
-        let isFailed = sessionStorage.getItem('switchFailed');
+      if (!navigator.onLine) {
+        return setTimeout(() => {
+          let isFailed = sessionStorage.getItem('switchFailed');
 
-        if (isFailed) {
-          window.M.toast({html: 'Упс, дальше ничего нет. Возвращаемся...', displayLength: 2000});
-          sessionStorage.removeItem('switchFailed');
-          this.skipDays = 0;
-        }
-      }, 100);
+          if (isFailed) {
+            window.M.toast({html: 'Упс, дальше ничего нет. Возвращаемся...', displayLength: 2000});
+            sessionStorage.removeItem('switchFailed');
+            this.skipDays = 0;
+          }
+        }, 100);
+      }
     },
     coloring(mood) {
       switch (mood) {
