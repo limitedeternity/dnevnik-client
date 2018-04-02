@@ -122,7 +122,7 @@ export default {
           let isFailed = sessionStorage.getItem('switchFailed');
 
           if (isFailed) {
-            window.M.toast({html: 'Упс, дальше ничего нет. Возвращаемся...', displayLength: 2000});
+            window.M.toast({html: '<span>Упс, там ничего не нашлось...</span><button class="btn-flat toast-action" onclick="window.M.Toast.dismissAll();">ОК</button>', displayLength: 2000});
             sessionStorage.removeItem('switchFailed');
             this.skipDays = 0;
           }
