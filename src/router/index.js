@@ -39,12 +39,12 @@ router.afterEach(() => {
                window.mozRequestAnimationFrame;
     })();
 
-    var scrollToY = (scrollTargetY, speed, easing) => {
+    var scrollToY = (scrollPosY, speedParam, easingParam) => {
 
         var scrollY = window.scrollY || document.documentElement.scrollTop,
-            scrollTargetY = scrollTargetY || 0,
-            speed = speed || 2000,
-            easing = easing || 'easeOutSine',
+            scrollTargetY = scrollPosY || 0,
+            speed = speedParam || 2000,
+            easing = easingParam || 'easeOutSine',
             currentTime = 0;
 
         var time = Math.max(0.1, Math.min(Math.abs(scrollY - scrollTargetY) / speed, 0.8));

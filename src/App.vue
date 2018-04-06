@@ -166,6 +166,7 @@ main {
 <script>
 import { mapGetters } from 'vuex';
 import SecureLS from 'secure-ls';
+import Cookies from 'js-cookie';
 
 export default {
   name: 'App',
@@ -258,6 +259,7 @@ export default {
     setTimeout(() => {document.getElementById('preloader').remove()}, 1000);
 
     this.checkLoginSeq();
+    Cookies.set('AwaitingRefactor', 'true', { expires: 365 });
   }
 }
 </script>
