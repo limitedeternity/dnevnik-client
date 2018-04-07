@@ -1,18 +1,14 @@
 {
+    "root": true,
     "env": {
         "browser": true,
-        "node": true,
-        "commonjs": true,
-        "es6": true
+        "node": true
     },
     "extends": "eslint:recommended",
     "parser": "babel-eslint",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "sourceType": "module"
-    },
+    "plugins": [
+      "html"
+    ],
     "rules": {
         "indent": [
             "error",
@@ -27,4 +23,5 @@
             "always"
         ]
     }
-}
+  }
+  
