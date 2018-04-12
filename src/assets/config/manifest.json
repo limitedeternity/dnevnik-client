@@ -6,7 +6,7 @@
 	"start_url": "https://dnevnik-client.herokuapp.com/",
 	"display": "standalone",
 	"short_name": "Dnevnik",
-	"theme_color": "#EE6E73",
+	"theme_color": "transparent",
 	"description": "Облегченная версия Дневник.Ру.",
 	"orientation": "portrait-primary",
 	"background_color": "#000000",
