@@ -16,7 +16,7 @@
   "license": "MIT",
   "scripts": {
     "devServer": "workbox generateSW workbox-config.dev.js && cross-env NODE_ENV=development webpack-dev-server --open --hot",
-    "start": "bin/start-nginx cross-env NODE_ENV=production node --optimize_for_size --max_old_space_size=460 --gc_interval=100 server.js",
+    "start": "bin/start-nginx cross-env NODE_ENV=production node pm2.js",
     "postinstall": "bash scripts/postinstall.sh"
   },
   "repository": {
@@ -31,8 +31,8 @@
     "cross-env": "^5.1.4",
     "express": "^4.16.3",
     "helmet": "^3.12.0",
-    "shrink-ray-current": "^2.1.0",
-    "throng": "^4.0.0"
+    "pm2": "^2.10.2",
+    "shrink-ray-current": "^2.1.0"
   },
   "engines": {
     "node": "9.8.0",
@@ -53,7 +53,6 @@
     "css-loader": "^0.28.11",
     "date-fns": "^1.29.0",
     "file-loader": "^1.1.11",
-    "js-cookie": "^2.2.0",
     "secure-ls": "^1.1.0",
     "vue": "^2.5.16",
     "vue-loader": "^14.2.2",

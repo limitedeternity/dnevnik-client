@@ -1,12 +1,11 @@
 const express = require('express');
 const helmet = require('helmet');
-const throng = require('throng');
 const shrinkRay = require('shrink-ray-current');
 const path = require('path');
 const fs = require('fs');
 
 
-const application = () => {
+setTimeout(() => {
     var instance = express();
 
     if (process.env.NODE_ENV === 'production') {
@@ -43,10 +42,5 @@ const application = () => {
     });
     
     instance.listen(PORT, callbackFn);
-};
-
-
-throng({
-    workers: process.env.WEB_CONCURRENCY || 1,
-    lifetime: Infinity
-}, application);
+    
+}, 2000);
