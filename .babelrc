@@ -1,6 +1,15 @@
 {
   "presets": [
-    ["env", { "modules": false }],
+    ["env", { 
+      "modules": false,
+      "targets": {
+        "browsers": [
+          "> 1%",
+          "not ie <= 8",
+          "not op_mini all"
+        ]
+      }
+    }],
     "stage-0"
   ]
 }
