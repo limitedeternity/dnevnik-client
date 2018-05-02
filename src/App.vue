@@ -226,27 +226,31 @@ export default {
       return location.origin;
     },
     onswipeRight() {
-      switch (this.$route.name) {
-      case 'stats':
-        return this.$router.replace({name: 'dnevnik'});
+      if (this.isLoggedIn) {
+        switch (this.$route.name) {
+          case 'stats':
+            return this.$router.replace({name: 'dnevnik'});
       
-      case 'dnevnik':
-        return this.$router.replace({name: 'home'});
+          case 'dnevnik':
+            return this.$router.replace({name: 'home'});
       
-      default:
-        return;
+          default:
+            return;
+        }
       }
     },
     onswipeLeft() {
-      switch (this.$route.name) {
-      case 'home':
-        return this.$router.replace({name: 'dnevnik'});
+      if (this.isLoggedIn) {
+        switch (this.$route.name) {
+          case 'home':
+            return this.$router.replace({name: 'dnevnik'});
       
-      case 'dnevnik':
-        return this.$router.replace({name: 'stats'});
+          case 'dnevnik':
+            return this.$router.replace({name: 'stats'});
       
-      default:
-        return;
+          default:
+            return;
+        }
       }
     }
   },
