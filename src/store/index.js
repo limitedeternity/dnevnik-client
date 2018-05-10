@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import SecureLS from 'secure-ls';
+import ls from 'store/dist/store.modern';
 
 import addDays from 'date-fns/add_days'; 
 import getHours from 'date-fns/get_hours'; 
@@ -25,13 +25,18 @@ const defaultState = {
     apiKey: null
 };
 
-const ls = new SecureLS({ encodingType: 'rc4', isCompression: false });
-
 var keyStampList = [];
 
 (() => {
     let keyStampObj = {};
-    let cachedKeysList = Object.keys(localStorage).filter(item => item.match(/^\d{4}-\d{2}-\d{2}$/));
+    let cachedKeysList = [];
+
+    ls.each((value, key) => {
+        if (key.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            cachedKeysList.push(key);
+        }
+    });
+
     let timeStampList = cachedKeysList.map(item => ls.get(`${item}:ts`));
 
     cachedKeysList.forEach((value, index) => {
@@ -156,8 +161,8 @@ const store = new Vuex.Store({
         fetchData() {
             let localState = defaultState;
 
-            ls.getAllKeys().forEach((key) => {
-                localState[key] = ls.get(key);
+            ls.each((value, key) => {
+                localState[key] = value;
             });
 
             if (localState.isLoggedIn) {
@@ -274,7 +279,7 @@ const store = new Vuex.Store({
                 }).then((response) => {
                     response.json().then((userData) => {
                         if (deauthChecker(userData)) {
-                            localStorage.clear();
+                            ls.clearAll();
                             store.replaceState({});
 
                         } else {
@@ -336,7 +341,7 @@ const store = new Vuex.Store({
                         }
 
                         if (deauthChecker(dnevnikJson)) {
-                            localStorage.clear();
+                            ls.clearAll();
                             store.replaceState({});
 
                         } else {
@@ -361,7 +366,7 @@ const store = new Vuex.Store({
         },
         resetLoginState() {
             if (navigator.onLine) {
-                localStorage.clear();
+                ls.clearAll();
                 store.replaceState({});
             }
         }

@@ -165,7 +165,7 @@ main {
 
 <script>
 import { mapGetters } from 'vuex';
-import SecureLS from 'secure-ls';
+import ls from 'store/dist/store.modern';
 
 export default {
   name: 'App',
@@ -202,7 +202,6 @@ export default {
       if (this.$route.fullPath.includes('access_token=')) {
         
         let accessToken = this.$route.fullPath.match(new RegExp('access_token=(.*)&state='))[1];
-        const ls = new SecureLS({ encodingType: 'rc4', isCompression: false });
 
         fetch(`https://api.dnevnik.ru/v1/users/me/context?access_token=${accessToken}`, { credentials: 'same-origin' }).then((response) => {
           return response.json();
