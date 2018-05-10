@@ -25,7 +25,7 @@ const defaultState = {
     apiKey: null
 };
 
-const ls = new SecureLS({ encodingType: 'aes' });
+const ls = new SecureLS({ encodingType: 'rc4', isCompression: false });
 
 var keyStampList = [];
 
