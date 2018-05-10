@@ -2,7 +2,7 @@
   <div class="col s12 offset-m1 m10 offset-l2 l8 offset-xl4 xl4">
         <div class="card">
             <div class="card-image">
-                <img src="../assets/images/nature.webp" alt>
+                <img src="../assets/images/nature.jpg" alt>
                 <a class="btn-floating btn-large activator halfway-fab waves-effect waves-light red pulse" onclick="this.classList.remove('pulse')">
                     <i class="material-icons">mode_edit</i>
                 </a>
