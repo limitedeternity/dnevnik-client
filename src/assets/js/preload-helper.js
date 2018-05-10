@@ -13,9 +13,9 @@
 
     } else {
         preloadedStyles.forEach(el => el.addEventListener('load', () => {
-            this.rel = 'stylesheet';
-            this.removeAttribute('as');
-        }));
+            el.rel = 'stylesheet';
+            el.removeAttribute('as');
+        }, false));
     }
 
     var preloadedScripts = preloadList.filter(el => Boolean(el.as === "script"));
@@ -25,7 +25,6 @@
 
             script.src = el.href;
             script.type = 'application/javascript';
-            script.defer = true;
 
             document.head.appendChild(script);
             el.remove();
@@ -35,12 +34,11 @@
         preloadedScripts.forEach(el => el.addEventListener('load', () => {
             let script = document.createElement('script');
 
-            script.src = this.href;
+            script.src = el.href;
             script.type = 'application/javascript';
-            script.defer = true;
 
             document.head.appendChild(script);
-            this.remove();
-        }));
+            el.remove();
+        }, false));
     }
 })();
