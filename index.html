@@ -28,11 +28,15 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
 
-  <link rel="preload" as="style" onload="this.rel='stylesheet';this.removeAttribute('as')" href="src/assets/css/preloader.css">
-  <link rel="preload" as="style" onload="this.rel='stylesheet';this.removeAttribute('as')" href="src/assets/css/MaterialIcons.css">
-  <link rel="preload" as="style" onload="this.rel='stylesheet';this.removeAttribute('as')" href="src/assets/css/materialize.min.css">
-  <link rel="preload" as="script" href="dist/build.js" onload="var script=document.createElement('script');script.src=this.href;script.type='application/javascript';script.async=true;document.body.appendChild(script);this.remove()">
-  <link rel="preload" as="script" href="src/assets/js/materialize.min.js" onload="var script=document.createElement('script');script.src=this.href;script.type='application/javascript';script.async=true;document.body.appendChild(script);this.remove()">
+  <link rel="preload" as="style" href="src/assets/css/preloader.css">
+  <link rel="preload" as="style" href="src/assets/css/MaterialIcons.css">
+  <link rel="preload" as="style" href="src/assets/css/materialize.min.css">
+  <link rel="preload" as="script" href="dist/build.js">
+  <link rel="preload" as="script" href="src/assets/js/materialize.min.js">
+
+  <script src="src/assets/js/preload-polyfill.min.js"></script>
+  <script src="src/assets/js/preload-polyfill-invoke.min.js"></script>
+  <script src="src/assets/js/preload-polyfill-inline.min.js"></script>
   
   <link rel="apple-touch-icon" sizes="57x57" href="src/assets/images/icons/apple-icon-57x57.png">
   <link rel="apple-touch-icon" sizes="60x60" href="src/assets/images/icons/apple-icon-60x60.png">
