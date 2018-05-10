@@ -14,6 +14,8 @@ setTimeout(() => {
             fs.closeSync(fs.openSync('/tmp/app-initialized', 'w'));
             console.log(`Listening on ${PORT}`);
         };
+        
+        instance.enable("trust proxy");
 
     } else {
         var PORT = 8080;
@@ -23,7 +25,6 @@ setTimeout(() => {
     }
 
     instance.use(helmet());
-
     instance.use(shrinkRay());
     instance.use('/src/assets', express.static(path.join(__dirname, 'src', 'assets')));
     instance.use('/dist', express.static(path.join(__dirname, 'dist')));
