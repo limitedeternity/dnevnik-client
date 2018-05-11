@@ -27,6 +27,15 @@ module.exports = {
                     statuses: [0, 200]
                 }
             }
+        },
+        {
+            urlPattern: new RegExp('https://cdn.polyfill.io/(.*)'),
+            handler: 'networkFirst',
+            options: {
+                cacheableResponse: {
+                    statuses: [0, 200]
+                }
+            }
         }
     ]
 };
