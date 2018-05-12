@@ -178,7 +178,7 @@ export default {
   data() {
     return {
       transition: 'slide-right',
-      footerText: 'Версия: 2.0.0-beta2'
+      footerText: 'Версия: 2.0.0-beta3'
     }
   },
   watch: {

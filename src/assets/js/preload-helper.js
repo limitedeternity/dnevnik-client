@@ -41,7 +41,7 @@ var DOMTokenListSupports = function DOMTokenListSupports(tokenList, token) {
 
             script.src = el.href;
             script.type = 'application/javascript';
-            script.async = true;
+            script.defer = true;
 
             document.head.appendChild(script);
             el.remove();
