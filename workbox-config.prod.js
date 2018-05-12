@@ -31,8 +31,8 @@ module.exports = {
                 ]
             }
         },
-        { 
-            urlPattern: new RegExp('https://cdn.polyfill.io/(.*)'),
+        {
+            urlPattern: /^https:\/\/(?:cdn|qa)\.polyfill\.io\/(.*)/,
             handler: 'staleWhileRevalidate',
             options: {
                 cacheableResponse: {
