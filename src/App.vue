@@ -165,7 +165,7 @@ main {
 
 <script>
 import { mapGetters } from 'vuex';
-import ls from 'store/dist/store.modern';
+import ls from 'store';
 
 export default {
   name: 'App',

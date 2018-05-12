@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import ls from 'store/dist/store.modern';
+import ls from 'store';
 
 import addDays from 'date-fns/add_days'; 
 import getHours from 'date-fns/get_hours'; 
@@ -337,7 +337,7 @@ const store = new Vuex.Store({
                 cachedFetch(`https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}&access_token=${state.apiKey}`, { credentials: 'same-origin' }).then((response) => {
                     response.json().then((dnevnikJson) => {
                         if (!dnevnikJson) {
-                            return sessionStorage.setItem('switchFailed', true);
+                            return ls.set('switchFailed', true);
                         }
 
                         if (deauthChecker(dnevnikJson)) {
