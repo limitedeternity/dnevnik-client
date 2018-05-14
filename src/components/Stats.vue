@@ -23,8 +23,8 @@
                          <p :style="{color: coloring(markConstruct.value[1])}">{{ markConstruct.value[0] }} : {{ markConstruct.count }}</p>
                        </div>
 
-                       <p v-if="subjectData.Avg" :style="{color: coloring()}">Среднее значение: {{ subjectData.Avg.Value }}</p>
                        <p v-if="subjectData.FinalMark" :style="{color: coloring(subjectData.FinalMark.Values[0].Mood)}">Итоговое значение: {{ subjectData.FinalMark.Values[0].Value }}</p>
+                       <p v-else-if="subjectData.Avg" :style="{color: coloring()}">Среднее значение: {{ subjectData.Avg.Value }}</p>
                      </li>
                      <div :style="{display: 'block', clear: 'both', height: '3px'}" :key="'delimiter-' + index"></div>
                  </template>
