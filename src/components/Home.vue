@@ -69,7 +69,7 @@
                             <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                         </div>
                         <div>
-                            <p>Спасибо, что решили протестировать beta-версию DnevnikClient. Я очень это ценю. <br> <a href="https://alt-dnevnik.herokuapp.com/" target="_self" rel="noopener">Здесь</a> расположен DnevnikClient v1. <br>Обо всех ошибках просьба сообщать, открывая Issue в <a href="https://github.com/limitedeternity/dnevnik-client/" target="_blank" rel="noopener">репозитории на GitHub</a>. <br>Надеюсь, вам нравится клиент, и вы довольны его функционалом и проделанной мной работой. <br>Напоминаю, что проект - Open Source, так что вы в любой момент можете помочь разработке. <br>By <a href="https://github.com/limitedeternity/" target="_blank" rel="noopener">@limitedeternity</a></p>
+                            <p>Спасибо, что решили протестировать beta-версию DnevnikClient. Я очень это ценю. <br>Обо всех ошибках просьба сообщать, открывая Issue в <a href="https://github.com/limitedeternity/dnevnik-client/" target="_blank" rel="noopener">репозитории на GitHub</a>. <br>Надеюсь, вам нравится клиент, и вы довольны его функционалом и проделанной мной работой. <br>Напоминаю, что проект - Open Source, так что вы в любой момент можете помочь разработке. <br>By <a href="https://github.com/limitedeternity/" target="_blank" rel="noopener">@limitedeternity</a></p>
                         </div>
                     </template>
                     <template v-else>
