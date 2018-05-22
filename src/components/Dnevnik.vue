@@ -166,10 +166,10 @@ export default {
       let replacedText = anchorme(escapedText, {
           emails: false,
 	        attributes: [
-		          {
-			            name: "target",
-			            value: "_blank"
-		          },
+              {
+                  name: "target",
+                  value: "_blank"
+              },
               {
                   name:"rel",
                   value:"noopener"

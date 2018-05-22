@@ -220,7 +220,8 @@ const store = new Vuex.Store({
                             }, () => {
                                 localState['dnevnikData'] = localState['offlineDnevnik'];
                                 localState['dnevnikLoad'] = false;
-                            });
+                            }
+                        );
                     })
                 );
 
@@ -242,7 +243,8 @@ const store = new Vuex.Store({
 
                             }, () => {
                                 localState['statsLoad'] = false;
-                            });
+                            }
+                        );
                     })
                 );
 
@@ -270,7 +272,8 @@ const store = new Vuex.Store({
 
                             }, () => {
                                 localState['feedLoad'] = false;
-                            });
+                            }
+                        );
                     })
                 );
 
