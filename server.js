@@ -1,6 +1,5 @@
 const express = require('express');
 const helmet = require('helmet');
-const shrinkRay = require('shrink-ray-current');
 const path = require('path');
 const fs = require('fs');
 
@@ -14,7 +13,7 @@ setTimeout(() => {
             fs.closeSync(fs.openSync('/tmp/app-initialized', 'w'));
             console.log(`Listening on ${PORT}`);
         };
-        
+
         instance.enable("trust proxy");
 
     } else {
@@ -25,7 +24,6 @@ setTimeout(() => {
     }
 
     instance.use(helmet());
-    instance.use(shrinkRay());
     instance.use('/src/assets', express.static(path.join(__dirname, 'src', 'assets')));
     instance.use('/dist', express.static(path.join(__dirname, 'dist')));
 
@@ -33,7 +31,7 @@ setTimeout(() => {
         res.setHeader('Cache-Control', 'no-cache');
         res.sendFile(path.join(__dirname, 'dist', 'sw.js'));
     });
-    
+
     instance.get('/', (req, res) => {
         res.sendFile(path.join(__dirname, 'index.html'));
     });
@@ -41,7 +39,7 @@ setTimeout(() => {
     instance.get('*', (req, res) => {
         res.redirect('/');
     });
-    
+
     instance.listen(PORT, callbackFn);
-    
+
 }, 2000);
