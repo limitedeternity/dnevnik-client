@@ -76,6 +76,10 @@
 </template>
 
 <style>
+::-webkit-scrollbar {
+    display: none;
+}
+
 #tabs a.router-link-exact-active {
     background-color: rgba(0, 0, 0, 0.1);
 }
@@ -200,7 +204,7 @@ export default {
   methods: {
     checkLoginSeq() {
       if (this.$route.fullPath.includes('access_token=')) {
-        
+
         let accessToken = this.$route.fullPath.match(new RegExp('access_token=(.*)&state='))[1];
 
         fetch(`https://api.dnevnik.ru/v1/users/me/context?access_token=${accessToken}`, { credentials: 'same-origin' }).then((response) => {
@@ -210,7 +214,7 @@ export default {
           if (userData.roles !== undefined && userData.roles.includes('EduStudent')) {
 
             this.$store.commit('setDefaultState');
-            
+
             ls.set('apiKey', accessToken);
             ls.set('userData', userData);
             ls.set('isLoggedIn', true);
@@ -229,10 +233,10 @@ export default {
         switch (this.$route.name) {
           case 'stats':
             return this.$router.replace({name: 'dnevnik'});
-      
+
           case 'dnevnik':
             return this.$router.replace({name: 'home'});
-      
+
           default:
             return;
         }
@@ -243,10 +247,10 @@ export default {
         switch (this.$route.name) {
           case 'home':
             return this.$router.replace({name: 'dnevnik'});
-      
+
           case 'dnevnik':
             return this.$router.replace({name: 'stats'});
-      
+
           default:
             return;
         }
