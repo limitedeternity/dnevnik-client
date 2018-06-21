@@ -28,6 +28,7 @@
   },
   "homepage": "https://dnevnik-client.herokuapp.com/",
   "dependencies": {
+    "compression": "^1.7.2",
     "cross-env": "^5.1.5",
     "express": "^4.16.3",
     "helmet": "^3.12.0",
