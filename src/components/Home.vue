@@ -39,14 +39,14 @@
                             <blockquote>Важные работы</blockquote>
                             <ul class="collection">
                                 <template v-for="(work, index) in feedData.Feed.Days[0].ImportantWorks">
-                                    <li class="collection-item avatar z-depth-1" :key="'item-warn-' + index">
+                                    <li class="collection-item avatar z-depth-1" :key="`item-warn-${index}`">
                                         <i class="material-icons circle white" :style="{color: 'orange', transform: 'scale(1.5)'}">warning</i>
                                         <div :style="{display: 'block', clear: 'both', height: '6px'}"></div>
                                         <span class="title" :style="{color: 'orange'}">{{ work.Subject.Name }}</span>
                                         <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                                         <p class="grey-text text-darken-4">{{ work.WorkType.Kind }}</p>
                                     </li>
-                                    <div :style="{display: 'block', clear: 'both', height: '2px'}" :key="'delimiter-warn-' + index"></div>
+                                    <div :style="{display: 'block', clear: 'both', height: '2px'}" :key="`delimiter-warn-${index}`"></div>
                                 </template>
                             </ul>
                             <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
@@ -55,7 +55,7 @@
                             <blockquote :style="{borderLeft: '5px solid #01579B'}">Объявления</blockquote>
                             <ul class="collection">
                                 <template v-for="(notification, index) in feedData.Feed.Days[0].Schedule.Notifications">
-                                    <li class="collection-item avatar z-depth-1" :key="'item-notif-' + index">
+                                    <li class="collection-item avatar z-depth-1" :key="`item-notif-${index}`">
                                         <i class="material-icons circle white" :style="{color: '#01579B', transform: 'scale(1.5)'}">message</i>
                                         <div :style="{display: 'block', clear: 'both', height: '6px'}"></div>
                                         <span class="title" :style="{color: '#01579B'}">{{ notification.Title }}</span>
@@ -63,7 +63,7 @@
                                         <p v-html="linkReplace(notification.Text)"></p>
                                         <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                                     </li>
-                                    <div :style="{display: 'block', clear: 'both', height: '2px'}" :key="'delimiter-notif-' + index"></div>
+                                    <div :style="{display: 'block', clear: 'both', height: '2px'}" :key="`delimiter-notif-${index}`"></div>
                                 </template>
                             </ul>
                             <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>

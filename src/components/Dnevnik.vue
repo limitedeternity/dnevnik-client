@@ -30,7 +30,7 @@
                 <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                 <ul class="collection" v-if="dnevnikData.Days.length && dnevnikData.Days[0].Schedule.length">
                       <template v-for="(lesson, index) in dnevnikData.Days[0].Schedule" v-if="lesson.Subject">
-                              <li class="collection-item avatar z-depth-1" :key="'item-' + index">
+                              <li class="collection-item avatar z-depth-1" :key="`item-${index}`">
 
                                 <i class="material-icons circle white" :style="{color: '#039be5', transform: 'scale(1.5)'}">format_list_bulleted</i>
 
@@ -64,7 +64,7 @@
                                 <div :style="{display: 'block', clear: 'both', height: '8px'}"></div>
 
                               </li>
-                              <div :style="{display: 'block', clear: 'both', height: '3px'}" :key="'delimiter-' + index"></div>
+                              <div :style="{display: 'block', clear: 'both', height: '3px'}" :key="`delimiter-${index}`"></div>
                       </template>
                 </ul>
                 <div v-else class="card-panel teal center">

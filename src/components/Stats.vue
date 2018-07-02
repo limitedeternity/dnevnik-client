@@ -8,9 +8,9 @@
           <span class="card-title grey-text text-darken-4">Статистика</span>
             <template v-if="!statsLoad">
               <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
-              <ul class="collection" v-if="statsData.AllMarks && statsData.AllMarks[0].SubjectMarks">
-                 <template v-for="(subjectData, index) in statsData.AllMarks[0].SubjectMarks">
-                     <li class="collection-item avatar z-depth-1" :key="'item-' + index">
+              <ul class="collection" v-if="statsData.AllMarks.length && statsData.AllMarks[0].SubjectMarks.length">
+                 <template v-for="(subjectData, subjectIndex) in statsData.AllMarks[0].SubjectMarks">
+                     <li class="collection-item avatar z-depth-1" :key="`item-${subjectIndex}`">
                        <i class="material-icons circle white" :style="{color: 'blue', transform: 'scale(1.5)'}">timeline</i>
 
                        <div :style="{display: 'block', clear: 'both', height: '6px'}"></div>
@@ -19,17 +19,19 @@
 
                        <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
 
-                       <div v-if="subjectData.Marks" v-for="(markConstruct, index) in Counter(subjectData.Marks)" :key="index">
-                         <p :style="{color: coloring(markConstruct.value[1])}">{{ markConstruct.value[0] }} : {{ markConstruct.count }}</p>
+                       <div v-if="subjectData.Marks.length">
+                         <template v-for="(markConstruct, markIndex) in Counter(subjectData.Marks)">
+                           <p :key="`mark-${subjectIndex}-${markIndex}`" :style="{color: coloring(markConstruct.value[1])}">{{ markConstruct.value[0] }} : {{ markConstruct.count }}</p>
+                         </template>
                        </div>
                        <div v-else>
                          <p style="color: teal;">Оценки: нет</p>
                        </div>
 
-                       <p v-if="subjectData.Avg" :style="{color: coloring()}">Среднее значение: {{ subjectData.Avg.Value }}</p>
+                       <p v-if="subjectData.Avg && subjectData.Avg.Value" :style="{color: coloring()}">Среднее значение: {{ subjectData.Avg.Value }}</p>
                        <p v-if="subjectData.FinalMark" :style="{color: coloring(subjectData.FinalMark.Values[0].Mood)}">Итоговое значение: {{ subjectData.FinalMark.Values[0].Value }}</p>
                      </li>
-                     <div :style="{display: 'block', clear: 'both', height: '3px'}" :key="'delimiter-' + index"></div>
+                     <div :style="{display: 'block', clear: 'both', height: '3px'}" :key="`delimiter-${subjectIndex}`"></div>
                  </template>
               </ul>
               <div v-else class="card-panel teal center">
