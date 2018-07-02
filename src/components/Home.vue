@@ -17,7 +17,7 @@
                         <i class="material-icons right">close</i>
                     </span>
                     <template v-if="!feedLoad">
-                        <div v-if="feedData.Feed.Days[0].MarkCards.length">
+                        <div v-if="feedData.Feed.Days.length && feedData.Feed.Days[0].MarkCards.length">
                             <blockquote :style="{borderLeft: '5px solid ' + coloring(feedData.Feed.Days[0].DayEmotion)}">Оценки за сегодня</blockquote>
                             <ul class="collection">
                               <template v-for="(card, indexCard) in feedData.Feed.Days[0].MarkCards">
@@ -35,7 +35,7 @@
                             </ul>
                             <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                         </div>
-                        <div v-if="feedData.Feed.Days[0].ImportantWorks.length">
+                        <div v-if="feedData.Feed.Days.length && feedData.Feed.Days[0].ImportantWorks.length">
                             <blockquote>Важные работы</blockquote>
                             <ul class="collection">
                                 <template v-for="(work, index) in feedData.Feed.Days[0].ImportantWorks">
@@ -51,7 +51,7 @@
                             </ul>
                             <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                         </div>
-                        <div v-if="feedData.Feed.Days[0].Schedule.Notifications.length">
+                        <div v-if="feedData.Feed.Days.length && feedData.Feed.Days[0].Schedule.Notifications.length">
                             <blockquote :style="{borderLeft: '5px solid #01579B'}">Объявления</blockquote>
                             <ul class="collection">
                                 <template v-for="(notification, index) in feedData.Feed.Days[0].Schedule.Notifications">
@@ -113,23 +113,23 @@ export default {
         case 'AllIsGood':
         case 'Good':
           return 'teal'
-        
+
         case 'О':
         case 'Average':
           return '#FF5722'
-        
+
         case 'AllIsBad':
         case 'Н':
         case 'Bad':
           return 'red'
-        
+
         case 'П':
         case 'Б':
           return '#01579B'
-        
+
         default:
           return '#212121'
-      } 
+      }
     },
     linkReplace(text) {
         let escapeMap = {
@@ -143,16 +143,16 @@ export default {
         let escapedText = text.replace(/[&<>"']/g, (match) => { return escapeMap[match] });
         let replacedText = anchorme(escapedText, {
             emails: false,
-	        attributes: [
-		        {
-			        name: "target",
-			        value: "_blank"
-		        },
-                {
-                    name:"rel",
-                    value:"noopener"
-                }
-	        ]
+	          attributes: [
+		          {
+			          name: "target",
+			          value: "_blank"
+		          },
+              {
+                name:"rel",
+                value:"noopener"
+              }
+	          ]
         });
         let parsedText = (new DOMParser()).parseFromString(replacedText, "text/html");
         Array.from(parsedText.getElementsByTagName('a')).forEach(link => link.innerText = "[ссылка]");
@@ -161,4 +161,3 @@ export default {
   }
 }
 </script>
-

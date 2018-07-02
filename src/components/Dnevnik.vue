@@ -8,7 +8,7 @@
             <span class="card-title grey-text text-darken-4">Дневник</span>
             <template v-if="!dnevnikLoad">
                 <p style="font-size: 110%">({{ dnevnikData.Days[0].Date.split("T")[0] }})</p>
-                
+
                 <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
                 <ul class="pagination center">
                     <li class="waves-effect">
@@ -28,12 +28,12 @@
                     </li>
                 </ul>
                 <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
-                <ul class="collection" v-if="dnevnikData.Days[0].Schedule.length">
+                <ul class="collection" v-if="dnevnikData.Days.length && dnevnikData.Days[0].Schedule.length">
                       <template v-for="(lesson, index) in dnevnikData.Days[0].Schedule" v-if="lesson.Subject">
                               <li class="collection-item avatar z-depth-1" :key="'item-' + index">
-                        
+
                                 <i class="material-icons circle white" :style="{color: '#039be5', transform: 'scale(1.5)'}">format_list_bulleted</i>
-                                
+
                                 <div :style="{display: 'block', clear: 'both', height: '8px'}"></div>
                                 <a href="#">
                                  <span class="title">#{{ index }}. {{ lesson.Subject.Name }}</span>
@@ -42,9 +42,9 @@
                                 <a class="secondary-content waves-effect" :style="{ marginTop: '-.5em'}" onclick="this.firstChild.innerHTML === 'close' ? (() => { this.parentNode.style.opacity=0.35; this.firstChild.innerHTML='refresh' })() : (() => { this.parentNode.style.opacity=1.0; this.firstChild.innerHTML='close' })()">
                                   <i class="material-icons">close</i>
                                 </a>
-                          
+
                                 <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
-                    
+
                                 <div v-for="(mark, index) in lesson.Marks" :key="index">
                                     <p v-if="mark.MarkType === 'LogEntry'" class="text-darken-4" :style="{ color: coloring(mark.Values[0].Value) }">Присутствие: {{ mark.MarkTypeText }}</p>
                                     <p v-else-if="mark.MarkType === 'Mark'" class="text-darken-4" v-for="(markValue, index) in mark.Values" :key="index" :style="{ color: coloring(markValue.Mood)}">Оценка: {{ markValue.Value }} ({{ mark.MarkTypeText }})</p>
@@ -62,7 +62,7 @@
                                 </div>
 
                                 <div :style="{display: 'block', clear: 'both', height: '8px'}"></div>
-                                
+
                               </li>
                               <div :style="{display: 'block', clear: 'both', height: '3px'}" :key="'delimiter-' + index"></div>
                       </template>
@@ -135,23 +135,23 @@ export default {
         case "AllIsGood":
         case "Good":
           return "teal"
-        
+
         case "О":
         case "Average":
           return "#FF5722"
-        
+
         case "AllIsBad":
         case "Н":
         case "Bad":
           return "red"
-        
+
         case "П":
         case "Б":
           return "#01579B"
-        
+
         default:
           return "#212121"
-      } 
+      }
     },
     linkReplace(text) {
       let escapeMap = {
@@ -183,4 +183,3 @@ export default {
   }
 };
 </script>
-

@@ -8,8 +8,8 @@
           <span class="card-title grey-text text-darken-4">Статистика</span>
             <template v-if="!statsLoad">
               <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
-              <ul class="collection">
-                 <template v-for="(subjectData, index) in statsData.AllMarks[0].SubjectMarks" v-if="subjectData.Marks.length">
+              <ul class="collection" v-if="statsData.AllMarks && statsData.AllMarks[0].SubjectMarks">
+                 <template v-for="(subjectData, index) in statsData.AllMarks[0].SubjectMarks">
                      <li class="collection-item avatar z-depth-1" :key="'item-' + index">
                        <i class="material-icons circle white" :style="{color: 'blue', transform: 'scale(1.5)'}">timeline</i>
 
@@ -19,16 +19,23 @@
 
                        <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
 
-                       <div v-for="(markConstruct, index) in Counter(subjectData.Marks)" :key="index">
+                       <div v-if="subjectData.Marks" v-for="(markConstruct, index) in Counter(subjectData.Marks)" :key="index">
                          <p :style="{color: coloring(markConstruct.value[1])}">{{ markConstruct.value[0] }} : {{ markConstruct.count }}</p>
                        </div>
+                       <div v-else>
+                         <p style="color: teal;">Оценки: нет</p>
+                       </div>
 
+                       <p v-if="subjectData.Avg" :style="{color: coloring()}">Среднее значение: {{ subjectData.Avg.Value }}</p>
                        <p v-if="subjectData.FinalMark" :style="{color: coloring(subjectData.FinalMark.Values[0].Mood)}">Итоговое значение: {{ subjectData.FinalMark.Values[0].Value }}</p>
-                       <p v-else-if="subjectData.Avg" :style="{color: coloring()}">Среднее значение: {{ subjectData.Avg.Value }}</p>
                      </li>
                      <div :style="{display: 'block', clear: 'both', height: '3px'}" :key="'delimiter-' + index"></div>
                  </template>
               </ul>
+              <div v-else class="card-panel teal center">
+                  <span class="white-text">Статистика пуста.
+                  </span>
+              </div>
             </template>
             <template v-else>
               <div :style="{display: 'block', clear: 'both', height: '5px'}"></div>
@@ -65,37 +72,37 @@ export default {
         case 'AllIsGood':
         case 'Good':
           return 'teal'
-        
+
         case 'О':
         case 'Average':
           return '#FF5722'
-        
+
         case 'AllIsBad':
         case 'Н':
         case 'Bad':
           return 'red'
-        
+
         case 'П':
         case 'Б':
           return '#01579B'
-        
+
         default:
           return '#212121'
-      } 
+      }
     },
     Counter(obj) {
       var compressArray = (original) => {
 	        var compressed = [];
           var copy = original.slice(0);
           for (let i = 0; i < original.length; i++) {
-		          var myCount = 0;	
+		          var myCount = 0;
 		          for (let w = 0; w < copy.length; w++) {
 			            if (JSON.stringify(original[i]) === JSON.stringify(copy[w])) {
 				              myCount++;
 				              delete copy[w];
 			            }
 		          }
- 
+
 		          if (myCount > 0) {
 			            var a = new Object();
 			            a.value = original[i];
