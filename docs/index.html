@@ -7,17 +7,19 @@
         </noscript>
         <!--[if lt IE 9]><script type="text/javascript">var IE_fix=true;</script><![endif]-->
         <script type="text/javascript">
-            var url = "https://dnevnik-client.herokuapp.com/";
-            if (typeof IE_fix !== "undefined") {
-                document.body.innerHTML = "<p>redirecting...</p>";
-                var referLink = document.createElement("a");
-                referLink.href = url;
-                document.body.appendChild(referLink);
-                referLink.click();
+          var url = "https://dnevnik-client.herokuapp.com/";
+
+          if (typeof IE_fix !== "undefined") {
+            document.body.innerHTML = "<p>redirecting...</p>";
+            var referLink = document.createElement("a");
+
+            referLink.href = url;
+            document.body.appendChild(referLink);
+            referLink.click();
                 
-            } else { 
-                window.location.replace(url); 
-            }
+          } else { 
+            window.location.replace(url); 
+          }
         </script>
     </head>
     <body>

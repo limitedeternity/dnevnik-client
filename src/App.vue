@@ -19,14 +19,14 @@
                 </router-link>
               </li>
               <li>
-                <a href="#" @click="$store.commit('resetLoginState')">
+                <a href="#" @click="logout()">
                   <i class="material-icons">exit_to_app</i>
                 </a>
               </li>
             </template>
             <template v-else>
               <li>
-                <a :href="'https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo&redirect_uri=' + getOrigin()">
+                <a :href="'https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo&redirect_uri=' + getLocation().origin">
                   <i class="material-icons">settings_power</i>
                 </a>
               </li>
@@ -167,8 +167,7 @@ main {
 
 
 <script>
-import { mapGetters } from 'vuex';
-import ls from 'store';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 
 export default {
   name: 'App',
@@ -181,89 +180,95 @@ export default {
   data() {
     return {
       transition: 'slide-right',
-      footerText: 'Версия: 2.0.0-beta3'
-    }
+      footerText: 'Версия: 2.0.0-rc1'
+    };
   },
   watch: {
     '$route' (to, from) {
-      if (from.name === "stats") {
+      if (from.name === 'stats') {
         this.transition = 'slide-right';
 
-      } else if (from.name === "dnevnik" && to.name === "home") {
+      } else if (from.name === 'dnevnik' && to.name === 'home') {
         this.transition = 'slide-right';
 
-      } else if (from.name === "dnevnik" && to.name === "stats") {
+      } else if (from.name === 'dnevnik' && to.name === 'stats') {
         this.transition = 'slide-left';
 
-      } else if (from.name === "home") {
+      } else if (from.name === 'home') {
         this.transition = 'slide-left';
       }
     }
   },
   methods: {
-    checkLoginSeq() {
-      if (this.$route.fullPath.includes('access_token=')) {
+    ...mapActions([
+      'login',
+      'fetchUserData'
+    ]),
+    ...mapMutations([
+      'resetState',
+      'applyStateFromStorage'
+    ]),
+    isOauthStarted() {
+      let fullLocation = this.getLocation().href;
 
-        let accessToken = this.$route.fullPath.match(new RegExp('access_token=(.*)&state='))[1];
+      if (fullLocation.includes('access_token=')) {
+        let accessToken = fullLocation.match(new RegExp('access_token=(.*)&state='))[1];
 
-        fetch(`https://api.dnevnik.ru/v1/users/me/context?access_token=${accessToken}`, { credentials: 'same-origin' }).then((response) => {
-          return response.json();
-
-        }).then((userData) => {
-          if (userData.roles !== undefined && userData.roles.includes('EduStudent')) {
-
-            this.$store.commit('setDefaultState');
-
-            ls.set('apiKey', accessToken);
-            ls.set('userData', userData);
-            ls.set('isLoggedIn', true);
-
-            this.$store.commit('fetchData');
-            this.$router.replace({name: 'home'});
-          }
-        })
+        this.login(accessToken)
+          .then(() => this.$router.replace({ name: 'home' }));
       }
     },
-    getOrigin() {
-      return location.origin;
+    logout() {
+      this.$router.replace({ name: 'home' });
+      this.resetState();
+    },
+    getLocation() {
+      return new URL(location.href);
     },
     onswipeRight() {
       if (this.isLoggedIn) {
         switch (this.$route.name) {
-          case 'stats':
-            return this.$router.replace({name: 'dnevnik'});
+        case 'stats':
+          return this.$router.replace({name: 'dnevnik'});
 
-          case 'dnevnik':
-            return this.$router.replace({name: 'home'});
+        case 'dnevnik':
+          return this.$router.replace({name: 'home'});
 
-          default:
-            return;
+        default:
+          return;
         }
       }
     },
     onswipeLeft() {
       if (this.isLoggedIn) {
         switch (this.$route.name) {
-          case 'home':
-            return this.$router.replace({name: 'dnevnik'});
+        case 'home':
+          return this.$router.replace({name: 'dnevnik'});
 
-          case 'dnevnik':
-            return this.$router.replace({name: 'stats'});
+        case 'dnevnik':
+          return this.$router.replace({name: 'stats'});
 
-          default:
-            return;
+        default:
+          return;
         }
       }
     }
   },
   created() {
-    this.$store.commit('fetchData');
+    this.applyStateFromStorage();
+    this.fetchUserData(this.$router);
   },
   mounted() {
-    document.getElementById('preloader').style.opacity = "0";
-    setTimeout(() => {document.getElementById('preloader').remove()}, 1000);
+    document.getElementById('preloader').style.opacity = '0';
+    
+    setTimeout(
+      () => {
+        document.getElementById('preloader').remove();
+      },
+      1000
+    );
 
-    this.checkLoginSeq();
+    this.isOauthStarted();
   }
-}
+};
 </script>
