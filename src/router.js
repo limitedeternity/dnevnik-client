@@ -1,9 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home';
-import Dnevnik from './views/Dnevnik';
-import Stats from './views/Stats';
-import NotFound from './views/NotFound';
 
 Vue.use(Router);
 
@@ -18,16 +15,16 @@ const router = new Router({
     {
       path: '/dnevnik',
       name: 'dnevnik',
-      component: Dnevnik
+      component: () => import('./views/Dnevnik')
     },
     {
       path: '/stats',
       name: 'stats',
-      component: Stats
+      component: () => import('./views/Stats')
     },
     {
       path: '*',
-      component: NotFound
+      component: () => import('./views/NotFound')
     }
   ]
 });

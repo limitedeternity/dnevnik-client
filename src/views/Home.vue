@@ -2,7 +2,12 @@
   <div class="col s12 offset-m1 m10 offset-l2 l8 offset-xl4 xl4">
         <div class="card">
             <div class="card-image">
-                <img src="../assets/nature.jpg" alt>
+                <lazy-image
+                    :width="428"
+                    :height="321"
+                    :background-color="'#28342c'"
+                    :lazy-src="'/img/nature.jpg'"
+                />
                 <a class="btn-floating btn-large activator halfway-fab waves-effect waves-light red pulse" onclick="this.classList.remove('pulse')">
                     <i class="material-icons">mode_edit</i>
                 </a>
@@ -91,12 +96,17 @@
 </template>
 
 <script>
+import LazyImage from '@/components/LazyImage';
+
 import { mapGetters, mapActions } from 'vuex';
 import coloring from './methods/coloring';
 import linkReplace from './methods/linkReplace';
 
 export default {
   name: 'Home',
+  components: {
+    LazyImage
+  },
   computed: {
     ...mapGetters([
       'isLoggedIn',

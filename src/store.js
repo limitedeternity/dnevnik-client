@@ -27,7 +27,7 @@ const defaultState = {
 
 let keyStampList = [];
 
-(function () {
+(function() {
   let keyStampObj = {};
   let cachedKeysList = [];
 

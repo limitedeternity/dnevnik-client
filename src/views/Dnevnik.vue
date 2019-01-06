@@ -2,7 +2,12 @@
   <div class="col s12 offset-m1 m10 offset-l2 l8 offset-xl4 xl4" v-if="isLoggedIn">
     <div class="card">
         <div class="card-image">
-            <img src="../assets/office.jpg" alt>
+          <lazy-image
+            :width="428"
+            :height="321"
+            :background-color="'#c29f79'"
+            :lazy-src="'/img/office.jpg'"
+          />
         </div>
         <div class="card-content">
             <span class="card-title grey-text text-darken-4">Дневник</span>
@@ -92,6 +97,8 @@
 </template>
 
 <script>
+import LazyImage from '@/components/LazyImage';
+
 import { mapGetters, mapActions } from 'vuex';
 import ls from 'store';
 import coloring from './methods/coloring';
@@ -99,6 +106,9 @@ import linkReplace from './methods/linkReplace';
 
 export default {
   name: 'Dnevnik',
+  components: {
+    LazyImage
+  },
   computed: {
     ...mapGetters([
       'isLoggedIn',

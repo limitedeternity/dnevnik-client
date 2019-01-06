@@ -34,11 +34,9 @@
   },
   "dependencies": {
     "micro": "^9.3.3",
-    "register-service-worker": "^1.5.2",
-    "serve-handler": "^5.0.7",
-    "vue": "^2.5.21",
-    "vue-router": "^3.0.2",
-    "vuex": "^3.0.1"
+    "micro-compress": "^1.0.0",
+    "micro-middleware": "^0.1.0",
+    "serve-handler": "^5.0.7"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.2",
@@ -52,8 +50,13 @@
     "eslint": "^5.12.0",
     "eslint-plugin-html": "^5.0.0",
     "eslint-plugin-vue": "^5.1.0",
+    "lozad": "^1.7.0",
+    "register-service-worker": "^1.5.2",
     "store": "^2.0.12",
+    "vue": "^2.5.21",
+    "vue-router": "^3.0.2",
     "vue-template-compiler": "^2.5.21",
-    "vue-touch": "2.0.0-beta.4"
+    "vue-touch": "2.0.0-beta.4",
+    "vuex": "^3.0.1"
   }
 }

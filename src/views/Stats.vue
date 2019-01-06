@@ -2,7 +2,12 @@
   <div class="col s12 offset-m1 m10 offset-l2 l8 offset-xl4 xl4" v-if="isLoggedIn">
       <div class="card">
         <div class="card-image">
-            <img src="../assets/stats.jpg" alt>
+            <lazy-image
+              :width="428"
+              :height="321"
+              :background-color="'#0d2969'"
+              :lazy-src="'/img/stats.jpg'"
+            />
         </div>
         <div class="card-content">
           <span class="card-title grey-text text-darken-4">Статистика</span>
@@ -57,11 +62,16 @@
 </template>
 
 <script>
+import LazyImage from '@/components/LazyImage';
+
 import { mapGetters, mapActions } from 'vuex';
 import coloring from './methods/coloring';
 
 export default {
   name: 'Stats',
+  components: {
+    LazyImage
+  },
   computed: {
     ...mapGetters([
       'isLoggedIn',

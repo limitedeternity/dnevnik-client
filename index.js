@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
-
-const micro = require('micro');
+const { applyMiddleware } = require('micro-middleware');
+const compress = require('micro-compress');
 const handler = require('serve-handler');
 
-const server = micro(async (req, res) => {
+let server = async (req, res) => {
   await handler(req, res, {
     public: './dist/',
     directoryListing: false,
@@ -27,7 +26,6 @@ const server = micro(async (req, res) => {
       }
     ]
   });
-});
+};
 
-console.log(`Starting to listen on ${process.env.PORT || 8080}`);
-server.listen(process.env.PORT || 8080);
+module.exports = applyMiddleware(server, [ compress ]);
