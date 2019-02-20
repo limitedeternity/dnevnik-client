@@ -29,33 +29,33 @@
     "heroku-postbuild": "npm run build"
   },
   "engines": {
-    "node": "11.6.0",
-    "npm": "6.5.0"
+    "node": "11.10.0",
+    "npm": "6.8.0"
   },
   "dependencies": {
     "micro": "^9.3.3",
     "micro-compress": "^1.0.0",
     "micro-middleware": "^0.1.0",
-    "serve-handler": "^5.0.7"
+    "serve-handler": "^5.0.8"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.3.0",
-    "@vue/cli-plugin-eslint": "^3.3.0",
-    "@vue/cli-plugin-pwa": "^3.3.0",
-    "@vue/cli-service": "^3.3.0",
+    "@vue/cli-plugin-babel": "^3.4.1",
+    "@vue/cli-plugin-eslint": "^3.4.1",
+    "@vue/cli-plugin-pwa": "^3.4.1",
+    "@vue/cli-service": "^3.4.1",
     "anchorme": "^1.1.2",
     "babel-eslint": "^10.0.1",
     "date-fns": "^1.30.1",
-    "eslint": "^5.12.0",
-    "eslint-plugin-html": "^5.0.0",
-    "eslint-plugin-vue": "^5.1.0",
-    "lozad": "^1.7.0",
-    "register-service-worker": "^1.5.2",
+    "eslint": "^5.14.1",
+    "eslint-plugin-html": "^5.0.3",
+    "eslint-plugin-vue": "^5.2.2",
+    "lozad": "^1.9.0",
+    "register-service-worker": "^1.6.2",
     "store": "^2.0.12",
-    "vue": "^2.5.22",
+    "vue": "^2.6.6",
     "vue-router": "^3.0.2",
-    "vue-template-compiler": "^2.5.22",
+    "vue-template-compiler": "^2.6.6",
     "vue-touch": "2.0.0-beta.4",
-    "vuex": "^3.0.1"
+    "vuex": "^3.1.0"
   }
 }

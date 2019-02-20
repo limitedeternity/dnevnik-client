@@ -1,11 +1,5 @@
 <template>
-    <img
-      :data-src="lazySrc"
-      :data-srcset="lazySrcset"
-      :style="style"
-      class="LazyImage"
-      alt
-    >
+  <img :data-src="lazySrc" :data-srcset="lazySrcset" :style="style" class="LazyImage" alt>
 </template>
 
 <style>
@@ -16,14 +10,14 @@
 </style>
 
 <script>
-import lozad from 'lozad';
+import lozad from "lozad";
 
 export default {
-  name: 'LazyImage',
+  name: "LazyImage",
   props: {
     backgroundColor: {
       type: String,
-      default: '#efefef'
+      default: "#efefef"
     },
     height: {
       type: Number,
@@ -57,7 +51,7 @@ export default {
       if (this.loading) {
         return {
           ...styleObj,
-          height: '0px',
+          height: "0px",
           paddingTop: `${this.aspectRatio}%`
         };
       }
