@@ -46,7 +46,7 @@ module.exports = {
           }
         },
         {
-          urlPattern: /^https:\/\/(?:cdn|qa)\.polyfill\.io\/(.*)/,
+          urlPattern: /^https:\/\/polyfill\.io\/(.*)/,
           handler: 'staleWhileRevalidate',
           options: {
             cacheableResponse: {
