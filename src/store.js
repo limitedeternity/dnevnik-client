@@ -138,12 +138,6 @@ function cachedFetch(url, options) {
   });
 }
 
-function deauthChecker(jsonData) {
-  return ["invalidToken", "apiRequestLimit"].some(elem => {
-    return jsonData.hasOwnProperty("type") && jsonData["type"] === elem;
-  });
-}
-
 const store = new Vuex.Store({
   state: defaultState,
   getters: {
@@ -220,15 +214,12 @@ const store = new Vuex.Store({
       ).then(response => {
         if (response.ok) {
           response.json().then(userData => {
-            if (deauthChecker(userData)) {
-              commit("resetState");
-              router.replace({ name: "home" });
-              return;
-            }
-
             state["userData"] = userData;
             ls.set("userData", userData);
           });
+        } else if ((response.status / 100) >> 0 === 4) {
+          commit("resetState");
+          router.replace({ name: "home" });
         }
       });
     },
