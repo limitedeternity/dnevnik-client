@@ -178,7 +178,7 @@ const store = new Vuex.Store({
   actions: {
     login({ commit, state }, accessToken) {
       fetch(
-        `https://api.dnevnik.ru/v1/users/me/context?access_token=${accessToken}`,
+        `https://api.dnevnik.ru/v2/users/me/context?access_token=${accessToken}`,
         { credentials: "same-origin" }
       ).then(response => {
         if (response.ok) {
@@ -207,7 +207,7 @@ const store = new Vuex.Store({
       }
 
       fetch(
-        `https://api.dnevnik.ru/v1/users/me/context?access_token=${
+        `https://api.dnevnik.ru/v2/users/me/context?access_token=${
           state.apiKey
         }`,
         { credentials: "same-origin" }
