@@ -186,6 +186,14 @@ export default {
   },
   created() {
     this.fetchFeed();
+    this.$store.watch(
+      (state, getters) => getters.isLoggedIn,
+      (newValue, oldValue) => {
+        if (oldValue === false && newValue === true) {
+          this.fetchFeed();
+        }
+      }
+    );
   }
 };
 </script>
