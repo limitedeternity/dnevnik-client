@@ -3,6 +3,12 @@ const compress = require("micro-compress");
 const handler = require("serve-handler");
 
 let server = async (req, res) => {
+  if (req.headers["x-forwarded-proto"] && req.headers["x-forwarded-proto"] !== "https") {
+    res.statusCode = 302;
+    res.setHeader("Location", "https://" + req.headers.host + req.url);
+    return res.end();
+  }
+
   await handler(req, res, {
     public: "./dist/",
     directoryListing: false,
