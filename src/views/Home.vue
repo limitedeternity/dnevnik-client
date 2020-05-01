@@ -108,7 +108,7 @@
             </div>
             <div>
               <p>
-                Спасибо, что решили протестировать beta-версию DnevnikClient. Я очень это ценю.
+                Спасибо, что используете DnevnikClient. Я очень это ценю.
                 <br>Обо всех ошибках просьба сообщать, открывая Issue в
                 <a
                   href="https://github.com/limitedeternity/dnevnik-client/"
@@ -139,7 +139,7 @@
             <i class="material-icons right">close</i>
           </span>
           <p>
-            Спасибо, что решили протестировать beta-версию DnevnikClient. Я очень это ценю.
+            Спасибо, что используете DnevnikClient. Я очень это ценю.
             <br>Обо всех ошибках просьба сообщать, открывая Issue в
             <a
               href="https://github.com/limitedeternity/dnevnik-client/"

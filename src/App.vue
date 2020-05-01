@@ -196,7 +196,7 @@ export default {
   data() {
     return {
       transition: "slide-right",
-      footerText: "Версия: 2.0.0-rc1"
+      footerText: "Версия: 2.0.0-final"
     };
   },
   watch: {
