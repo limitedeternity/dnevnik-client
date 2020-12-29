@@ -178,8 +178,11 @@ const store = new Vuex.Store({
   actions: {
     login({ commit, state }, accessToken) {
       fetch(
-        `https://api.dnevnik.ru/v2/users/me/context?access_token=${accessToken}`,
-        { credentials: "same-origin" }
+        "https://api.dnevnik.ru/v2/users/me/context",
+        {
+          headers: { "Access-Token": accessToken },
+          credentials: "same-origin"
+        }
       ).then(response => {
         if (response.ok) {
           response.json().then(userData => {
@@ -207,10 +210,11 @@ const store = new Vuex.Store({
       }
 
       fetch(
-        `https://api.dnevnik.ru/v2/users/me/context?access_token=${
-          state.apiKey
-        }`,
-        { credentials: "same-origin" }
+        "https://api.dnevnik.ru/v2/users/me/context",
+        {
+          headers: { "Access-Token": state.apiKey },
+          credentials: "same-origin"
+        }
       ).then(response => {
         if (response.ok) {
           response.json().then(userData => {
@@ -229,12 +233,11 @@ const store = new Vuex.Store({
       }
 
       fetch(
-        `https://api.dnevnik.ru/mobile/v2/allMarks?personId=${
-          state.userData.personId
-        }&groupId=${state.userData.eduGroups[0].id_str}&access_token=${
-          state.apiKey
-        }`,
-        { credentials: "same-origin" }
+        `https://api.dnevnik.ru/mobile/v2/allMarks?personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}`,
+        {
+          headers: { "Access-Token": state.apiKey },
+          credentials: "same-origin"
+        }
       ).then(
         response => {
           if (response.ok) {
@@ -265,12 +268,11 @@ const store = new Vuex.Store({
       let year = getYear(dateCurrent);
 
       fetch(
-        `https://api.dnevnik.ru/mobile/v2/feed/?date=${year}-${month}-${day}&limit=1&personId=${
-          state.userData.personId
-        }&groupId=${state.userData.eduGroups[0].id_str}&access_token=${
-          state.apiKey
-        }`,
-        { credentials: "same-origin" }
+        `https://api.dnevnik.ru/mobile/v2/feed/?date=${year}-${month}-${day}&limit=1&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}`,
+        {
+          headers: { "Access-Token": state.apiKey },
+          credentials: "same-origin"
+        }
       ).then(
         response => {
           if (response.ok) {
@@ -327,12 +329,11 @@ const store = new Vuex.Store({
 
       if (amount === 0) {
         fetch(
-          `https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${
-            state.userData.personId
-          }&groupId=${state.userData.eduGroups[0].id_str}&access_token=${
-            state.apiKey
-          }`,
-          { credentials: "same-origin" }
+          `https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}`,
+          {
+            headers: { "Access-Token": state.apiKey },
+            credentials: "same-origin"
+          }
         ).then(
           response => {
             if (response.ok) {
@@ -355,12 +356,11 @@ const store = new Vuex.Store({
         );
       } else {
         cachedFetch(
-          `https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${
-            state.userData.personId
-          }&groupId=${state.userData.eduGroups[0].id_str}&access_token=${
-            state.apiKey
-          }`,
-          { credentials: "same-origin" }
+          `https://api.dnevnik.ru/mobile/v2/schedule?startDate=${year}-${month}-${day}&endDate=${year}-${month}-${day}&personId=${state.userData.personId}&groupId=${state.userData.eduGroups[0].id_str}`,
+          {
+            headers: { "Access-Token": state.apiKey },
+            credentials: "same-origin"
+          }
         ).then(
           response => {
             if (response.ok) {
