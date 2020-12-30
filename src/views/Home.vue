@@ -176,7 +176,7 @@ export default {
   computed: {
     ...mapGetters(["isLoggedIn", "userData", "feedData", "feedLoad"]),
     user() {
-      return this.userData ? this.userData.firstName : "товарищ";
+      return this.userData ? this.userData.shortName.split(" ")[0] : "товарищ";
     }
   },
   methods: {

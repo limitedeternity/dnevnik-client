@@ -27,7 +27,7 @@
             <template v-else>
               <li>
                 <a
-                  :href="'https://login.dnevnik.ru/oauth2?response_type=token&client_id=0925b3b0d1e84c05b85851e4f8a4033d&scope=CommonInfo,FriendsAndRelatives,EducationalInfo&redirect_uri=' + getLocation().origin"
+                  :href="'https://login.dnevnik.ru/oauth2?response_type=token&client_id=b8006d7570a94291885c13d8511bb2ae&scope=CommonInfo,FriendsAndRelatives,EducationalInfo&redirect_uri=' + getLocation().origin"
                 >
                   <i class="material-icons">settings_power</i>
                 </a>
